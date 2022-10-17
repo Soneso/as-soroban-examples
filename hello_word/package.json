@@ -2,13 +2,10 @@
   "name": "hello_word",
   "version": "0.0.1",
   "description": "hello word example for the as soroban sdk",
-  "main": "index.js",
   "scripts": {
-    "test": "node tests",
     "asbuild:debug": "asc assembly/index.ts --target debug",
     "asbuild:release": "asc assembly/index.ts --target release",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
-    "start": "npx serve ."
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release"
   },
   "keywords": [
     "soroban",
