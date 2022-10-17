@@ -27,6 +27,13 @@ Navigate to the directory of the example you would like to run. E.g.
 $ cd hello_word
 ```
 
+Install the SDK:
+
+```shell
+$ npm install as-soroban-sdk
+
+```
+
 Build the contract:
 ```shell
 $ asc assembly/index.ts --target release
