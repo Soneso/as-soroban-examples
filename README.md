@@ -24,7 +24,7 @@ $ cargo install --locked soroban-cli
 Navigate to the directory of the example you would like to run. E.g.
 
 ```shell
-$ cd hello
+$ cd hello_word
 ```
 
 Build the contract:
