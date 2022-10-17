@@ -1,0 +1,13 @@
+{
+    "name": "hello word",
+    "version": "0.0.1",
+    "description": "my first contract",
+    "host_functions_version": 23,
+    "functions": [
+        {
+            "name" : "hello",
+            "arguments": [{"name": "to", "type": "symbol"}],
+            "returns" : "val"
+        }
+    ]
+}
