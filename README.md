@@ -1,6 +1,6 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
-![v0.0.1](https://img.shields.io/badge/v0.0.1-yellow.svg)
+![v0.0.3](https://img.shields.io/badge/v0.0.3-yellow.svg)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
@@ -16,7 +16,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 To run a contract, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```shell
-$ cargo install --locked soroban-cli
+cargo install --locked soroban-cli
 ```
 
 ### 3. Run an example contract
@@ -24,19 +24,19 @@ $ cargo install --locked soroban-cli
 Navigate to the directory of the example you would like to run. E.g.
 
 ```shell
-$ cd hello_word
+cd hello_word
 ```
 
 Install the SDK:
 
 ```shell
-$ npm install as-soroban-sdk
+npm install as-soroban-sdk
 
 ```
 
 Build the contract:
 ```shell
-$ asc assembly/index.ts --target release
+asc assembly/index.ts --target release
 ```
 
 You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (Text format of the .wasm).
@@ -44,9 +44,21 @@ You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` fol
 Now you can run the example contract:
 
 ```shell
-$ soroban invoke --wasm build/release.wasm --id 6 --fn hello --arg friend
+soroban invoke --wasm build/release.wasm --id 6 --fn hello --arg friend
 ```
 
-### 4. Create your own contract
+### 4. Avaialable examples
 
-See: [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
+The [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add) demonstrates how to write a simple contract, with a single function that takes two i32 inputs and returns their sum as an outout.
+
+The [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main/hello_word) demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output.
+
+The [increment exammple](https://github.com/Soneso/as-soroban-examples/tree/main/increment) demonstrates how to write a simple contract that stores data, with a single function that increments an internal counter and returns the value.
+
+The [logging exammple](https://github.com/Soneso/as-soroban-examples/tree/main/logging) demonstrates how to log for the purpose of debugging.
+
+The [cross contract call exammple](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract) demonstrates how to call a contract from another contract.
+
+### 5. Create your own contract
+
+Use: [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
