@@ -1,0 +1,16 @@
+{
+    "name": "contract_a",
+    "version": "0.0.1",
+    "description": "soroban contract to be called by another contract",
+    "host_functions_version": 23,
+    "functions": [
+        {
+            "name" : "add",
+            "arguments": [
+                {"name": "a", "type": "i32"},
+                {"name": "b", "type": "i32"}
+            ],
+            "returns" : "i32"
+        }
+    ]
+}

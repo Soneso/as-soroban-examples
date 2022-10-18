@@ -1,0 +1,13 @@
+{
+  "extends": "as-soroban-sdk/sdkasconfig",
+  "targets": {
+    "release": {
+      "outFile": "build/release.wasm",
+      "textFile": "build/release.wat"
+    },
+    "debug": {
+      "outFile": "build/debug.wasm",
+      "textFile": "build/debug.wat"
+    }
+  }
+}

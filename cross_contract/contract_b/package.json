@@ -1,17 +1,15 @@
 {
-  "name": "add",
+  "name": "contract_b",
   "version": "0.0.1",
-  "description": "as soroban contract example adding two integers",
+  "description": "a contract that calls another soroban contract",
+  "main": "index.js",
   "scripts": {
+    "test": "node tests",
     "asbuild:debug": "asc assembly/index.ts --target debug",
     "asbuild:release": "asc assembly/index.ts --target release",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release"
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "start": "npx serve ."
   },
-  "keywords": [
-    "soroban",
-    "example",
-    "add"
-  ],
   "author": "c.r.",
   "license": "Apache-2.0",
   "devDependencies": {
