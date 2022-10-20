@@ -59,6 +59,10 @@ The [logging exammple](https://github.com/Soneso/as-soroban-examples/tree/main/l
 
 The [cross contract call exammple](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract) demonstrates how to call a contract from another contract.
 
+The [errors exammple](https://github.com/Soneso/as-soroban-examples/tree/main/errors) demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.
+
+The [events exammple](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events) demonstrates how to publish events from a contract.
+
 ### 5. Create your own contract
 
 Use: [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)

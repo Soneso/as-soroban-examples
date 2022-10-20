@@ -5,12 +5,12 @@ export function increment(): RawVal {
 
   let key = "COUNTER";
   var counter = 0;
-  if (ledger.has_data_for(key)) {
-    let dataObj = ledger.get_data_for(key);
+  if (ledger.hasDataFor(key)) {
+    let dataObj = ledger.getDataFor(key);
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.put_data_for(key, fromU32(counter));
-  return ledger.get_data_for(key);
-  
+  ledger.putDataFor(key, fromU32(counter));
+  return ledger.getDataFor(key);
+
 }

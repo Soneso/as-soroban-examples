@@ -44,7 +44,7 @@ logging/assembly/index.ts
 
 ```typescript
 import * as context from 'as-soroban-sdk/lib/context';
-import {RawVal, fromI32, fromString, fromVoid} from 'as-soroban-sdk/lib/value';
+import {RawVal, fromI32, fromSymbolStr, fromVoid} from 'as-soroban-sdk/lib/value';
 import {Vec} from 'as-soroban-sdk/lib/vec';
 
 export function logging(): RawVal {
@@ -53,7 +53,7 @@ export function logging(): RawVal {
 
   let args = new Vec();
   args.push_back(fromI32(30));
-  args.push_back(fromString("celsius"));
+  args.push_back(fromSymbolStr("celsius"));
   context.log_ftm("We have {} degrees {}!", args);
 
   return fromVoid();
@@ -68,6 +68,6 @@ The ```context.log_str``` method, provided by [as-soroban-sdk](https://github.co
 
 The ```context.log_ftm``` method lets the host build a string from the format string, and a list of arguments. Arguments are substituted wherever the {} value appears in the format string.
 
-The Arguments must be passed in a Vector containing raw values. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
+The arguments must be passed in a Vector containing raw values. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
 
 To convert primitives or short strings into raw values you can use the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).

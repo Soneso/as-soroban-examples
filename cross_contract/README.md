@@ -98,10 +98,10 @@ export function callc(): val.RawVal {
   let contractId = "1f93b99bbd17a11ca22c05763b0c3296a7617af46835bb590105b2b154aefb18";
   let func = "add";
   let args = new Vec();
-  args.push_back(val.fromI32(3));
-  args.push_back(val.fromI32(12));
+  args.pushBack(val.fromI32(3));
+  args.pushBack(val.fromI32(12));
 
-  return contract.call_by_id(contractId, func, args.getHostObject());
+  return contract.callContractById(contractId, func, args.getHostObject());
 }
 ```
 
@@ -109,6 +109,6 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract/cont
 
 ## How it works
 
-The ```contract.call_by_id``` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), allows the contract to call another contracts function.
+The ```contract.callContractById``` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), allows the contract to call another contracts function.
 
 It needs the id of the contract to be called, the name of the function to be executed and it's arguments packed in a vector.

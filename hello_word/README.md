@@ -41,14 +41,14 @@ hello_word/assembly/index.ts
 ```
 
 ```typescript
-import {SymbolVal, VectorObject, fromString} from 'as-soroban-sdk/lib/value';
+import {SymbolVal, VectorObject, fromSymbolStr} from 'as-soroban-sdk/lib/value';
 import {Vec} from 'as-soroban-sdk/lib/vec';
 
 export function hello(to: SymbolVal): VectorObject {
 
   let vec = new Vec();
-  vec.push_front(fromString("Hello"));
-  vec.push_back(to);
+  vec.pushFront(fromSymbolStr("Hello"));
+  vec.pushBack(to);
   
   return vec.getHostObject();
 }
@@ -81,16 +81,16 @@ The concrete types must also be defined in the [contract spec](https://github.co
 }
 ```
 
-The ```hello``` function from our contract first creates a new Vector object on the host. Vectors can hold raw values. To add the symbol ```Hello``` to the vector, it must first be encoded into a raw value. This is done by using the ```fromString``` function of the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).
+The ```hello``` function from our contract first creates a new Vector object on the host. Vectors can hold raw values. To add the symbol ```Hello``` to the vector, it must first be encoded into a raw value. This is done by using the ```fromSymbolStr``` function of the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).
 
 ```typescript
 let vec = new Vec();
-vec.push_front(fromString("Hello"));
+vec.pushFront(fromSymbolStr("Hello"));
 ```
 
 Next the raw value obtained by argument is added to the vector. The contract function then returns a raw value, encoding the host object handle of the vector.
 
 ```typescript
-  vec.push_back(to);
+  vec.pushBack(to);
   return vec.getHostObject();
 ```

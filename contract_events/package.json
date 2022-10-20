@@ -1,7 +1,7 @@
 {
-  "name": "contract_b",
+  "name": "contract_events",
   "version": "0.0.1",
-  "description": "a contract that calls another soroban contract",
+  "description": "soroban contract example that publishes events",
   "main": "index.js",
   "scripts": {
     "test": "node tests",
@@ -10,6 +10,11 @@
     "asbuild": "npm run asbuild:debug && npm run asbuild:release",
     "start": "npx serve ."
   },
+  "keywords": [
+    "soroban",
+    "contract",
+    "events"
+  ],
   "author": "c.r.",
   "license": "Apache-2.0",
   "devDependencies": {

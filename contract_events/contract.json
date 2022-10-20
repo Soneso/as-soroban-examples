@@ -1,0 +1,13 @@
+{
+    "name": "add",
+    "version": "0.0.1",
+    "description": "soroban contract example publishing events",
+    "host_functions_version": 23,
+    "functions": [
+        {
+            "name" : "events",
+            "arguments": [],
+            "returns" : "val"
+        }
+    ]
+}

@@ -53,13 +53,13 @@ export function increment(): RawVal {
 
   let key = "COUNTER";
   var counter = 0;
-  if (ledger.has_data_for(key)) {
-    let dataObj = ledger.get_data_for(key);
+  if (ledger.hasDataFor(key)) {
+    let dataObj = ledger.getDataFor(key);
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.put_data_for(key, fromU32(counter));
-  return ledger.get_data_for(key);
+  ledger.putDataFor(key, fromU32(counter));
+  return ledger.getDataFor(key);
 }
 ```
 
@@ -95,8 +95,8 @@ it loads it, decodes it to ```u32``` and assigns its value to the ```counter```v
 ```typescript
 let key = "COUNTER";
 var counter = 0;
-if (ledger.has_data_for(key)) {
-    let dataObj = ledger.get_data_for(key);
+if (ledger.hasDataFor(key)) {
+    let dataObj = ledger.getDataFor(key);
     counter = toU32(dataObj);
 }
 ```
@@ -105,12 +105,12 @@ Next, the counter is incremented and stored back into the ledger. To store the c
 
 ```typescript
 counter += 1;
-ledger.put_data_for(key, fromU32(counter));
+ledger.putDataFor(key, fromU32(counter));
 ```
 
 Finally the function loads the counter from storage again and returns it.
 
 ```typescript
-return ledger.get_data_for(key);
+return ledger.getDataFor(key);
 ```
 To store and load data from storage, the contract uses the helper functions provided by the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).
