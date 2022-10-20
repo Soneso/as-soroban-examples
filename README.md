@@ -47,7 +47,7 @@ Now you can run the example contract:
 soroban invoke --wasm build/release.wasm --id 6 --fn hello --arg friend
 ```
 
-### 4. Avaialable examples
+### 4. Available examples
 
 The [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add) demonstrates how to write a simple contract, with a single function that takes two i32 inputs and returns their sum as an outout.
 
