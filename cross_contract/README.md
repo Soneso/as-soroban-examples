@@ -1,6 +1,6 @@
 # Cross contract Calls
 
-The [cross contract call exammple](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract) demonstrates how to call a contract from another contract.
+The [cross contract call example](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract) demonstrates how to call a contract from another contract.
 
 
 ## Run the example

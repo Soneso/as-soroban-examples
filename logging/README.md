@@ -1,6 +1,6 @@
 # Logging
 
-The [logging exammple](https://github.com/Soneso/as-soroban-examples/tree/main/logging) demonstrates how to log for the purpose of debugging.
+The [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/logging) demonstrates how to log for the purpose of debugging.
 
 
 ## Run the example
