@@ -13,7 +13,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 ### 1. Clone this repo
 ### 2. Install the soroban cli
 
-To run a contract, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract, you must first install the official ```soroban-cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```shell
 cargo install --locked soroban-cli
@@ -21,13 +21,13 @@ cargo install --locked soroban-cli
 
 ### 3. Run an example contract
 
-Navigate to the directory of the example you would like to run. E.g.
+Navigate to the directory of the example you would like to run.
 
 ```shell
 cd hello_word
 ```
 
-Install the SDK:
+Install the AS Soroban SDK:
 
 ```shell
 npm install as-soroban-sdk
@@ -39,30 +39,26 @@ Build the contract:
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (Text format of the .wasm).
+You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (Text format of the ```.wasm```).
 
-Now you can run the example contract:
+Run the example contract:
 
 ```shell
-soroban invoke --wasm build/release.wasm --id 6 --fn hello --arg friend
+soroban invoke --wasm build/release.wasm --id 1 --fn hello --arg friend
 ```
 
 ### 4. Available examples
 
-The [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add) demonstrates how to write a simple contract, with a single function that takes two i32 inputs and returns their sum as an outout.
-
-The [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main/hello_word) demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output.
-
-The [increment exammple](https://github.com/Soneso/as-soroban-examples/tree/main/increment) demonstrates how to write a simple contract that stores data, with a single function that increments an internal counter and returns the value.
-
-The [logging exammple](https://github.com/Soneso/as-soroban-examples/tree/main/logging) demonstrates how to log for the purpose of debugging.
-
-The [cross contract call exammple](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract) demonstrates how to call a contract from another contract.
-
-The [errors exammple](https://github.com/Soneso/as-soroban-examples/tree/main/errors) demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.
-
-The [events exammple](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events) demonstrates how to publish events from a contract.
+| Example | Description |
+| :--- | :--- |
+| [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add)| Demonstrates how to write a simple contract, with a single function that takes two i32 inputs and returns their sum as an output. |
+| [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main/hello_word)| Demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output. |
+| [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment)| Demonstrates how to write a simple contract that stores data, with a single function that increments an internal counter and returns the value.| 
+| [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/logging)| Demonstrates how to log for the purpose of debugging.|
+| [cross contract call example](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract)| Demonstrates how to call a contract from another contract.|
+| [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/errors)| Demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.|
+| [events example](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events)| Demonstrates how to publish events from a contract.|
 
 ### 5. Create your own contract
 
-Use: [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
+Use: [AS Soroban SDK](https://github.com/Soneso/as-soroban-sdk)
