@@ -1,4 +1,4 @@
-import {RawVal, fromSymbolStr} from 'as-soroban-sdk/lib/value';
+import {RawVal, fromU32} from 'as-soroban-sdk/lib/value';
 
 export function add_str(): RawVal {
 
@@ -18,5 +18,5 @@ export function add_str(): RawVal {
  * 0: "Validation"
  */
   
-  return fromSymbolStr("OK");
+  return fromU32(1);
 }
