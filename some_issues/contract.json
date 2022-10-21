@@ -1,0 +1,13 @@
+{
+    "name": "some issues",
+    "version": "0.0.1",
+    "description": "shows issues for sorobanathon decribing some problems working with assemblyscript",
+    "host_functions_version": 23,
+    "functions": [
+        {
+            "name" : "add_str",
+            "arguments": [],
+            "returns" : "val"
+        }
+    ]
+}
