@@ -1,0 +1,13 @@
+{
+    "name": "crontract b",
+    "version": "0.0.1",
+    "description": "the contract that calls the other contract",
+    "host_functions_version": 23,
+    "functions": [
+        {
+            "name" : "callAuth",
+            "arguments": [],
+            "returns" : "val"
+        }
+    ]
+}
