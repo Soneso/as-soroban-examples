@@ -1,0 +1,16 @@
+{
+    "name": "add",
+    "version": "0.0.1",
+    "description": "soroban contract example adding 2 integers",
+    "host_functions_version": 23,
+    "functions": [
+        {
+            "name" : "add",
+            "arguments": [
+                {"name": "a", "type": "i32"},
+                {"name": "b", "type": "i32"}
+            ],
+            "returns" : "i32"
+        }
+    ]
+}

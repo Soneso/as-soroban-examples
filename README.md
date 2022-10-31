@@ -59,6 +59,7 @@ soroban invoke --wasm build/release.wasm --id 1 --fn hello --arg friend
 | [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)| Demonstrates how to tell who has invoked a contract, and verify that a contract has been invoked by an account or contract.|
 | [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/errors)| Demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.|
 | [events example](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events)| Demonstrates how to publish events from a contract.|
+| [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/testing)| Shows a simple way to test your contract.|
 
 ### 5. Create your own contract
 
