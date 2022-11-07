@@ -1,4 +1,4 @@
-# Cross contract Calls
+# Cross Contract Calls
 
 The [cross contract call example](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract) demonstrates how to call a contract from another contract.
 

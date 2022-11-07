@@ -71,3 +71,7 @@ OK
 
 The script exectues the soroban comand and then checks the result.
 
+
+## Further example
+
+A more comprehensive example can be found in the [as-soroban-sdk Tests](https://github.com/Soneso/as-soroban-sdk/blob/main/test.cjs).
