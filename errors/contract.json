@@ -2,7 +2,7 @@
     "name": "checkAge",
     "version": "0.0.1",
     "description": "soroban contract example with error codes",
-    "host_functions_version": 23,
+    "host_functions_version": 27,
     "functions": [
         {
             "name" : "checkAge",

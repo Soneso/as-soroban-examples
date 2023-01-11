@@ -4,7 +4,7 @@ import * as contract from "as-soroban-sdk/lib/contract";
 
 export function callAuth(): val.RawVal {
 
-  let contractId = "45a5e4697fcd38ec0654ea477a751ccc9b6d8eaa45d8c848678a87c02a43db53";
+  let contractId = "a593b4630c4a58ee79e6f9ec9cda422abae51552d327042b4e857e5df5dbf21e";
   let func = "auth";
   let args = new Vec();
 

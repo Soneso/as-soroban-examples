@@ -78,7 +78,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
     "name": "increment",
     "version": "0.0.1",
     "description": "increment smart contract example using storage",
-    "host_functions_version": 23,
+    "host_functions_version": 27,
     "functions": [
         {
             "name" : "increment",

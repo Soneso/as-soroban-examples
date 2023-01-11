@@ -8,7 +8,7 @@ export function add_str(): RawVal {
 * README.md for more details on how to compile and run.
 ******************************************************************************/
   
-// let a = "b" + "c";
+let a = "b" + "c";
 
 /****
  * Error you will get:

@@ -63,4 +63,4 @@ soroban invoke --wasm build/release.wasm --id 1 --fn hello --arg friend
 
 ### 5. Create your own contract
 
-Use: [AS Soroban SDK](https://github.com/Soneso/as-soroban-sdk)
+Use: [AssemblyScript Soroban SDK](https://github.com/Soneso/as-soroban-sdk)

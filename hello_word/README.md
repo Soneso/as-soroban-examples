@@ -70,7 +70,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
     "name": "hello word",
     "version": "0.0.1",
     "description": "my first contract",
-    "host_functions_version": 23,
+    "host_functions_version": 27,
     "functions": [
         {
             "name" : "hello",

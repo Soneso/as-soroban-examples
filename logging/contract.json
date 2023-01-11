@@ -2,7 +2,7 @@
     "name": "logging",
     "version": "0.0.1",
     "description": "example of logging in the soroban cli",
-    "host_functions_version": 23,
+    "host_functions_version": 27,
     "functions": [
         {
             "name" : "logging",

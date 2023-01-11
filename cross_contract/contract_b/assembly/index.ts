@@ -4,7 +4,7 @@ import * as contract from "as-soroban-sdk/lib/contract";
 
 export function callc(): val.RawVal {
 
-  let contractId = "1f93b99bbd17a11ca22c05763b0c3296a7617af46835bb590105b2b154aefb18";
+  let contractId = "9a1268dd7745bea291bdc79ad38d6dd34d193088ae83931a3569fd6de7d25db7";
   let func = "add";
   let args = new Vec();
   args.pushBack(val.fromI32(3));

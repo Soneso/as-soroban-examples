@@ -67,7 +67,7 @@ The concrete types encoded in the ```RawVal```'s for our arguments are defined i
     "name": "add",
     "version": "0.0.1",
     "description": "soroban contract example adding 2 integers",
-    "host_functions_version": 23,
+    "host_functions_version": 27,
     "functions": [
         {
             "name" : "add",
