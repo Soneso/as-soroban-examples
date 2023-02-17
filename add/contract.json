@@ -2,7 +2,7 @@
     "name": "add",
     "version": "0.0.1",
     "description": "soroban contract example adding 2 integers",
-    "host_functions_version": 27,
+    "host_functions_version": 29,
     "functions": [
         {
             "name" : "add",

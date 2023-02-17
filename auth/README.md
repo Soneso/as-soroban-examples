@@ -1,143 +1,149 @@
 # Auth
 
-The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth) demonstrates how to tell who has invoked a contract, and verify that a contract has been invoked by an account or contract. This example is an extension of the [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment).
+The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth) demonstrates how to implement authentication and authorization using the [Soroban Host-managed auth framework](https://soroban.stellar.org/docs/learn/authorization). This example is an extension of the [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment).
 
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official ```soroban-cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
-```shell
-cargo install --locked soroban-cli
+```sh
+cargo install --locked --version 0.6.0 soroban-cli
 ```
 
-The example contains two contracts. To run them, navigate in the directory of the first contract and build the contract (```contract_a```):
+Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
-```shell
+```sh
 cd auth
-cd contract_a
 npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (text format of the ```.wasm```).
+Since we are dealing with authorization and signatures, we need to set up some identities to use for testing and get their public keys:
 
-Now navigate back to the example directory and deploy the ```contract_a``` in the soroban cli:
-
-Hint: it is important to use the soroban cli in the main directory of the example because when executed, it adds a ```.soroban``` folder to store its data (e.g. deployed contracts).
-
-```shell
-cd ..
-soroban deploy --wasm contract_a/build/release.wasm
+```sh
+soroban config identity generate acc1 && \
+soroban config identity generate acc2 && \
+soroban config identity address acc1 && \
+soroban config identity address acc2
 ```
 
-You should see an output similar to this:
-```shell
-45a5e4697fcd38ec0654ea477a751ccc9b6d8eaa45d8c848678a87c02a43db53
-```
-representing the id of the contract that has been deployed.
-
-Next navigate to the dicrectory of the second contract (```contract_b```) and install the sdk.
-
-```shell
-cd contract_b
-npm install as-soroban-sdk
-````
-
-Before we build the contract_b, we need to replace the contract id to be called in the source code of ```contract_b```. 
-Open the ```contract_b/assembly/index.ts``` file and replace the contract id in the code. Paste the contract id of ```contract_a``` that you received as you deployed it.
-
-```typescript
-let contractId = "45a5e4697fcd38ec0654ea477a751ccc9b6d8eaa45d8c848678a87c02a43db53";
+Example output with the public key of the identity:
+```sh
+GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO
+GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR
 ```
 
-Next, build ```contract_b```:
+Now the contract itself can be invoked. Notice the --account has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
 
-```shell
-asc assembly/index.ts --target release
+```sh
+soroban contract invoke \
+    --account GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --id 1 \
+    --wasm build/release.wasm \
+    --fn auth \
+    -- \
+    --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --value 3
 ```
 
-Now navigate back to the example directory and invoke ```contract_b``` in the soroban cli:
+Run a few more increments for both accounts.
 
-```shell
-cd ..
-soroban invoke --wasm contract_b/build/release.wasm --id 19 --fn callAuth
+```sh
+soroban contract invoke \
+    --account GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --id 1 \
+    --wasm build/release.wasm \
+    --fn auth \
+    -- \
+    --user GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --value 2
 ```
 
-You should see an output similar to this:
-```shell
-[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,25],1]
+```sh
+soroban contract invoke \
+    --account GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --id 1 \
+    --wasm build/release.wasm \
+    --fn auth \
+    -- \
+    --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --value 14
 ```
 
-```contract_b``` called ```contract_a``` 's ```auth```function and forwarded the output. If you invoke the contract multiple times like this, the counter value increases.
-
-Next invoke ```contract_a``` directly with the soroban-cli using an account id:
-
-```shell
-soroban invoke --id 45a5e4697fcd38ec0654ea477a751ccc9b6d8eaa45d8c848678a87c02a43db53 --account GBX2MZM4HIUK4QQ4F37SIAAILKS2QAUSTYAM4IXMXTPND2L6TCV4FZAS --fn auth
+```sh
+soroban contract invoke \
+    --account GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --id 1 \
+    --wasm build/release.wasm \
+    --fn auth \
+    -- \
+    --user GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --value 5
 ```
 
-You should see an output similar to this:
-```shell
-["GBX2MZM4HIUK4QQ4F37SIAAILKS2QAUSTYAM4IXMXTPND2L6TCV4FZAS",1]
+View the data that has been stored against each user with ```soroban read```.
+
+```sh
+soroban contract read --id 1
 ```
 
-If you invoke the contract multiple times like this, the counter value increases.
+```sh
+"""GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO""",17
+"""GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR""",7
+```
 
 ## Code
 
-You can find the code of ```contract_a``` in:
+You can find the code of the contract in:
 
-```shell
-auth/contract_a/assembly/index.ts
+```sh
+auth/assembly/index.ts
 ```
-It contains the function ```auth()``` that only reads and writes data for the authenticated invoker, and so the only thing that can access or change the data for an invoker, is the invoker themselves.
-
-The code of ```contract_a``` can be found in:
-
-```shell
-cross_contract/contract_b/assembly/index.ts
-```
-
+It contains the function `auth()`, which stores a per-Address counter that can only be incremented by the owner of that Address:
 
 ```typescript
-import {RawVal, fromU32, toU32} from 'as-soroban-sdk/lib/value';
-import {Vec} from 'as-soroban-sdk/lib/vec';
+import {AddressObject, MapObject, RawVal, fromU32, toU32} from 'as-soroban-sdk/lib/value';
+import {Map} from 'as-soroban-sdk/lib/map';
 import * as ledger from 'as-soroban-sdk/lib/ledger';
-import * as context from 'as-soroban-sdk/lib/context';
+import * as address from 'as-soroban-sdk/lib/address';
 
-export function auth(): RawVal {
+export function auth(user: AddressObject, value: RawVal): MapObject {
 
-  let key = context.getInvokerType() == 0 ? context.getInvokingAccount() : context.getInvokingContract();
+  address.requireAuth(user);
+
+  // let argsVec = new Vec();
+  // argsVec.pushFront(value);
+  // address.requireAuthForArgs(user, argsVec);
 
   var counter = 0;
-  if (ledger.hasData(key)) {
-    let dataObj = ledger.getData(key);
-    counter = toU32(dataObj);
+  
+  if (ledger.hasData(user)) {
+    let dataValue = ledger.getData(user);
+    counter = toU32(dataValue);
   }
-  counter += 1;
-  let counterObj = fromU32(counter);
-  ledger.putData(key, counterObj);
 
-  let vec = new Vec();
-  vec.pushFront(key);
-  vec.pushBack(counterObj);
+  counter += toU32(value);
+  let counterVal = fromU32(counter);
+  ledger.putData(user, counterVal);
 
-  return vec.getHostObject();
+  let map = new Map();
+  map.put(user, counterVal);
+
+  return map.getHostObject();
 }
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/auth/contract_a
+Ref: https://github.com/Soneso/as-soroban-examples/tree/main/auth
 
 ## How it works
 
-The ```auth``` function first checks the invoker type using the ```getInvokerType()``` function provided by the sdk. If it returns ```0``` the invoker is an account. If it returns ```1``` the invoker is a contract. 
+The `auth` function first checks the invoker type using the `address.requireAuth(user)` which can be called for any Address. Semantically `address.requireAuth(user)` here means 'require user to have authorized calling increment function of the current contract instance with the current call arguments, i.e. the current user and value argument values'. In simpler terms, this ensures that the user has allowed incrementing their counter value and nobody else can increment it.
 
-Depending on the invoker type, it sets the key for data storage (see [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment)), being the invoking account or the invoking contract:
+When using `requireAuth` the contract implementation doesn't need to worry about the signatures, authentication, and replay prevention. All these features are implemented by the Soroban host and happen automatically as long as Address type is used.
 
-```typescript
-let key = context.getInvokerType() == 0 ? context.getInvokingAccount() : context.getInvokingContract();
-```
-To do so it uses the ```getInvokingAccount()``` and ```getInvokingContract()``` functions provided by the sdk.
+Address has another, more extensible version of this method called `requireAuthForArgs`. It works in the same fashion as `requireAuth`, but allows customizing the arguments that need to be authorized. Note though, this should be used with care to ensure that there is a deterministic mapping between the contract invocation arguments and the `requireAuthForArgs` arguments.
 
-Next it reads, increments and stores the counter for the invoker and returns a vector containing the key and the new counter value for the invoker.
+## Further reading
+
+[Authorization documentation](https://soroban.stellar.org/docs/learn/authorization) provides more details on how Soroban auth framework works.

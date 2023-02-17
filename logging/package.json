@@ -1,6 +1,6 @@
 {
   "name": "logging",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "soroban contract example that logs data on the host - soroban cli only",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.0.7"
+    "as-soroban-sdk": "^0.1.0"
   }
 }

@@ -7,45 +7,51 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 
 To run a contract in the sandbox, you must first install the official ```soroban cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
-```shell
-cargo install --locked soroban-cli
+```sh
+cargo install --locked --version 0.6.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
-```shell
+```sh
 cd contract_events
 npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (text format of the ```.wasm```).
+You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
 Run the example contract:
 
-```shell
-soroban invoke --wasm build/release.wasm --id 9 --fn events
+```sh
+soroban contract invoke --wasm build/release.wasm --id 9 --fn events
 ```
 
 You should see the output:
-```shell
+```sh
 1
 
-#0: event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9],"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":1}}}}
+#0: 
+event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9],
+"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},
+{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":1}}}}
 ```
 
 If you run the contract again, you should see the output:
-```shell
+```sh
 2
 
-#0: event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9],"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":2}}}}
+#0: 
+event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9],
+"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},
+{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":2}}}}
 ```
 
 ## Code
 
 You can find the code in:
 
-```shell
+```sh
 contract_events/assembly/index.ts
 ```
 

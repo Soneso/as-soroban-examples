@@ -5,36 +5,36 @@ The [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/te
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official ```soroban cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
-```shell
-cargo install --locked soroban-cli
+```sh
+cargo install --locked --version 0.6.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
-```shell
+```sheshll
 cd testing
 npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (text format of the ```.wasm```).
+You can find the generated `.wasm` (WebAssembly) file in the ```build``` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
 Run the example contract:
 
-```shell
-soroban invoke --wasm build/release.wasm --id 1 --fn add --arg 1 --arg 5
+```sh
+soroban contract invoke --wasm build/release.wasm --id 1 --fn add -- --a 1 --b 5
 ```
 
 You should see the output:
-```shell
+```sh
 6
 ```
 
 ## Test
 
-In this example we created the ```testContract.cjs``` file in the main folder. We will execute it using node. 
+In this example we created the `testContract.cjs` file in the main folder. We will execute it using node. 
 
 ## Code
 
@@ -42,7 +42,7 @@ In this example we created the ```testContract.cjs``` file in the main folder. W
 const { exec } = require("child_process");
 var assert = require('assert');
 
-exec("soroban invoke --id 1 --wasm build/release.wasm --fn add --arg 1 --arg 5", (error, stdout, stderr) => {
+exec("soroban contract invoke --id 1 --wasm build/release.wasm --fn add -- --a 1 --b 5", (error, stdout, stderr) => {
     if (error) {
         assert.fail('error: ${error.message}');
     }
@@ -58,12 +58,12 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/testing/testContrac
 
 ## Run
 
-```shell
+```sh
 node testContract.cjs
 ```
 
 You should see the output:
-```shell
+```sh
 OK
 ```
 

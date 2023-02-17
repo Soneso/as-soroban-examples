@@ -5,35 +5,35 @@ The [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official ```soroban-cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
-```shell
-cargo install --locked soroban-cli
+```sh
+cargo install --locked --version 0.6.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
-```shell
+```sh
 cd increment
 npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (text format of the ```.wasm```).
+You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
 Run the example contract:
 
-```shell
-soroban invoke --wasm build/release.wasm --id 9 --fn increment
+```sh
+soroban contract invoke --wasm build/release.wasm --id 9 --fn increment
 ```
 
 You should see the output:
-```shell
+```sh
 1
 ```
 
 If you run the contract again, you should see the output:
-```shell
+```sh
 2
 ```
 
@@ -41,7 +41,7 @@ If you run the contract again, you should see the output:
 
 You can find the code in:
 
-```shell
+```sh
 increment/assembly/index.ts
 ```
 
@@ -67,18 +67,18 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/increment
 
 ## How it works
 
-Host and contract communicate via ```u64``` raw values. 
+Host and contract communicate via `u64` raw values. 
 
-The contract function ```increment``` defined in our contract has no arguments but returns a ```RawVal```. It is a ```u64``` raw value encoding the u32 to be passed to the host as a result. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
+The contract function `increment` defined in our contract has no arguments but returns a `RawVal`. It is a `u64` raw value encoding the u32 to be passed to the host as a result. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
 
-The concrete types must also be defined in the [contract spec](https://github.com/Soneso/as-soroban-sdk#understanding-contract-metadata): ```contract.json``` file:
+The concrete types must also be defined in the [contract spec](https://github.com/Soneso/as-soroban-sdk#understanding-contract-metadata): `contract.json` file:
 
 ```json
 {
     "name": "increment",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "increment smart contract example using storage",
-    "host_functions_version": 27,
+    "host_functions_version": 29,
     "functions": [
         {
             "name" : "increment",
@@ -89,8 +89,8 @@ The concrete types must also be defined in the [contract spec](https://github.co
 }
 ```
 
-The ```increment``` function from our contract first defines the key for the counter to be stored. Then it checks if the contract already has the counter stored. If so,
-it loads it, decodes it to ```u32``` and assigns its value to the ```counter```variable. To decode the raw value obtained from the host it is using the ```toU32``` function of the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).
+The `increment` function from our contract first defines the key for the counter to be stored. Then it checks if the contract already has the counter stored. If so,
+it loads it, decodes it to `u32` and assigns its value to the `counter` variable. To decode the raw value obtained from the host it is using the `toU32` function of the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).
 
 ```typescript
 let key = "COUNTER";
@@ -101,7 +101,7 @@ if (ledger.hasDataFor(key)) {
 }
 ```
 
-Next, the counter is incremented and stored back into the ledger. To store the counter it must be first encoded into a raw value using the ```fromU32```function provided by the sdk.
+Next, the counter is incremented and stored back into the ledger. To store the counter it must be first encoded into a raw value using the `fromU32` function provided by the sdk.
 
 ```typescript
 counter += 1;

@@ -1,13 +1,13 @@
 {
     "name": "add",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "soroban contract example publishing events",
-    "host_functions_version": 27,
+    "host_functions_version": 29,
     "functions": [
         {
             "name" : "events",
             "arguments": [],
-            "returns" : "val"
+            "returns" : "u32"
         }
     ]
 }

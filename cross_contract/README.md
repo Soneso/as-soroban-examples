@@ -5,13 +5,13 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official ```soroban-cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
-```shell
-cargo install --locked soroban-cli
+```sh
+cargo install --locked --version 0.6.0 soroban-cli
 ```
 
-The example contains two contracts. To run them first navigate in the directory of the first contract and build the contract (```contract_a```):
+The example contains two contracts. To run them first navigate in the directory of the first contract and build the contract (`contract_a`):
 
 ```shell
 cd cross_contract
@@ -20,70 +20,71 @@ npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (text format of the ```.wasm```).
+You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
-Now navigate back to the example directory and deploy the ```contract_a``` in the soroban cli:
+Now navigate back to the example directory and deploy the `contract_a` in the soroban cli:
 
-Hint: it is important to use the soroban cli in the main directory of the example because when executed, it adds a ```.soroban``` folder to store its data (e.g. deployed contracts).
+Hint: it is important to use the soroban cli in the main directory of the example because when executed, it adds a `.soroban` folder to store its data (e.g. deployed contracts).
 
-```shell
+```sh
 cd ..
-soroban deploy --wasm contract_a/build/release.wasm
+soroban contract deploy --wasm contract_a/build/release.wasm
 ```
 
 You should see an output similar to this:
-```shell
-1f93b99bbd17a11ca22c05763b0c3296a7617af46835bb590105b2b154aefb18
+
+```sh
+4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058
 ```
 representing the id of the contract that has been deployed.
 
-Next navigate to the dicrectory of the second contract (```contract_b```) and install the sdk.
+Next navigate to the dicrectory of the second contract (`contract_b`) and install the sdk.
 
-```shell
+```sh
 cd contract_b
 npm install as-soroban-sdk
-````
-
-Before we build the contract_b, we need to replace the contract id to be called in the source code of ```contract_b```. 
-Open the contract_b/assembly/index.ts file and replace the contract id in the code. Paste the contract id of ```contract_a``` that you received as you deployed it.
-
-```typescript
-let contractId = "1f93b99bbd17a11ca22c05763b0c3296a7617af46835bb590105b2b154aefb18";
 ```
 
-Next, build ```contract_b```:
+Before we build the contract_b, we need to replace the contract id to be called in the source code of `contract_b`. 
+Open the contract_b/assembly/index.ts file and replace the contract id in the code. Paste the contract id of `contract_a` that you received as you deployed it.
 
-```shell
+```typescript
+let contractId = "4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058";
+```
+
+Next, build `contract_b`:
+
+```sh
 asc assembly/index.ts --target release
 ```
 
-Now navigate back to the example directory and invoke ```contract_b``` in the soroban cli:
+Now navigate back to the example directory and invoke `contract_b` in the soroban cli:
 
-```shell
+```sh
 cd ..
-soroban invoke --wasm contract_b/build/release.wasm --id 19 --fn callc
+soroban contract invoke --wasm contract_b/build/release.wasm --id 19 --fn callc
 ```
 
 You should see following output:
-```shell
+```sh
 15
 ```
 
-```contract_b``` called ```contract_a``` and forwarded the result of the called function.
+`contract_b` called `contract_a` and forwarded the result of the called function.
 
 
 ## Code
 
-You can find the code of ```contract_a``` in:
+You can find the code of `contract_a` in:
 
-```shell
+```sh
 cross_contract/contract_a/assembly/index.ts
 ```
 It contains a simple function that applies the + operation to 2 integers received as arguments and returns the result.
 
-The code of ```contract_a``` can be found in:
+The code of `contract_a` can be found in:
 
-```shell
+```sh
 cross_contract/contract_b/assembly/index.ts
 ```
 
@@ -95,7 +96,7 @@ import * as contract from "as-soroban-sdk/lib/contract";
 
 export function callc(): val.RawVal {
 
-  let contractId = "1f93b99bbd17a11ca22c05763b0c3296a7617af46835bb590105b2b154aefb18";
+  let contractId = "4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058";
   let func = "add";
   let args = new Vec();
   args.pushBack(val.fromI32(3));
@@ -109,6 +110,6 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract/cont
 
 ## How it works
 
-The ```contract.callContractById``` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), allows the contract to call another contracts function.
+The `contract.callContractById` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), allows the contract to call another contracts function.
 
 It needs the id of the contract to be called, the name of the function to be executed and it's arguments packed in a vector.

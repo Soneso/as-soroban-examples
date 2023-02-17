@@ -1,0 +1,16 @@
+{
+    "name": "auth",
+    "version": "0.1.0",
+    "description": "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework",
+    "host_functions_version": 29,
+    "functions": [
+        {
+            "name" : "auth",
+            "arguments": [
+                {"name": "user", "type": "address"},
+                {"name": "value", "type": "u32"}
+            ],
+            "returns" : "map[address, u32]"
+        }
+    ]
+}

@@ -1,13 +1,13 @@
 {
     "name": "logging",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "example of logging in the soroban cli",
-    "host_functions_version": 27,
+    "host_functions_version": 29,
     "functions": [
         {
             "name" : "logging",
             "arguments": [],
-            "returns" : "val"
+            "returns" : "status"
         }
     ]
 }

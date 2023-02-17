@@ -5,41 +5,41 @@ The [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/err
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official ```soroban-cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
-```shell
-cargo install --locked soroban-cli
+```sh
+cargo install --locked --version 0.6.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
-```shell
+```sh
 cd errors
 npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
 
-You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (text format of the ```.wasm```).
+You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
 Run the example contract:
 
-```shell
-soroban invoke --wasm build/release.wasm --id 6 --fn checkAge --arg 20
+```sh
+soroban contract invoke --wasm build/release.wasm --id 6 --fn checkAge -- --age 20
 ```
 
 You should see the output:
-```shell
+```sh
 OK
 ```
 
 Next try with age 12:
 
-```shell
-soroban invoke --wasm build/release.wasm --id 6 --fn checkAge --arg 12
+```sh
+soroban contract invoke --wasm build/release.wasm --id 6 --fn checkAge -- --age 12
 ```
 
 You should see the output:
-```shell
+```sh
 error: HostError
 Value: Status(ContractError(1))
 ```
@@ -86,8 +86,8 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/errors
 
 ## How it works
 
-The enum ```ALLOWED_AGE_RANGE``` defines the allowed age range. The enum ```AGE_ERR_CODES``` defines the error codes. 
+The enum `ALLOWED_AGE_RANGE` defines the allowed age range. The enum `AGE_ERR_CODES` defines the error codes. 
 
-Errors can be returned from contract functions by ```context.failWithErrorCode(code)```. 
+Errors can be returned from contract functions by `context.failWithErrorCode(code)`. 
 
-One can also use ```context.fail()```. It automatically inserts the error code ```0```.
+One can also use `context.fail()`. It automatically inserts the error code `0`.

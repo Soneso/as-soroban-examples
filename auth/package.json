@@ -1,7 +1,7 @@
 {
-  "name": "some_issues",
-  "version": "0.0.1",
-  "description": "shows some issues to be resolved that we have with creating contract with assembly script",
+  "name": "auth",
+  "version": "0.1.0",
+  "description": "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework",
   "main": "index.js",
   "scripts": {
     "test": "node tests",
@@ -13,7 +13,7 @@
   "author": "c.r.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assemblyscript": "^0.21.7"
+    "assemblyscript": "^0.22.0"
   },
   "type": "module",
   "exports": {
@@ -23,6 +23,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.0.7"
+    "as-soroban-sdk": "^0.1.0"
   }
 }
