@@ -1,21 +1,24 @@
 {
-  "name": "increment",
+  "name": "deployer",
   "version": "0.1.0",
-  "description": "soroban example using storage to increment",
+  "description": "The deployer example demonstrates how to deploy contracts using a contract.",
+  "main": "index.js",
   "scripts": {
+    "test": "node tests",
     "asbuild:debug": "asc assembly/index.ts --target debug",
     "asbuild:release": "asc assembly/index.ts --target release",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release"
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "start": "npx serve ."
   },
   "keywords": [
     "soroban",
-    "example",
-    "increment"
+    "deployer",
+    "client"
   ],
   "author": "c.r.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assemblyscript": "^0.21.6"
+    "assemblyscript": "^0.27.0"
   },
   "type": "module",
   "exports": {

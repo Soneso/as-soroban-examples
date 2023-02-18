@@ -23,6 +23,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.1.0"
+    "as-soroban-sdk": "^0.1.1"
   }
 }

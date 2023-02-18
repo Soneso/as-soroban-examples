@@ -1,0 +1,18 @@
+{
+    "name": "deploy",
+    "version": "0.1.0",
+    "description": "example deploys and calls a contract",
+    "host_functions_version": 29,
+    "functions": [
+        {
+            "name" : "deploy",
+            "arguments": [
+                {"name": "wasm_hash", "type": "bytesN[32]"},
+                {"name": "salt", "type": "bytesN[32]"},
+                {"name": "fn_name", "type": "symbol"},
+                {"name": "args", "type": "vec[i32]"}
+            ],
+            "returns" : "i32"
+        }
+    ]
+}
