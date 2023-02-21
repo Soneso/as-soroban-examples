@@ -13,7 +13,7 @@ cargo install --locked --version 0.6.0 soroban-cli
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
-```sheshll
+```sh
 cd testing
 npm install as-soroban-sdk
 asc assembly/index.ts --target release

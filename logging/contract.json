@@ -7,7 +7,7 @@
         {
             "name" : "logging",
             "arguments": [],
-            "returns" : "status"
+            "returns" : "void"
         }
     ]
 }

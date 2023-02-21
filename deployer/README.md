@@ -26,7 +26,9 @@ asc assembly/index.ts --target release
 Next install the `add` contract:
 
 ```sh
-soroban contract install --wasm build/release.wasm
+cd ..
+cd deployer
+soroban contract install --wasm ../add/build/release.wasm
 ```
 
 As an output you will get the wasm hash of the installed `add` contract, similar to this:
@@ -43,8 +45,6 @@ Lets deploy the `add` contract and execute its `add(...)` function after deploy.
 First navigate to the deployer directory, install the SDK and build the deployer contract:
 
 ```sh
-cd ..
-cd deployer
 npm install as-soroban-sdk
 asc assembly/index.ts --target release
 ```
@@ -73,7 +73,7 @@ You should see the output:
 You can find the code in:
 
 ```sh
-add/assembly/index.ts
+deployer/assembly/index.ts
 ```
 
 ```typescript
@@ -101,7 +101,7 @@ The contract ID is deterministic and is derived from the deploying contract and 
 let id = ledger.deployContract(wasm_hash, salt);
 ```
 
-Next, deployer contract invokes the new contract's function and passes through the arguments.
+Next, deployer contract invokes the `add` contract's function and passes through the arguments.
 
 ```typescript
 return contract.callContract(id, fn_name, args);

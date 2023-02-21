@@ -1,0 +1,140 @@
+{
+    "name": "token",
+    "version": "0.1.1",
+    "description": "token example implementing the token interface",
+    "host_functions_version": 29,
+    "functions": [
+        {
+            "name" : "initialize",
+            "arguments": [
+                {"name": "admin", "type": "address"},
+                {"name": "decimal", "type": "u32"},
+                {"name": "name", "type": "bytes"},
+                {"name": "symbol", "type": "bytes"}
+            ]
+        },
+        {
+            "name" : "allowance",
+            "arguments": [
+                {"name": "from", "type": "address"},
+                {"name": "spender", "type": "address"}
+            ],
+            "returns" : "i128"
+        },
+        {
+            "name" : "incr_allow",
+            "arguments": [
+                {"name": "from", "type": "address"},
+                {"name": "spender", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "decr_allow",
+            "arguments": [
+                {"name": "from", "type": "address"},
+                {"name": "spender", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "balance",
+            "arguments": [
+                {"name": "id", "type": "address"}
+            ],
+            "returns" : "i128"
+        },
+        {
+            "name" : "spendable",
+            "arguments": [
+                {"name": "id", "type": "address"}
+            ],
+            "returns" : "i128"
+        },
+        {
+            "name" : "authorized",
+            "arguments": [
+                {"name": "id", "type": "address"}
+            ],
+            "returns" : "bool"
+        },
+        {
+            "name" : "xfer",
+            "arguments": [
+                {"name": "from", "type": "address"},
+                {"name": "to", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "xfer_from",
+            "arguments": [
+                {"name": "spender", "type": "address"},
+                {"name": "from", "type": "address"},
+                {"name": "to", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "burn",
+            "arguments": [
+                {"name": "from", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "burn_from",
+            "arguments": [
+                {"name": "spender", "type": "address"},
+                {"name": "from", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "clawback",
+            "arguments": [
+                {"name": "admin", "type": "address"},
+                {"name": "from", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "set_auth",
+            "arguments": [
+                {"name": "admin", "type": "address"},
+                {"name": "id", "type": "address"},
+                {"name": "authorize", "type": "u32"}
+            ]
+        },
+        {
+            "name" : "mint",
+            "arguments": [
+                {"name": "admin", "type": "address"},
+                {"name": "to", "type": "address"},
+                {"name": "amount", "type": "i128"}
+            ]
+        },
+        {
+            "name" : "set_admin",
+            "arguments": [
+                {"name": "admin", "type": "address"},
+                {"name": "new_admin", "type": "address"}
+            ]
+        },
+        {
+            "name" : "decimals",
+            "arguments": [],
+            "returns" : "u32"
+        },
+        {
+            "name" : "name",
+            "arguments": [],
+            "returns" : "bytes"
+        },
+        {
+            "name" : "symbol",
+            "arguments": [],
+            "returns" : "bytes"
+        }
+    ]
+}
