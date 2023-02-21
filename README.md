@@ -1,6 +1,6 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
-![v0.1.1](https://img.shields.io/badge/v0.1.1-yellow.svg)
+![v0.1.2](https://img.shields.io/badge/v0.1.2-yellow.svg)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
@@ -61,6 +61,7 @@ soroban contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to frie
 | [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/errors)| Demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.|
 | [events example](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events)| Demonstrates how to publish events from a contract.|
 | [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/testing)| Shows a simple way to test your contract.|
+| [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token)| Demonstrates how to write a token contract that implements the Stellar [token interface](https://soroban.stellar.org/docs/reference/interfaces/token-interface).|
 
 ### 5. Create your own contract
 
