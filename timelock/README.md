@@ -262,7 +262,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 
 ## Run the contract
 
-To run the contract, you need to prepare the needed accounts and token first. You can find an example in [testContract.cjs](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/testContract.cjs).
+To run the contract, you need to prepare the needed accounts and token first. You can find an example in [testContract.cjs](https://github.com/Soneso/as-soroban-examples/tree/main/timelock/testContract.cjs).
 
 To run the test you can execute it as follows:
 
