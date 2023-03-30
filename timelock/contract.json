@@ -1,0 +1,25 @@
+{
+    "name": "timelock",
+    "version": "0.1.1",
+    "description": "This contract demonstrates 'timelock' concept",
+    "host_functions_version": 29,
+    "functions": [
+        {
+            "name" : "deposit",
+            "arguments": [
+                {"name": "from", "type": "address"},
+                {"name": "token", "type": "bytes"},
+                {"name": "amount", "type": "i128"},
+                {"name": "claimants", "type": "vec[address]"},
+                {"name": "lock_kind", "type": "u32"},
+                {"name": "timestamp", "type": "u64"}
+            ]
+        },
+        {
+            "name" : "claim",
+            "arguments": [
+                {"name": "claimant", "type": "address"}
+            ]
+        }
+    ]
+}
