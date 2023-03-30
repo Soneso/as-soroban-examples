@@ -194,4 +194,4 @@ To run the contract, you can execute the test provided in [testContract.cjs](htt
 node testContract.cjs
 ```
 
-It will build and deploy the contract to futurenet and then execute the python script [swap_test.py](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/swap-test.cjs) which prepares the data and then invokes the contract.
+It will build and deploy the contract to futurenet and then execute the python script [swap_test.py](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/swap-test.py) which prepares the data and then invokes the contract.
