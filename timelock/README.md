@@ -54,8 +54,8 @@ export function deposit(from: AddressObject, token: BytesObject, amount: Signed1
       context.failWithErrorCode(ERR_CODES.ALREADY_INITIALIZED);
     }
 
-    let cleimantsVec = new Vec(claimants);
-    if (cleimantsVec.len() > 10) {
+    let claimantsVec = new Vec(claimants);
+    if (claimantsVec.len() > 10) {
       context.failWithErrorCode(ERR_CODES.TOO_MANY_CLAIMANTS);
     }
 
