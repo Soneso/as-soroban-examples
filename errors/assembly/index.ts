@@ -1,4 +1,4 @@
-import {fromSymbolStr, RawVal, toI32} from 'as-soroban-sdk/lib/value';
+import {fromSmallSymbolStr, RawVal, toI32} from 'as-soroban-sdk/lib/value';
 import * as context from "as-soroban-sdk/lib/context";
 
 enum ALLOWED_AGE_RANGE {
@@ -23,5 +23,5 @@ export function checkAge(age: RawVal): RawVal {
     context.failWithErrorCode(AGE_ERR_CODES.TOO_OLD);
   }
 
-  return fromSymbolStr("OK");
+  return fromSmallSymbolStr("OK");
 }

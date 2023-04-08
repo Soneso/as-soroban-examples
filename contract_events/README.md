@@ -8,7 +8,7 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 To run a contract in the sandbox, you must first install the official ```soroban cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 9 --fn events
+soroban contract invoke --wasm build/release.wasm --id 9 -- events
 ```
 
 You should see the output:
@@ -56,12 +56,12 @@ contract_events/assembly/index.ts
 ```
 
 ```typescript
-import {RawVal, fromU32, fromSymbolStr, toU32} from 'as-soroban-sdk/lib/value';
+import {U32Val, fromU32, fromSmallSymbolStr, toU32 } from 'as-soroban-sdk/lib/value';
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import {Vec} from 'as-soroban-sdk/lib/vec';
 import {publishEvent} from 'as-soroban-sdk/lib/context';
 
-export function events(): RawVal {
+export function events(): U32Val {
 
   let key = "COUNTER";
   var counter = 0;
@@ -74,12 +74,11 @@ export function events(): RawVal {
   
   // prepare and publish event
   let topics = new Vec();
-  topics.pushBack(fromSymbolStr(key)); // "COUNTER"
-  topics.pushBack(fromSymbolStr("increment"));
+  topics.pushBack(fromSmallSymbolStr(key));
+  topics.pushBack(fromSmallSymbolStr("increment"));
   publishEvent(topics, fromU32(counter));
 
   return ledger.getDataFor(key);
-
 }
 ```
 
@@ -103,8 +102,8 @@ Topics are defined using a vector. In the sample code two topics of type symbol 
 
 ```typescript
   let topics = new Vec();
-  topics.pushBack(fromSymbolStr(key)); // "COUNTER"
-  topics.pushBack(fromSymbolStr("increment"));
+  topics.pushBack(fromSmallSymbolStr(key)); // "COUNTER"
+  topics.pushBack(fromSmallSymbolStr("increment"));
 
   publishEvent(topics, ...);
 ```
@@ -113,7 +112,7 @@ Tip: The topics don't have to be made of the same type. You can mix different ty
 
 ### Event Data
 
-An event also contains a data object of any value or type including types defined by contracts. In the example the data is the u32 count.
+An event also contains a data object of any value or type including types defined by contracts. In the example the data is the `u32` count.
 
 ```typescript
   publishEvent(..., fromU32(counter));

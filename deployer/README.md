@@ -8,7 +8,7 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 ### Install the `add` contract
@@ -55,8 +55,7 @@ Next execute the deployer contract (change the wash_hash in the command first):
 soroban contract invoke \
     --wasm build/release.wasm \
     --id 0 \
-    --fn deploy \
-    -- \
+    -- deploy \
     --salt 0000000000000000000000000000000000000000000000000000000000000000 \
     --wasm_hash 0f3d90bc518e8589231fdf374cd860c621fa6a740e1099821413057ebcb847d0 \
     --fn_name add \
@@ -77,12 +76,12 @@ deployer/assembly/index.ts
 ```
 
 ```typescript
-import {BytesObject, RawVal, SymbolVal, VectorObject} from 'as-soroban-sdk/lib/value';
+import {BytesObject, I32Val, RawVal, SmallSymbolVal, VecObject} from 'as-soroban-sdk/lib/value';
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as contract from "as-soroban-sdk/lib/contract";
 
 export function deploy(wasm_hash: BytesObject, salt: BytesObject, 
-                      fn_name: SymbolVal, args:VectorObject): RawVal {
+                      fn_name: SmallSymbolVal, args:VecObject): I32Val {
 
   let id = ledger.deployContract(wasm_hash, salt);
   return contract.callContract(id, fn_name, args);
@@ -115,9 +114,9 @@ The concrete argument and return types of this example deployer contract are def
 ```json
 {
     "name": "deploy",
-    "version": "0.1.0",
+    "version": "0.1.8",
     "description": "example deploys and calls a contract",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "deploy",

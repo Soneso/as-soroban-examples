@@ -1,8 +1,9 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
-import {AddressObject, BytesObject, Signed128BitIntObject, fromSymbolStr, RawVal, fromVoid} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Object, fromSmallSymbolStr, RawVal, fromVoid, isI128Small, toI128Small, isI128, fromI128Pieces} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
+import { Sym } from "as-soroban-sdk/lib/sym";
 
 enum SWAP_ERR_CODES {
   NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A = 1,
@@ -19,24 +20,24 @@ enum SWAP_ERR_CODES {
  * @param {AddressObject} b The Address holding token b.
  * @param {BytesObject} token_a The contract id representing token a.
  * @param {BytesObject} token_b The contract id representing token b.
- * @param {Signed128BitIntObject} amount_a The amount of token a offered.
- * @param {Signed128BitIntObject} min_b_for_a The min amount of token b requested for the amount of token a offered.
- * @param {Signed128BitIntObject} amount_b The amount of token b offered.
- * @param {Signed128BitIntObject} min_a_for_b The min amount of token a requested for the amount of token b offered.
+ * @param {I128Object} amount_a The amount of token a offered.
+ * @param {I128Object} min_b_for_a The min amount of token b requested for the amount of token a offered.
+ * @param {I128Object} amount_b The amount of token b offered.
+ * @param {I128Object} min_a_for_b The min amount of token a requested for the amount of token b offered.
  * @returns {RawVal} void. Traps on error.
  */
 export function swap(a: AddressObject, b: AddressObject, 
   token_a: BytesObject, token_b: BytesObject, 
-  amount_a: Signed128BitIntObject, min_b_for_a: Signed128BitIntObject, 
-  amount_b: Signed128BitIntObject, min_a_for_b: Signed128BitIntObject): RawVal {
+  amount_a: I128Object, min_b_for_a: I128Object, 
+  amount_b: I128Object, min_a_for_b: I128Object): RawVal {
   
 
   // Verify preconditions on the minimum price for both parties.
-  if (context.compare(amount_b, min_b_for_a) == -1) { // amount_b < min_b_for_a 
+  if (compareAmounts(amount_b, min_b_for_a) == -1) { // amount_b < min_b_for_a 
     context.failWithErrorCode(SWAP_ERR_CODES.NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A);
   }
 
-  if (context.compare(amount_a, min_a_for_b) == -1) { // amount_a < min_a_for_b 
+  if (compareAmounts(amount_a, min_a_for_b) == -1) { // amount_a < min_a_for_b 
     context.failWithErrorCode(SWAP_ERR_CODES.NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A);
   }
 
@@ -69,8 +70,8 @@ export function swap(a: AddressObject, b: AddressObject,
 
 }
 
-export function move_token(token: BytesObject, from: AddressObject, to:AddressObject, 
-  approve_amount:Signed128BitIntObject, xfer_amount:Signed128BitIntObject): void {
+function move_token(token: BytesObject, from: AddressObject, to:AddressObject, 
+  approve_amount:I128Object, xfer_amount:I128Object): void {
   
   let contract_address =  context.getCurrentContractAddress();
 
@@ -82,13 +83,27 @@ export function move_token(token: BytesObject, from: AddressObject, to:AddressOb
   incrArgs.pushBack(from);
   incrArgs.pushBack(contract_address);
   incrArgs.pushBack(approve_amount);
-  contract.callContract(token, fromSymbolStr("incr_allow"), incrArgs.getHostObject());
+  let func = Sym.fromSymbolString("incr_allow").getHostObject(); // "incr_allow" has more than 9 chars.
+  contract.callContract(token, func, incrArgs.getHostObject());
 
   let xferArgs = new Vec();
   xferArgs.pushBack(contract_address);
   xferArgs.pushBack(from);
   xferArgs.pushBack(to);
   xferArgs.pushBack(xfer_amount);
-  contract.callContract(token, fromSymbolStr("xfer_from"), xferArgs.getHostObject());
+  contract.callContract(token, fromSmallSymbolStr("xfer_from"), xferArgs.getHostObject());
 
+}
+
+function compareAmounts(a: RawVal, b: RawVal): i64 {
+  
+  if (isI128Small(a) && isI128Small(b)) {
+    let a_val = toI128Small(a);
+    let b_val = toI128Small(b);
+    return a_val < b_val ? -1 : (a_val > b_val ? 1 : 0);
+  } 
+
+  let a_obj = isI128(a) ? a : fromI128Pieces(toI128Small(a), 0);
+  let b_obj = isI128(b) ? b : fromI128Pieces(toI128Small(b), 0);
+  return context.compareObj(a_obj, b_obj);
 }

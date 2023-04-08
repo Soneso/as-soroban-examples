@@ -1,8 +1,8 @@
 {
     "name": "auth",
-    "version": "0.1.0",
+    "version": "0.1.8",
     "description": "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "auth",

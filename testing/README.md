@@ -8,7 +8,7 @@ The [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/te
 To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated `.wasm` (WebAssembly) file in the ```build``` folder.
 Run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 1 --fn add -- --a 1 --b 5
+soroban contract invoke --wasm build/release.wasm --id 1 -- add --a 1 --b 5
 ```
 
 You should see the output:
@@ -42,15 +42,15 @@ In this example we created the `testContract.cjs` file in the main folder. We wi
 const { exec } = require("child_process");
 var assert = require('assert');
 
-exec("soroban contract invoke --id 1 --wasm build/release.wasm --fn add -- --a 1 --b 5", (error, stdout, stderr) => {
+exec("soroban contract invoke --id 1 --wasm build/release.wasm -- add --a 1 --b 5", (error, stdout, stderr) => {
     if (error) {
-        assert.fail('error: ${error.message}');
+        assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        assert.fail('stderr: ${stderr}');
+        assert.fail(`stderr: ${stderr}`);
     }
     assert.equal(stdout, 6);
-    console.log('OK');
+    console.log(`OK`);
 });
 ```
 

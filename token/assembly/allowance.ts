@@ -1,10 +1,10 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as context from "as-soroban-sdk/lib/context";
 import {Map} from "as-soroban-sdk/lib/map";
-import { AddressObject, fromI128Pieces, Signed128BitIntObject } from "as-soroban-sdk/lib/value";
+import { AddressObject, fromI128Pieces, I128Object } from "as-soroban-sdk/lib/value";
 import { ERR_CODE, S_ALLOWANCE, isNeg, lt, sub_amounts } from "./util";
 
-export function read_allowance(from: AddressObject, spender:AddressObject): Signed128BitIntObject {
+export function read_allowance(from: AddressObject, spender:AddressObject): I128Object {
 
     // S_ALLOWANCE : map[from, map[sender, amout]]
     if (ledger.hasDataFor(S_ALLOWANCE)) {
@@ -20,7 +20,7 @@ export function read_allowance(from: AddressObject, spender:AddressObject): Sign
     return fromI128Pieces(0,0);
 }
 
-export function write_allowance(from: AddressObject, spender:AddressObject, amount: Signed128BitIntObject): void {
+export function write_allowance(from: AddressObject, spender:AddressObject, amount: I128Object): void {
 
     if(isNeg(amount)) {
         context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
@@ -51,7 +51,7 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
     ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject());
 }
 
-export function spend_allowance(from: AddressObject, spender:AddressObject, amount: Signed128BitIntObject): void {
+export function spend_allowance(from: AddressObject, spender:AddressObject, amount: I128Object): void {
     let allowance = read_allowance(from, spender);
 
     if (lt(allowance, amount)) { 

@@ -8,7 +8,7 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -34,15 +34,14 @@ GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO
 GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR
 ```
 
-Now the contract itself can be invoked. Notice the --account has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
+Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
 
 ```sh
 soroban contract invoke \
-    --account GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --source acc1 \
     --id 1 \
     --wasm build/release.wasm \
-    --fn auth \
-    -- \
+    -- auth \
     --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
     --value 3
 ```
@@ -51,34 +50,31 @@ Run a few more increments for both accounts.
 
 ```sh
 soroban contract invoke \
-    --account GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --source acc2 \
     --id 1 \
     --wasm build/release.wasm \
-    --fn auth \
-    -- \
-    --user GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    -- auth \
+    --user GBI5PLC6I7VUW47RIHIRHX3FHWXSBRBNO4ZO5UJRJEPDGHIPZHVUH7GC \
     --value 2
 ```
 
 ```sh
 soroban contract invoke \
-    --account GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --source acc1 \
     --id 1 \
     --wasm build/release.wasm \
-    --fn auth \
-    -- \
+    -- auth 
     --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
     --value 14
 ```
 
 ```sh
 soroban contract invoke \
-    --account GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --source acc2 \
     --id 1 \
     --wasm build/release.wasm \
-    --fn auth \
-    -- \
-    --user GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    -- auth \
+    --user GBI5PLC6I7VUW47RIHIRHX3FHWXSBRBNO4ZO5UJRJEPDGHIPZHVUH7GC \
     --value 5
 ```
 
@@ -147,3 +143,4 @@ Address has another, more extensible version of this method called `requireAuthF
 ## Further reading
 
 [Authorization documentation](https://soroban.stellar.org/docs/learn/authorization) provides more details on how Soroban auth framework works.
+[Atomic Swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap) demonstrates advanced usage of Soroban auth framework.

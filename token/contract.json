@@ -1,8 +1,8 @@
 {
     "name": "token",
-    "version": "0.1.1",
+    "version": "0.1.8",
     "description": "token example implementing the token interface",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "initialize",

@@ -15,7 +15,7 @@ import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import {AddressObject, BytesObject, Signed128BitIntObject, fromSymbolStr, RawVal, fromVoid, VectorObject, Unsigned64BitIntObject, fromU32, toU32, isVoid} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Object, fromSmallSymbolStr, RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, isU64Small, fromU64, toU64Small} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 
 // This contract demonstrates 'timelock' concept and implements a
@@ -41,14 +41,14 @@ enum ERR_CODES {
  * 
  * @param {AddressObject} from The address that deposits the given token amount.
  * @param {BytesObject} token The token to be deposited.
- * @param {Signed128BitIntObject} amount The amount of the token to be deposited.
- * @param {VectorObject} claimants The list of claimants (AddressObject's) that are allowed to claim the deposit. Maximum number of claimants is 10.
+ * @param {I128Object} amount The amount of the token to be deposited.
+ * @param {VecObject} claimants The list of claimants (AddressObject's) that are allowed to claim the deposit. Maximum number of claimants is 10.
  * @param {RawVal} lock_kind The timelock kind (u32). If the provided value is 0 the lock_kind is "before" otherwise "after".
- * @param {Unsigned64BitIntObject} timestamp The time point (u64) to apply the timelock for.
+ * @param {U64Object} timestamp The time point (u64) to apply the timelock for.
  * @returns {RawVal} void
  */
-export function deposit(from: AddressObject, token: BytesObject, amount: Signed128BitIntObject, claimants: VectorObject, 
-  lock_kind: RawVal, timestamp: Unsigned64BitIntObject): RawVal {
+export function deposit(from: AddressObject, token: BytesObject, amount: I128Object, claimants: VecObject, 
+  lock_kind: RawVal, timestamp: U64Object): RawVal {
     
     if (ledger.hasDataFor(S_INIT)) {
       context.failWithErrorCode(ERR_CODES.ALREADY_INITIALIZED);
@@ -68,7 +68,7 @@ export function deposit(from: AddressObject, token: BytesObject, amount: Signed1
     xferArgs.pushBack(from);
     xferArgs.pushBack(contract_address);
     xferArgs.pushBack(amount);
-    contract.callContract(token, fromSymbolStr("xfer"), xferArgs.getHostObject());
+    contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
 
     // Store all the necessary info to allow one of the claimants to claim it.
     let claimableBlance = new Vec();
@@ -107,18 +107,25 @@ export function claim(claimant: AddressObject): RawVal {
   // Load the data from storage.
   let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE));
   let lock_kind = claimableBalance.get(2);
-  let timestamp = claimableBalance.get(3);
+  var timestamp = claimableBalance.get(3);
+  if (isU64Small(timestamp)) { // if not obj => make obj so we can compare
+    timestamp = fromU64(toU64Small(timestamp));
+  }
   
+  // Get the current ledger timestamp.
+  var ledger_timestamp = context.getLedgerTimestamp()
+  if (isU64Small(ledger_timestamp)) { // if not obj => make obj so we can compare
+    ledger_timestamp = fromU64(toU64Small(ledger_timestamp));
+  }
+
   // The 'timelock' part: check that provided time point is before/after
   // the current ledger timestamp.
-  let ledger_timestamp = context.getLedgerTimestamp()
-
   if (toU32(lock_kind) == 0) { // before
-    if (context.compare(timestamp, ledger_timestamp) == 1) { // timestamp > ledger_timestamp
+    if (context.compareObj(timestamp, ledger_timestamp) == 1) { // timestamp > ledger_timestamp
       context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
     }   
   } else { // after
-    if (context.compare(timestamp, ledger_timestamp) == -1) { // timestamp < ledger_timestamp
+    if (context.compareObj(timestamp, ledger_timestamp) == -1) { // timestamp < ledger_timestamp
       context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
     }
   }
@@ -141,7 +148,7 @@ export function claim(claimant: AddressObject): RawVal {
   xferArgs.pushBack(contract_address);
   xferArgs.pushBack(claimant);
   xferArgs.pushBack(amount);
-  contract.callContract(token, fromSymbolStr("xfer"), xferArgs.getHostObject());
+  contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
   
   // Remove the balance entry to prevent any further claims.
   ledger.delDataFor(S_BALANCE);
@@ -168,7 +175,7 @@ let xferArgs = new Vec();
 xferArgs.pushBack(from);
 xferArgs.pushBack(contract_address);
 xferArgs.pushBack(amount);
-contract.callContract(token, fromSymbolStr("xfer"), xferArgs.getHostObject());
+contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
 ```
 
 ### Store claimable balance
@@ -196,25 +203,34 @@ To validate if the claimant has authorized the call, the contract uses the Sorob
 address.requireAuth(claimant);
 ```
 
-To validate the request, the contract loads the needed info about the claimable balance from storage and then checks the preconditions:
+To validate the request, the contract loads the needed info about the claimable balance from storage and and from the current ledger first:
 
 ```typescript
+// Load the data from storage.
 let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE));
 let lock_kind = claimableBalance.get(2);
-let timestamp = claimableBalance.get(3);
+var timestamp = claimableBalance.get(3);
+if (isU64Small(timestamp)) { // if not obj => make obj so we can compare
+  timestamp = fromU64(toU64Small(timestamp));
+}
   
+// Get the current ledger timestamp.
+var ledger_timestamp = context.getLedgerTimestamp()
+```
+
+and then checks the preconditions:
+
+```typescript
 // The 'timelock' part: check that provided time point is before/after
 // the current ledger timestamp.
-let ledger_timestamp = context.getLedgerTimestamp()
-
 if (toU32(lock_kind) == 0) { // before
-    if (context.compare(timestamp, ledger_timestamp) == 1) { // timestamp > ledger_timestamp
-        context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
-    }   
+  if (context.compareObj(timestamp, ledger_timestamp) == 1) { // timestamp > ledger_timestamp
+    context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
+  }   
 } else { // after
-    if (context.compare(timestamp, ledger_timestamp) == -1) { // timestamp < ledger_timestamp
-      context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
-    }
+  if (context.compareObj(timestamp, ledger_timestamp) == -1) { // timestamp < ledger_timestamp
+    context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
+  }
 }
 ```
 
@@ -224,9 +240,9 @@ If the time preconditions are fulfilled, the contract next verifies if the claim
 let claimantsVec = new Vec(claimableBalance.get(4));
 let index = claimantsVec.getFirstIndexOf(claimant);
 if (isVoid(index)) { // claimant not found in data list.
-    context.failWithErrorCode(ERR_CODES.CLAIMANT_NOT_ALLOWED);
+  context.failWithErrorCode(ERR_CODES.CLAIMANT_NOT_ALLOWED);
 } else {
-    claimant = claimantsVec.get(toU32(index));
+  claimant = claimantsVec.get(toU32(index));
 }
 ```
 
@@ -238,8 +254,8 @@ let xferArgs = new Vec();
 xferArgs.pushBack(contract_address);
 xferArgs.pushBack(claimant);
 xferArgs.pushBack(amount);
-contract.callContract(token, fromSymbolStr("xfer"), xferArgs.getHostObject());
-  ```
+contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
+```
 
 
 ## Build the contract
@@ -247,7 +263,7 @@ contract.callContract(token, fromSymbolStr("xfer"), xferArgs.getHostObject());
 To run a contract in the sandbox, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 Then, to build the contract, navigate it's directory install the sdk. Then build the contract:

@@ -8,7 +8,7 @@ The [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 9 --fn increment
+soroban contract invoke --wasm build/release.wasm --id 9 -- increment
 ```
 
 You should see the output:
@@ -46,10 +46,10 @@ increment/assembly/index.ts
 ```
 
 ```typescript
-import { RawVal, toU32, fromU32 } from "as-soroban-sdk/lib/value";
+import { toU32, fromU32, U32Val } from "as-soroban-sdk/lib/value";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 
-export function increment(): RawVal {
+export function increment(): U32Val {
 
   let key = "COUNTER";
   var counter = 0;
@@ -60,6 +60,7 @@ export function increment(): RawVal {
   counter += 1;
   ledger.putDataFor(key, fromU32(counter));
   return ledger.getDataFor(key);
+
 }
 ```
 
@@ -69,16 +70,16 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/increment
 
 Host and contract communicate via `u64` raw values. 
 
-The contract function `increment` defined in our contract has no arguments but returns a `RawVal`. It is a `u64` raw value encoding the u32 to be passed to the host as a result. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
+The contract function `increment` defined in our contract has no arguments but returns a `U32Val`. It is a `u64` raw value encoding the u32 to be passed to the host as a result. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
 
 The concrete types must also be defined in the [contract spec](https://github.com/Soneso/as-soroban-sdk#understanding-contract-metadata): `contract.json` file:
 
 ```json
 {
     "name": "increment",
-    "version": "0.1.0",
+    "version": "0.1.8",
     "description": "increment smart contract example using storage",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "increment",
@@ -101,7 +102,7 @@ if (ledger.hasDataFor(key)) {
 }
 ```
 
-Next, the counter is incremented and stored back into the ledger. To store the counter it must be first encoded into a raw value using the `fromU32` function provided by the sdk.
+Next, the counter is incremented and stored back into the ledger. To store the counter it must be first encoded back into a raw value using the `fromU32` function provided by the sdk.
 
 ```typescript
 counter += 1;

@@ -5,35 +5,35 @@ https://soroban.stellar.org/docs/learn/authorization
 """
 import binascii
 import time
-import sys 
+import sys
 
 from stellar_sdk import Network, Keypair, TransactionBuilder
 from stellar_sdk import xdr as stellar_xdr
 from stellar_sdk.soroban import AuthorizedInvocation, ContractAuth, SorobanServer
-from stellar_sdk.soroban.soroban_rpc import TransactionStatus
+from stellar_sdk.soroban.soroban_rpc import GetTransactionStatus
 from stellar_sdk.soroban.types import Address, Bytes, Int128
 
-rpc_server_url = "https://horizon-futurenet.stellar.cash:443/soroban/rpc"
+rpc_server_url = "https://rpc-futurenet.stellar.org:443/"
 soroban_server = SorobanServer(rpc_server_url)
 network_passphrase = Network.FUTURENET_NETWORK_PASSPHRASE
 
 submitter_kp = Keypair.from_secret(
-    "SAIQXSLSJVPNTKQUS6UNCFTSXAYMTYGLS6RI6HHV2CO4AML6KLJY3RIO"
-)  # GBDKMWFNRCQFTFF4U4I2XAKRYP3PZPCWHQ7BZUEOAUMCBYNAMIEEG7QM
+    "SBORMYR6J6IYKD3ZBJXWB6JQ4XLVTUC66QHU45262JQH4DSF22NFFWNM"
+)  # GA5PTU7GGYXXC7CX5SAES3MQP34IHMOSZMRHHYU5GA6QIJETYU6JNE6Y
 alice_kp = Keypair.from_secret(
-    "SASL5DBNIBTVCY4DX75FD64RCOPQVCAM554Y52HE7EUK4UQSS67HZRQ5"
-)  # GDOB7QSQYA4PWJ3VFE5XO2OCOG54Y5CKXMYCJZBIJPT33M2PWHLGXD5O
+    "SCVJOWNMFJLGM73HIJUC6H3NI6EULKIC3TZU5OQYYPDY6MKQK4N2VZB3"
+)  # GBDVESQUNQZTQ67BS6RVATSIAGYNWNO6JQY4KA6V5WNSZ3KXSEWOCMCL
 bob_kp = Keypair.from_secret(
-    "SAHNHTFMFXOM4VME5VYDH7GMNCQS4PGNSJ6KFBE7UDR5446TSYRH6QHW"
-)  # GDM6DOD3MHD36YTNYWECJAP4NKHYJGLN2XZOUENO3YQU5NLXDWVVLAMB
+    "SDWZ5QGUDKT3OVB6LYOG4WAYWEE64BYO6WKPNPCDP5QPUZ2EPAQJJIZL"
+)  # GCNTVAJRMHUZUNFTZOICCZUPZN64AU5BNHPITMEYLE5HZPM6IWUBLDI3
 atomic_swap_contract_id = (
     sys.argv[1]
 )
 token_a_contract_id = (
-    "3c656d421338a1b89a2cc96a651bccfff4314b74c8a57828518e408fe266c6d7"
+    "721934fe4e1a90e2119e6ca71a71d4661bcf6c96f28fc05476bd7965e4e30006"
 )
 token_b_contract_id = (
-    "3e7a8bf9c5df350cc73eb77033308dd23ce710bed9bfe60710f5c702b3363e59"
+    "1ffecc2bd64667a400c53e71a9a134d3db245b32472f9e14c9de12d1a0609c63"
 )
 
 source = soroban_server.load_account(submitter_kp.public_key)
@@ -138,14 +138,16 @@ send_transaction_data = soroban_server.send_transaction(tx)
 
 while True:
     # print("waiting for transaction to be confirmed...")
-    get_transaction_status_data = soroban_server.get_transaction_status(
-        send_transaction_data.id
-    )
-    if get_transaction_status_data.status != TransactionStatus.PENDING:
+    get_transaction_data = soroban_server.get_transaction(send_transaction_data.hash)
+    if get_transaction_data.status != GetTransactionStatus.NOT_FOUND:
         break
     time.sleep(3)
-# print(f"transaction status: {get_transaction_status_data}")
+# print(f"transaction: {get_transaction_data}")
 
-if get_transaction_status_data.status == TransactionStatus.SUCCESS:
-    result = stellar_xdr.SCVal.from_xdr(get_transaction_status_data.results[0].xdr)  # type: ignore
-    print(f"transaction result: {result}")
+if get_transaction_data.status == GetTransactionStatus.SUCCESS:
+    assert get_transaction_data.result_meta_xdr is not None
+    transaction_meta = stellar_xdr.TransactionMeta.from_xdr(
+        get_transaction_data.result_meta_xdr
+    )
+    result = transaction_meta.v3.tx_result.result.results[0].tr.invoke_host_function_result.success  # type: ignore
+    print(f"Function result: {result}")

@@ -8,7 +8,7 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 The example contains two contracts. To run them first navigate in the directory of the first contract and build the contract (`contract_a`):
@@ -62,7 +62,7 @@ Now navigate back to the example directory and invoke `contract_b` in the soroba
 
 ```sh
 cd ..
-soroban contract invoke --wasm contract_b/build/release.wasm --id 19 --fn callc
+soroban contract invoke --wasm contract_b/build/release.wasm --id 19 -- callc
 ```
 
 You should see following output:
@@ -90,19 +90,20 @@ cross_contract/contract_b/assembly/index.ts
 
 
 ```typescript
-import * as val from 'as-soroban-sdk/lib/value';
+import { I32Val, fromI32 } from 'as-soroban-sdk/lib/value';
 import { Vec } from "as-soroban-sdk/lib/vec";
 import * as contract from "as-soroban-sdk/lib/contract";
 
-export function callc(): val.RawVal {
+export function callc(): I32Val {
 
   let contractId = "4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058";
   let func = "add";
   let args = new Vec();
-  args.pushBack(val.fromI32(3));
-  args.pushBack(val.fromI32(12));
+  args.pushBack(fromI32(3));
+  args.pushBack(fromI32(12));
 
   return contract.callContractById(contractId, func, args.getHostObject());
+
 }
 ```
 

@@ -1,8 +1,8 @@
 {
     "name": "add",
-    "version": "0.0.1",
+    "version": "0.1.8",
     "description": "soroban contract example adding 2 integers",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "add",

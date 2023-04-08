@@ -16,7 +16,7 @@ export function write_administrator(id: AddressObject) : void {
 }
 
 export function check_admin(admin: AddressObject) : void {
-    if (context.compare(admin, read_administrator()) != 0) {
+    if (context.compareObj(admin, read_administrator()) != 0) {
         context.failWithErrorCode(ERR_CODE.NOT_AUTHORIZED_BY_ADMIN);
     }
 }

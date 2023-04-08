@@ -12,12 +12,13 @@ async function startTest() {
     let swap_contract_id = await deploy_swap_contract(submitterSeed);
     await pipInstallPythonSDK();
     let result = await pySwap(swap_contract_id);
-    assert.equal("transaction result: <SCVal [type=3, ic=0]>", result);
+    assert.equal('Function result: <SCVal [type=1]>', result); // returns void.
     console.log(`test atomic swap -> OK`);
 } 
 
 async function pipInstallPythonSDK() {
-    const { error, stdout, stderr } = await exec('pip3 install -U stellar-sdk');
+    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban-preview-8'; // 'pip3 install -U stellar-sdk'
+    const { error, stdout, stderr } = await exec(pip);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -53,7 +54,7 @@ async function buildSwapContract() {
 async function deploy_swap_contract(key) {
     let cmd = 'soroban contract deploy'
     + ' --wasm build/release.wasm' + 
-    ' --secret-key ' + key + 
+    ' --source ' + key + 
     ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase;
 
@@ -62,10 +63,10 @@ async function deploy_swap_contract(key) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("success")) {
+        if (!stderr.startsWith("SUCCESS")) {
             console.log(stderr);
         }
-        assert.equal(stderr.startsWith("success"), true );
+        assert.equal(stderr.startsWith("SUCCESS"), true );
     }
     console.log("swap contract id: " + stdout);
     return stdout.trim(); // contract id

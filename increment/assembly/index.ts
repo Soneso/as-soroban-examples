@@ -1,7 +1,7 @@
-import { RawVal, toU32, fromU32 } from "as-soroban-sdk/lib/value";
+import { toU32, fromU32, U32Val } from "as-soroban-sdk/lib/value";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 
-export function increment(): RawVal {
+export function increment(): U32Val {
 
   let key = "COUNTER";
   var counter = 0;

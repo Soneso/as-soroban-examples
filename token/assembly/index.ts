@@ -1,14 +1,14 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import { ERR_CODE, add_amounts, isNeg, lt, sub_amounts } from "./util";
-import { RawVal, AddressObject, BytesObject, fromVoid, toU32, Signed128BitIntObject, fromBool, toBool, isU32} from "as-soroban-sdk/lib/value";
+import { RawVal, AddressObject, BytesObject, fromVoid, toU32, I128Object, fromBool, toBool, isU32, VoidVal, U32Val} from "as-soroban-sdk/lib/value";
 import { check_admin, has_administrator, write_administrator } from "./admin";
 import { read_decimal, read_name, read_symbol, write_decimal, write_name, write_symbol } from "./metadata";
 import { read_allowance, spend_allowance, write_allowance } from "./allowance";
 import { ev_burn, ev_claw, ev_d_allow, ev_i_allow, ev_mint, ev_s_admin, ev_s_auth, ev_trans } from "./event";
 import { is_authorized, read_balance, receive_balance, spend_balance, write_authorization } from "./balance";
 
-export function initialize(admin: AddressObject, decimal: RawVal, name:BytesObject, symbol:BytesObject): RawVal {
+export function initialize(admin: AddressObject, decimal: U32Val, name:BytesObject, symbol:BytesObject): VoidVal {
     if (has_administrator()) {
       context.failWithErrorCode(ERR_CODE.ALREADY_INITIALIZED);
     }
@@ -25,11 +25,11 @@ export function initialize(admin: AddressObject, decimal: RawVal, name:BytesObje
     return fromVoid();
 }
 
-export function allowance(from: AddressObject, spender:AddressObject): Signed128BitIntObject {
+export function allowance(from: AddressObject, spender:AddressObject): I128Object {
   return read_allowance(from, spender);
 }
 
-export function incr_allow(from: AddressObject, spender:AddressObject, amount: Signed128BitIntObject): RawVal {
+export function incr_allow(from: AddressObject, spender:AddressObject, amount: I128Object): VoidVal {
 
   address.requireAuth(from);
   if (isNeg(amount)){
@@ -42,7 +42,7 @@ export function incr_allow(from: AddressObject, spender:AddressObject, amount: S
   return fromVoid();
 }
 
-export function decr_allow(from: AddressObject, spender:AddressObject, amount: Signed128BitIntObject): RawVal {
+export function decr_allow(from: AddressObject, spender:AddressObject, amount: I128Object): VoidVal {
 
   address.requireAuth(from);
   if (isNeg(amount)){
@@ -60,11 +60,11 @@ export function decr_allow(from: AddressObject, spender:AddressObject, amount: S
   return fromVoid();
 }
 
-export function balance(id: AddressObject) : Signed128BitIntObject {
+export function balance(id: AddressObject) : I128Object {
   return read_balance(id);
 }
 
-export function spendable(id: AddressObject) : Signed128BitIntObject {
+export function spendable(id: AddressObject) : I128Object {
   return read_balance(id);
 }
 
@@ -72,8 +72,9 @@ export function authorized(id: AddressObject) : RawVal {
   return fromBool(is_authorized(id));
 }
 
-export function xfer(from: AddressObject, to: AddressObject, amount:Signed128BitIntObject) : RawVal {
+export function xfer(from: AddressObject, to: AddressObject, amount:I128Object) : VoidVal {
   address.requireAuth(from);
+
   if (isNeg(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
@@ -84,7 +85,7 @@ export function xfer(from: AddressObject, to: AddressObject, amount:Signed128Bit
   return fromVoid();
 }
 
-export function xfer_from(spender: AddressObject, from: AddressObject, to: AddressObject, amount:Signed128BitIntObject) : RawVal {
+export function xfer_from(spender: AddressObject, from: AddressObject, to: AddressObject, amount:I128Object) : VoidVal {
   address.requireAuth(spender);
   if (isNeg(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
@@ -96,7 +97,7 @@ export function xfer_from(spender: AddressObject, from: AddressObject, to: Addre
   return fromVoid();
 }
 
-export function burn(from: AddressObject, amount:Signed128BitIntObject) : RawVal {
+export function burn(from: AddressObject, amount:I128Object) : VoidVal {
   address.requireAuth(from);
   if (isNeg(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
@@ -107,7 +108,7 @@ export function burn(from: AddressObject, amount:Signed128BitIntObject) : RawVal
   return fromVoid();
 }
 
-export function burn_from(spender: AddressObject, from: AddressObject, amount:Signed128BitIntObject) : RawVal {
+export function burn_from(spender: AddressObject, from: AddressObject, amount:I128Object) : VoidVal {
   address.requireAuth(spender);
   if (isNeg(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
@@ -118,7 +119,7 @@ export function burn_from(spender: AddressObject, from: AddressObject, amount:Si
   return fromVoid();
 }
 
-export function clawback(admin: AddressObject, from: AddressObject, amount:Signed128BitIntObject) : RawVal {
+export function clawback(admin: AddressObject, from: AddressObject, amount:I128Object) : VoidVal {
   if (isNeg(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
@@ -129,7 +130,7 @@ export function clawback(admin: AddressObject, from: AddressObject, amount:Signe
   return fromVoid();
 }
 
-export function set_auth(admin: AddressObject, id: AddressObject, authorize:RawVal) : RawVal {
+export function set_auth(admin: AddressObject, id: AddressObject, authorize:RawVal) : VoidVal {
   check_admin(admin);
   address.requireAuth(admin);
   if (isBoolean(authorize)) {
@@ -144,7 +145,8 @@ export function set_auth(admin: AddressObject, id: AddressObject, authorize:RawV
   return fromVoid();
 }
 
-export function mint(admin: AddressObject, to: AddressObject, amount:Signed128BitIntObject) : RawVal {
+export function mint(admin: AddressObject, to: AddressObject, amount:I128Object) : VoidVal {
+
   if (isNeg(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
@@ -155,7 +157,7 @@ export function mint(admin: AddressObject, to: AddressObject, amount:Signed128Bi
   return fromVoid();
 }
 
-export function set_admin(admin: AddressObject, new_admin: AddressObject) : RawVal {
+export function set_admin(admin: AddressObject, new_admin: AddressObject) : VoidVal {
   check_admin(admin);
   address.requireAuth(admin);
   write_administrator(new_admin);
@@ -163,7 +165,7 @@ export function set_admin(admin: AddressObject, new_admin: AddressObject) : RawV
   return fromVoid();
 }
 
-export function decimals() : RawVal {
+export function decimals() : U32Val {
   return read_decimal();
 }
 

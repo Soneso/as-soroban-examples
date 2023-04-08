@@ -1,8 +1,8 @@
 {
     "name": "atomic_swap",
-    "version": "0.1.1",
+    "version": "0.1.8",
     "description": "atomic swap contract example",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "swap",

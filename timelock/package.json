@@ -1,6 +1,6 @@
 {
   "name": "timelock",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "timelock contract example",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.1.2"
+    "as-soroban-sdk": "^0.1.8"
   }
 }

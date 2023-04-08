@@ -1,8 +1,8 @@
 {
-    "name": "add",
-    "version": "0.1.0",
+    "name": "events",
+    "version": "0.1.8",
     "description": "soroban contract example publishing events",
-    "host_functions_version": 29,
+    "host_functions_version": 32,
     "functions": [
         {
             "name" : "events",

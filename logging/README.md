@@ -8,7 +8,7 @@ The [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/lo
 To run a contract in the sandbox, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.6.0 soroban-cli
+cargo install --locked --version 0.7.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory install the sdk. Then build the contract:
@@ -24,12 +24,11 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Now you can run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 10 --fn logging
+soroban contract invoke --wasm build/release.wasm --id 10 -- logging
 ```
 
 You should see the output:
 ```sh
-null
 #0: debug: Hello, today is a sunny day!
 #1: debug: We have I32(30) degrees Symbol(celsius)!
 ```
@@ -44,17 +43,17 @@ logging/assembly/index.ts
 
 ```typescript
 import * as context from 'as-soroban-sdk/lib/context';
-import {RawVal, fromI32, fromSymbolStr, fromVoid} from 'as-soroban-sdk/lib/value';
+import {VoidVal ,fromI32, fromSmallSymbolStr, fromVoid} from 'as-soroban-sdk/lib/value';
 import {Vec} from 'as-soroban-sdk/lib/vec';
 
-export function logging(): RawVal {
+export function logging(): VoidVal {
 
-  context.log_str("Hello, today is a sunny day!");
+  context.logStr("Hello, today is a sunny day!");
 
   let args = new Vec();
-  args.push_back(fromI32(30));
-  args.push_back(fromSymbolStr("celsius"));
-  context.log_ftm("We have {} degrees {}!", args);
+  args.pushBack(fromI32(30));
+  args.pushBack(fromSmallSymbolStr("celsius"));
+  context.logFtm("We have {} degrees {}!", args);
 
   return fromVoid();
 }

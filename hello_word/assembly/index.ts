@@ -1,10 +1,10 @@
-import {SymbolVal, VectorObject, fromSymbolStr} from 'as-soroban-sdk/lib/value';
+import {SmallSymbolVal, VecObject, fromSmallSymbolStr} from 'as-soroban-sdk/lib/value';
 import {Vec} from 'as-soroban-sdk/lib/vec';
 
-export function hello(to: SymbolVal): VectorObject {
+export function hello(to: SmallSymbolVal): VecObject {
 
   let vec = new Vec();
-  vec.pushFront(fromSymbolStr("Hello"));
+  vec.pushFront(fromSmallSymbolStr("Hello"));
   vec.pushBack(to);
   
   return vec.getHostObject();
