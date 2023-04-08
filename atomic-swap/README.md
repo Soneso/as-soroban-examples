@@ -152,8 +152,8 @@ move_token(token_a, a, b, amount_a, min_a_for_b);
 move_token(token_b, b, a, amount_b, min_b_for_a);
 ...
 
-export function move_token(token: BytesObject, from: AddressObject, to:AddressObject, 
-  approve_amount:Signed128BitIntObject, xfer_amount:Signed128BitIntObject): void {
+function move_token(token: BytesObject, from: AddressObject, to:AddressObject, 
+  approve_amount:I128Object, xfer_amount:I128Object): void {
   
   let contract_address =  context.getCurrentContractAddress();
 
@@ -165,14 +165,15 @@ export function move_token(token: BytesObject, from: AddressObject, to:AddressOb
   incrArgs.pushBack(from);
   incrArgs.pushBack(contract_address);
   incrArgs.pushBack(approve_amount);
-  contract.callContract(token, fromSymbolStr("incr_allow"), incrArgs.getHostObject());
+  let func = Sym.fromSymbolString("incr_allow").getHostObject(); // "incr_allow" has more than 9 chars.
+  contract.callContract(token, func, incrArgs.getHostObject());
 
   let xferArgs = new Vec();
   xferArgs.pushBack(contract_address);
   xferArgs.pushBack(from);
   xferArgs.pushBack(to);
   xferArgs.pushBack(xfer_amount);
-  contract.callContract(token, fromSymbolStr("xfer_from"), xferArgs.getHostObject());
+  contract.callContract(token, fromSmallSymbolStr("xfer_from"), xferArgs.getHostObject());
 
 }
 ```
