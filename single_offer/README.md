@@ -1,4 +1,4 @@
-# Sngle offer sale
+# Single offer sale
 
 The [single offer sale example](https://github.com/Soneso/as-soroban-examples/tree/main/single_offer) demonstrates how to write a contract that allows a seller to set up an offer to sell token A for token B to multiple buyers. 
 

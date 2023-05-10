@@ -1,4 +1,4 @@
-# Batched atolic swap
+# Batched atomic swap
 
 The [multi swap example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap) demonstrates how authorized calls can be batched together. It swaps a pair of tokens between the two groups of users that authorized the swap operation from the atomic swap example.
 
