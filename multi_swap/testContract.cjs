@@ -37,7 +37,7 @@ async function startTest() {
     let atomic_swap_cid = await deployAtomicSwapContract();
     console.log("atomic cid: " + atomic_swap_cid);
 
-    //await buildTokenContract();
+    await buildTokenContract();
     let token_a_cid = await deployTokenContract();
     console.log("token a cid: " + token_a_cid);
     let token_b_cid = await deployTokenContract();
@@ -78,7 +78,7 @@ async function startTest() {
     assert.equal(balance, '"' + b3Amount + '"');
     console.log("minted : " + b3Amount + " TOKENB to b3");
 
-    //await pipInstallPythonSDK();
+    await pipInstallPythonSDK();
     let result = await pyMultiSwap(multi_swap_cid, atomic_swap_cid, token_a_cid, token_b_cid);
     assert.equal('Function result: <SCVal [type=1]>', result);
     console.log(`test atomic swap -> OK`);
