@@ -1,10 +1,11 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as context from "as-soroban-sdk/lib/context";
 import {Map} from "as-soroban-sdk/lib/map";
-import { AddressObject, fromI128Pieces, I128Object } from "as-soroban-sdk/lib/value";
-import { ERR_CODE, S_ALLOWANCE, isNeg, lt, sub_amounts } from "./util";
+import { AddressObject, fromI128Small, I128Val } from "as-soroban-sdk/lib/value";
+import { isNegative, i128lt, i128sub } from "as-soroban-sdk/lib/val128";
+import { ERR_CODE, S_ALLOWANCE } from "./util";
 
-export function read_allowance(from: AddressObject, spender:AddressObject): I128Object {
+export function read_allowance(from: AddressObject, spender:AddressObject): I128Val {
 
     // S_ALLOWANCE : map[from, map[sender, amout]]
     if (ledger.hasDataFor(S_ALLOWANCE)) {
@@ -17,12 +18,12 @@ export function read_allowance(from: AddressObject, spender:AddressObject): I128
         }
     }
 
-    return fromI128Pieces(0,0);
+    return fromI128Small(0);
 }
 
-export function write_allowance(from: AddressObject, spender:AddressObject, amount: I128Object): void {
+export function write_allowance(from: AddressObject, spender:AddressObject, amount: I128Val): void {
 
-    if(isNeg(amount)) {
+    if(isNegative(amount)) {
         context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
     }
 
@@ -51,12 +52,12 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
     ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject());
 }
 
-export function spend_allowance(from: AddressObject, spender:AddressObject, amount: I128Object): void {
+export function spend_allowance(from: AddressObject, spender:AddressObject, amount: I128Val): void {
     let allowance = read_allowance(from, spender);
 
-    if (lt(allowance, amount)) { 
+    if (i128lt(allowance, amount)) { 
         context.failWithErrorCode(ERR_CODE.INSUFFICIENT_ALLOWANCE);
     }
 
-    write_allowance(from, spender, sub_amounts(allowance, amount));
+    write_allowance(from, spender, i128sub(allowance, amount));
 }

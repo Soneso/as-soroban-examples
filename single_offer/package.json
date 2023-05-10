@@ -1,7 +1,7 @@
 {
-  "name": "contract_events",
-  "version": "0.1.0",
-  "description": "soroban contract example that publishes events",
+  "name": "single_offer",
+  "version": "1.0.0",
+  "description": "single offer as example",
   "main": "index.js",
   "scripts": {
     "test": "node tests",
@@ -11,14 +11,15 @@
     "start": "npx serve ."
   },
   "keywords": [
-    "soroban",
-    "contract",
-    "events"
+    "single",
+    "offer",
+    "smart",
+    "contract"
   ],
   "author": "c.r.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assemblyscript": "^0.21.6"
+    "assemblyscript": "^0.27.5"
   },
   "type": "module",
   "exports": {

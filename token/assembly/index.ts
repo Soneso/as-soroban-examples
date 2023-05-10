@@ -1,12 +1,13 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
-import { ERR_CODE, add_amounts, isNeg, lt, sub_amounts } from "./util";
-import { RawVal, AddressObject, BytesObject, fromVoid, toU32, I128Object, fromBool, toBool, isU32, VoidVal, U32Val} from "as-soroban-sdk/lib/value";
+import { ERR_CODE } from "./util";
+import { RawVal, AddressObject, BytesObject, fromVoid, toU32, I128Val, fromBool, toBool, isU32, VoidVal, U32Val} from "as-soroban-sdk/lib/value";
 import { check_admin, has_administrator, write_administrator } from "./admin";
 import { read_decimal, read_name, read_symbol, write_decimal, write_name, write_symbol } from "./metadata";
 import { read_allowance, spend_allowance, write_allowance } from "./allowance";
 import { ev_burn, ev_claw, ev_d_allow, ev_i_allow, ev_mint, ev_s_admin, ev_s_auth, ev_trans } from "./event";
 import { is_authorized, read_balance, receive_balance, spend_balance, write_authorization } from "./balance";
+import { isNegative, i128lt, i128sub, i128add } from "as-soroban-sdk/lib/val128";
 
 export function initialize(admin: AddressObject, decimal: U32Val, name:BytesObject, symbol:BytesObject): VoidVal {
     if (has_administrator()) {
@@ -25,46 +26,46 @@ export function initialize(admin: AddressObject, decimal: U32Val, name:BytesObje
     return fromVoid();
 }
 
-export function allowance(from: AddressObject, spender:AddressObject): I128Object {
+export function allowance(from: AddressObject, spender:AddressObject): I128Val {
   return read_allowance(from, spender);
 }
 
-export function incr_allow(from: AddressObject, spender:AddressObject, amount: I128Object): VoidVal {
+export function incr_allow(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
 
   address.requireAuth(from);
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 
   let allowance = read_allowance(from, spender);
-  write_allowance(from, spender, add_amounts(allowance, amount));
+  write_allowance(from, spender, i128add(allowance, amount));
   ev_i_allow(from, spender, amount);
   return fromVoid();
 }
 
-export function decr_allow(from: AddressObject, spender:AddressObject, amount: I128Object): VoidVal {
+export function decr_allow(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
 
   address.requireAuth(from);
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 
   let allowance = read_allowance(from, spender);
 
-  if (lt(allowance, amount)) {
+  if (i128lt(allowance, amount)) {
     context.failWithErrorCode(ERR_CODE.INSUFFICIENT_ALLOWANCE);
   }
   
-  write_allowance(from, spender, sub_amounts(allowance, amount));
+  write_allowance(from, spender, i128sub(allowance, amount));
   ev_d_allow(from, spender, amount);
   return fromVoid();
 }
 
-export function balance(id: AddressObject) : I128Object {
+export function balance(id: AddressObject) : I128Val {
   return read_balance(id);
 }
 
-export function spendable(id: AddressObject) : I128Object {
+export function spendable(id: AddressObject) : I128Val {
   return read_balance(id);
 }
 
@@ -72,10 +73,10 @@ export function authorized(id: AddressObject) : RawVal {
   return fromBool(is_authorized(id));
 }
 
-export function xfer(from: AddressObject, to: AddressObject, amount:I128Object) : VoidVal {
+export function xfer(from: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
   address.requireAuth(from);
 
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 
@@ -85,9 +86,9 @@ export function xfer(from: AddressObject, to: AddressObject, amount:I128Object) 
   return fromVoid();
 }
 
-export function xfer_from(spender: AddressObject, from: AddressObject, to: AddressObject, amount:I128Object) : VoidVal {
+export function xfer_from(spender: AddressObject, from: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
   address.requireAuth(spender);
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
   spend_allowance(from, spender, amount);
@@ -97,9 +98,9 @@ export function xfer_from(spender: AddressObject, from: AddressObject, to: Addre
   return fromVoid();
 }
 
-export function burn(from: AddressObject, amount:I128Object) : VoidVal {
+export function burn(from: AddressObject, amount:I128Val) : VoidVal {
   address.requireAuth(from);
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 
@@ -108,9 +109,9 @@ export function burn(from: AddressObject, amount:I128Object) : VoidVal {
   return fromVoid();
 }
 
-export function burn_from(spender: AddressObject, from: AddressObject, amount:I128Object) : VoidVal {
+export function burn_from(spender: AddressObject, from: AddressObject, amount:I128Val) : VoidVal {
   address.requireAuth(spender);
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
   spend_allowance(from, spender, amount);
@@ -119,8 +120,8 @@ export function burn_from(spender: AddressObject, from: AddressObject, amount:I1
   return fromVoid();
 }
 
-export function clawback(admin: AddressObject, from: AddressObject, amount:I128Object) : VoidVal {
-  if (isNeg(amount)){
+export function clawback(admin: AddressObject, from: AddressObject, amount:I128Val) : VoidVal {
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
   check_admin(admin);
@@ -145,9 +146,9 @@ export function set_auth(admin: AddressObject, id: AddressObject, authorize:RawV
   return fromVoid();
 }
 
-export function mint(admin: AddressObject, to: AddressObject, amount:I128Object) : VoidVal {
+export function mint(admin: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
 
-  if (isNeg(amount)){
+  if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
   check_admin(admin);

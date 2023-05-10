@@ -1,0 +1,49 @@
+{
+    "name": "single offer",
+    "version": "0.1.8",
+    "description": "single offer contract demo",
+    "host_functions_version": 32,
+    "functions": [
+        {
+            "name" : "create",
+            "arguments": [
+                {"name": "seller", "type": "address"},
+                {"name": "sell_token", "type": "bytes"},
+                {"name": "buy_token", "type": "bytes"},
+                {"name": "sell_price", "type": "u32"},
+                {"name": "buy_price", "type": "u32"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "trade",
+            "arguments": [
+                {"name": "buyer", "type": "address"},
+                {"name": "buy_token_amount", "type": "i128"},
+                {"name": "min_sell_token_amount", "type": "i128"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "withdraw",
+            "arguments": [
+                {"name": "token", "type": "bytes"},
+                {"name": "amount", "type": "i128"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "updt_price",
+            "arguments": [
+                {"name": "sell_price", "type": "u32"},
+                {"name": "buy_price", "type": "u32"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "get_offer",
+            "arguments": [],
+            "returns" : "vec[val]"
+        }
+    ]
+}

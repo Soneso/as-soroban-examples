@@ -2,7 +2,7 @@ import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import {AddressObject, BytesObject, I128Object, fromSmallSymbolStr, RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, isU64Small, fromU64, toU64Small} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, isU64Small, fromU64, toU64Small} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 
 // This contract demonstrates 'timelock' concept and implements a
@@ -28,13 +28,13 @@ enum ERR_CODES {
  * 
  * @param {AddressObject} from The address that deposits the given token amount.
  * @param {BytesObject} token The token to be deposited.
- * @param {I128Object} amount The amount of the token to be deposited.
+ * @param {I128Val} amount The amount of the token to be deposited.
  * @param {VecObject} claimants The list of claimants (AddressObject's) that are allowed to claim the deposit. Maximum number of claimants is 10.
  * @param {RawVal} lock_kind The timelock kind (u32). If the provided value is 0 the lock_kind is "before" otherwise "after".
  * @param {U64Object} timestamp The time point (u64) to apply the timelock for.
  * @returns {RawVal} void
  */
-export function deposit(from: AddressObject, token: BytesObject, amount: I128Object, claimants: VecObject, 
+export function deposit(from: AddressObject, token: BytesObject, amount: I128Val, claimants: VecObject, 
   lock_kind: RawVal, timestamp: U64Object): RawVal {
     
     if (ledger.hasDataFor(S_INIT)) {

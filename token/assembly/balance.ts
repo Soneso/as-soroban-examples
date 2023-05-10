@@ -1,10 +1,11 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as context from "as-soroban-sdk/lib/context";
-import { AddressObject, fromI128Pieces, fromU32, I128Object, toU32 } from "as-soroban-sdk/lib/value";
+import { AddressObject, fromI128Small, fromU32, I128Val, toU32 } from "as-soroban-sdk/lib/value";
 import {Map} from "as-soroban-sdk/lib/map";
-import { add_amounts, isNeg, lt, sub_amounts, ERR_CODE, S_AUTHORIZED, S_BALANCE } from "./util";
+import { ERR_CODE, S_AUTHORIZED, S_BALANCE } from "./util";
+import { isNegative, i128lt, i128sub, i128add } from "as-soroban-sdk/lib/val128";
 
-export function read_balance(addr: AddressObject): I128Object {
+export function read_balance(addr: AddressObject): I128Val {
 
     // S_BALANCE : map[addr, amount]
     if (ledger.hasDataFor(S_BALANCE)) {
@@ -14,12 +15,12 @@ export function read_balance(addr: AddressObject): I128Object {
         }
     }
 
-    return fromI128Pieces(0,0);
+    return fromI128Small(0);
 }
 
-export function write_balance(addr: AddressObject, amount: I128Object): void {
+export function write_balance(addr: AddressObject, amount: I128Val): void {
 
-    if(isNeg(amount)) {
+    if(isNegative(amount)) {
         context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
     }
 
@@ -36,23 +37,23 @@ export function write_balance(addr: AddressObject, amount: I128Object): void {
     ledger.putDataFor(S_BALANCE, balanceMap.getHostObject());
 }
 
-export function receive_balance(addr: AddressObject, amount: I128Object): void {
+export function receive_balance(addr: AddressObject, amount: I128Val): void {
     if (!is_authorized(addr)) {
         context.failWithErrorCode(ERR_CODE.CANT_RECEIVE_WHEN_DEAUTHORIZED);
     }
     let balance = read_balance(addr);
-    write_balance(addr, add_amounts(balance, amount));
+    write_balance(addr, i128add(balance, amount));
 }
 
-export function spend_balance(addr: AddressObject, amount: I128Object): void {
+export function spend_balance(addr: AddressObject, amount: I128Val): void {
     if (!is_authorized(addr)) {
         context.failWithErrorCode(ERR_CODE.CANT_SPEND_WHEN_DEAUTHORIZED);
     }
     let balance = read_balance(addr);
-    if (lt(balance, amount)) {
+    if (i128lt(balance, amount)) {
         context.failWithErrorCode(ERR_CODE.INSUFFICIENT_BALANCE);
     }
-    write_balance(addr, sub_amounts(balance, amount));
+    write_balance(addr, i128sub(balance, amount));
 }
 
 export function is_authorized(addr: AddressObject) : bool {

@@ -17,7 +17,7 @@ async function startTest() {
 } 
 
 async function pipInstallPythonSDK() {
-    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban-preview-8'; // 'pip3 install -U stellar-sdk'
+    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban'; // 'pip3 install -U stellar-sdk'
     const { error, stdout, stderr } = await exec(pip);
     if (error) {
         assert.fail(`error: ${error.message}`);

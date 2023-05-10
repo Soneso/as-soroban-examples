@@ -1,4 +1,4 @@
-import {BytesObject, I32Val, RawVal, SmallSymbolVal, VecObject} from 'as-soroban-sdk/lib/value';
+import {BytesObject, I32Val, SmallSymbolVal, VecObject} from 'as-soroban-sdk/lib/value';
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as contract from "as-soroban-sdk/lib/contract";
 
