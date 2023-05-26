@@ -2,7 +2,7 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 var assert = require('assert');
 
-const rpcUrl = 'https://horizon-futurenet.stellar.cash:443/soroban/rpc';
+const rpcUrl = 'https://rpc-futurenet.stellar.org:443';
 const networkPassphrase = "'Test SDF Future Network ; October 2022'";
 const submitterSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57"; // GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T
 

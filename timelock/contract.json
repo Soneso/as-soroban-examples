@@ -1,8 +1,8 @@
 {
     "name": "timelock",
-    "version": "0.1.2",
+    "version": "0.1.9",
     "description": "This contract demonstrates 'timelock' concept",
-    "host_functions_version": 32,
+    "host_functions_version": 37,
     "functions": [
         {
             "name" : "deposit",

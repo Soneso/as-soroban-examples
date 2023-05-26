@@ -8,7 +8,7 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.7.0 soroban-cli
+cargo install --locked --version 0.8.0 soroban-cli
 ```
 
 The example contains two contracts. To run them first navigate in the directory of the first contract and build the contract (`contract_a`):

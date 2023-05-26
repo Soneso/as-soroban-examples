@@ -1,8 +1,8 @@
 {
     "name": "token",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "token example implementing the token interface",
-    "host_functions_version": 32,
+    "host_functions_version": 37,
     "functions": [
         {
             "name" : "initialize",
@@ -22,7 +22,7 @@
             "returns" : "i128"
         },
         {
-            "name" : "incr_allow",
+            "name" : "increase_allowance",
             "arguments": [
                 {"name": "from", "type": "address"},
                 {"name": "spender", "type": "address"},
@@ -30,7 +30,7 @@
             ]
         },
         {
-            "name" : "decr_allow",
+            "name" : "decrease_allowance",
             "arguments": [
                 {"name": "from", "type": "address"},
                 {"name": "spender", "type": "address"},
@@ -45,7 +45,7 @@
             "returns" : "i128"
         },
         {
-            "name" : "spendable",
+            "name" : "spendable_balance",
             "arguments": [
                 {"name": "id", "type": "address"}
             ],
@@ -59,7 +59,7 @@
             "returns" : "bool"
         },
         {
-            "name" : "xfer",
+            "name" : "transfer",
             "arguments": [
                 {"name": "from", "type": "address"},
                 {"name": "to", "type": "address"},
@@ -67,7 +67,7 @@
             ]
         },
         {
-            "name" : "xfer_from",
+            "name" : "transfer_from",
             "arguments": [
                 {"name": "spender", "type": "address"},
                 {"name": "from", "type": "address"},
@@ -93,15 +93,13 @@
         {
             "name" : "clawback",
             "arguments": [
-                {"name": "admin", "type": "address"},
                 {"name": "from", "type": "address"},
                 {"name": "amount", "type": "i128"}
             ]
         },
         {
-            "name" : "set_auth",
+            "name" : "set_authorized",
             "arguments": [
-                {"name": "admin", "type": "address"},
                 {"name": "id", "type": "address"},
                 {"name": "authorize", "type": "u32"}
             ]
@@ -109,7 +107,6 @@
         {
             "name" : "mint",
             "arguments": [
-                {"name": "admin", "type": "address"},
                 {"name": "to", "type": "address"},
                 {"name": "amount", "type": "i128"}
             ]
@@ -117,7 +114,6 @@
         {
             "name" : "set_admin",
             "arguments": [
-                {"name": "admin", "type": "address"},
                 {"name": "new_admin", "type": "address"}
             ]
         },

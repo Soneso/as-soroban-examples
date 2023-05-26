@@ -5,10 +5,10 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official ```soroban cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.7.0 soroban-cli
+cargo install --locked --version 0.8.0 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -30,21 +30,36 @@ soroban contract invoke --wasm build/release.wasm --id 9 -- events
 You should see the output:
 ```sh
 1
-
-#0: 
-event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9],
-"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},
-{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":1}}}}
 ```
 
-If you run the contract again, you should see the output:
-```sh
-2
+The `soroban cli` logs events locally in the file .soroban/events.json. Look into that file to see the published event:
 
-#0: 
-event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9],
-"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},
-{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":2}}}}
+```sh
+more .soroban/events.json 
+```
+
+You should see the output:
+```json
+{
+  "events": [
+    {
+      "type": "contract",
+      "ledger": "1",
+      "ledgerClosedAt": "1970-01-01T00:00:05Z",
+      "id": "0000000004294971393-0000000002",
+      "pagingToken": "0000000004294971393-0000000002",
+      "contractId": "0000000000000000000000000000000000000000000000000000000000000009",
+      "topic": [
+        "AAAADwAAAAdDT1VOVEVSAA==",
+        "AAAADwAAAAlpbmNyZW1lbnQAAAA="
+      ],
+      "value": {
+        "xdr": "AAAAAwAAAAE="
+      }
+    }
+  ],
+  "latestLedger": 1
+}
 ```
 
 ## Code

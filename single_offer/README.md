@@ -7,7 +7,7 @@ The [single offer sale example](https://github.com/Soneso/as-soroban-examples/tr
 First, install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.7.0 soroban-cli
+cargo install --locked --version 0.8.0 soroban-cli
 ```
 
 Then, navigate it's directory and install the sdk.

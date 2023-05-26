@@ -1,0 +1,391 @@
+import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, fromVoid, VecObject, fromU32, toU32, VoidVal, fromI128Pieces, fromI128Small, U32Val} from "as-soroban-sdk/lib/value";
+import * as context from "as-soroban-sdk/lib/context";
+import * as contract from "as-soroban-sdk/lib/contract";
+import * as ledger from "as-soroban-sdk/lib/ledger";
+import * as address from "as-soroban-sdk/lib/address";
+import * as crypto from "as-soroban-sdk/lib/crypto";
+import { Vec } from "as-soroban-sdk/lib/vec";
+import { Bytes} from "as-soroban-sdk/lib/bytes";
+import { Sym } from "as-soroban-sdk/lib/sym";
+import { __deposit_b, get_deposit_amounts } from "./deposit";
+import { i128add, i128div, i128gt, i128le, i128lt, i128mul, i128muldiv, i128sqrt, i128sub } from "as-soroban-sdk/lib/val128";
+
+
+enum DATA_KEY {
+  TOKEN_A = 0,
+  TOKEN_B = 1,
+  TOKEN_SHARE = 2,
+  TOTAL_SHARES = 3,
+  RESERVE_A = 4,
+  RESERVE_B = 5
+}
+
+export enum ERR_CODES {
+  TOKEN_A_MUST_BE_LESS_TOKEN_A = 1,
+  TOO_MANY_CLAIMANTS = 2,
+  NO_BALANCE = 3,
+  TIME_PREDICATE_NOT_FULFILLED = 4,
+  CLAIMANT_NOT_ALLOWED = 5,
+  AMOUNT_B_LESS_THAN_MIN = 6,
+  AMOUNT_A_INVALID = 7,
+  IN_AMOUNT_IS_OVER_MAX = 8,
+  CONST_PROD_INVARIANT_DOESE_NOT_HOLD = 9,
+  MIN_NOT_SATISFIED = 10
+}
+
+export function initialize(token_wasm_hash: BytesObject, token_a: BytesObject, token_b: BytesObject): VoidVal {
+
+  if (context.compareObj(token_a, token_b) != -1) { // token_a >= token_b
+    context.failWithErrorCode(ERR_CODES.TOKEN_A_MUST_BE_LESS_TOKEN_A);
+  }
+
+  let share_contract_id = create_contract(token_wasm_hash, token_a, token_b);
+
+  let args = new Vec();
+  args.pushBack(context.getCurrentContractAddress());
+  args.pushBack(fromU32(7));
+  let name = Bytes.fromString("Pool Share Token");
+  args.pushBack(name.getHostObject());
+  let symbol = Bytes.fromString("POOL");
+  args.pushBack(symbol.getHostObject());
+
+  contract.callContract(share_contract_id, Sym.fromSymbolString("initialize").getHostObject(), args.getHostObject());
+
+  put_token_a(token_a);
+  put_token_b(token_b);
+  put_token_share(share_contract_id);
+  put_total_shares(fromI128Pieces(0,0));
+  put_reserve_a(fromI128Pieces(0,0));
+  put_reserve_b(fromI128Pieces(0,0));
+
+  return fromVoid();
+}
+
+export function share_id() : BytesObject {
+  return get_token_share();
+}
+
+export function deposit(to: AddressObject, desired_a: I128Val, min_a: I128Val, desired_b: I128Val, min_b: I128Val) : VoidVal {
+  // Depositor needs to authorize the deposit
+  address.requireAuth(to);
+
+  let reserve_a = get_reserve_a();
+  let reserve_b = get_reserve_b();
+
+  // Calculate deposit amounts
+  let amount_a = get_deposit_amounts(desired_a, min_a, desired_b, min_b, reserve_a, reserve_b);
+  let amount_b = __deposit_b;
+
+  let current_contract_address = context.getCurrentContractAddress();
+
+  let transferArgs = new Vec();
+  transferArgs.pushBack(to);
+  transferArgs.pushBack(current_contract_address);
+  transferArgs.pushBack(amount_a);
+  let token_a = get_token_a();
+  contract.callContract(token_a, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+
+  transferArgs.popBack();
+  transferArgs.pushBack(amount_b);
+  let token_b = get_token_b();
+  contract.callContract(token_b, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());  
+
+  // Now calculate how many new pool shares to mint
+  let balance_a = get_balance_a();
+  let balance_b = get_balance_b();
+  let total_shares = get_total_shares();
+
+  let zero = fromI128Small(0);
+  var new_total_shares = zero;
+  if (i128gt(reserve_a, zero) && i128gt(reserve_b, zero)) {
+    let shares_a = i128muldiv(balance_a, total_shares, reserve_a);
+    let shares_b = i128muldiv(balance_b, total_shares, reserve_b);
+    if(i128le(shares_a, shares_b)) {
+      new_total_shares = shares_a;
+    } else {
+      new_total_shares = shares_b;
+    }
+  } else {
+    let mul = i128mul(balance_a, balance_b);
+    new_total_shares = i128sqrt(mul);
+  }
+  
+  mint_shares(to, i128sub(new_total_shares, total_shares));
+  put_reserve_a(balance_a);
+  put_reserve_b(balance_b);
+
+  return fromVoid();
+}
+
+
+export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I128Val) : VoidVal {
+
+  address.requireAuth(to);
+
+  let reserve_a = get_reserve_a();
+  let reserve_b = get_reserve_b();
+
+  var reserve_sell = reserve_a;
+  var reserve_buy = reserve_b;
+
+  let buy = toU32(buy_a) > 0; // TODO: replace with bool ass soon as it can be passed by the cli
+  // let buy = toBool(buy_a);
+  if (buy) {
+    reserve_sell = reserve_b;
+    reserve_buy = reserve_a;
+  }
+
+  // First calculate how much needs to be sold to buy amount out from the pool
+
+  let n = i128mul(i128mul(reserve_sell, out), fromI128Small(1000));
+  let d = i128mul(i128sub(reserve_buy, out), fromI128Small(997));
+  let sell_amount = i128add(i128div(n,d), fromI128Small(1));
+  if (i128gt(sell_amount, in_max)) {
+    context.failWithErrorCode(ERR_CODES.IN_AMOUNT_IS_OVER_MAX);
+  }
+
+  // Xfer the amount being sold to the contract
+  var sell_token = get_token_a();
+  if (buy) {
+    sell_token = get_token_b();
+  }
+
+  let current_contract_address = context.getCurrentContractAddress();
+
+  let transferArgs = new Vec();
+  transferArgs.pushBack(to);
+  transferArgs.pushBack(current_contract_address);
+  transferArgs.pushBack(sell_amount);
+  contract.callContract(sell_token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+
+  let balance_a = get_balance_a();
+  let balance_b = get_balance_b();
+
+  // residue_numerator and residue_denominator are the amount that the invariant considers after
+  // deducting the fee, scaled up by 1000 to avoid fractions
+
+  let residue_numerator = fromI128Small(997);
+  let residue_denominator = fromI128Small(1000);
+  let zero = fromI128Small(0);
+
+  var out_a = zero;
+  var out_b = zero;
+  if (buy) {
+    out_a = out;
+  } else {
+    out_b = out;
+  }
+
+  let new_inv_a = invariant_factor(balance_a, reserve_a, out_a, residue_numerator, residue_denominator);
+  let new_inv_b = invariant_factor(balance_b, reserve_b, out_b, residue_numerator, residue_denominator);
+  let old_inv_a = i128mul(residue_denominator, reserve_a);
+  let old_inv_b = i128mul(residue_denominator, reserve_b);
+
+  if (i128lt(i128mul(new_inv_a, new_inv_b), i128mul(old_inv_a, old_inv_b))) { // new_inv_a * new_inv_b < old_inv_a * old_inv_b
+    context.failWithErrorCode(ERR_CODES.CONST_PROD_INVARIANT_DOESE_NOT_HOLD);
+  }
+
+  if(buy) {
+    transfer_a(to, out_a);
+  } else {
+    transfer_b(to, out_b);
+  }
+
+  put_reserve_a(i128sub(balance_a, out_a));
+  put_reserve_b(i128sub(balance_b, out_b));
+
+  return fromVoid();
+}
+
+export function withdraw(to: AddressObject, share_amount: I128Val, min_a: I128Val, min_b: I128Val) :  VecObject {
+  address.requireAuth(to);
+
+  // First transfer the pool shares that need to be redeemed
+  let share_token_cid = get_token_share();
+
+  let current_contract_address = context.getCurrentContractAddress();
+
+  let transferArgs = new Vec();
+  transferArgs.pushBack(to);
+  transferArgs.pushBack(current_contract_address);
+  transferArgs.pushBack(share_amount);
+  contract.callContract(share_token_cid, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+
+  let balance_a = get_balance_a();
+  let balance_b = get_balance_b();
+
+  let balance_shares = get_balance_shares();
+  let total_shares = get_total_shares();
+
+  // Now calculate the withdraw amounts
+  let out_a = i128muldiv(balance_a, balance_shares, total_shares);
+  let out_b = i128muldiv(balance_b, balance_shares, total_shares);
+
+  if (i128lt(out_a, min_a) || i128lt(out_b, min_b)) {
+    context.failWithErrorCode(ERR_CODES.MIN_NOT_SATISFIED);
+  }
+
+  burn_shares(balance_shares);
+  transfer_a(to, out_a);
+  transfer_b(to, out_b);
+  put_reserve_a(i128sub(balance_a, out_a));
+  put_reserve_b(i128sub(balance_b, out_b));
+
+  let result = new Vec();
+  result.pushBack(out_a);
+  result.pushBack(out_b);
+
+  return result.getHostObject();
+}
+
+export function get_rsrvs() :  VecObject {
+
+  let result = new Vec();
+  result.pushBack(get_reserve_a());
+  result.pushBack(get_reserve_b());
+
+  return result.getHostObject();
+}
+
+function put_token_a(contract_id: BytesObject) : void {
+  ledger.putData(fromU32(DATA_KEY.TOKEN_A), contract_id);
+}
+
+function get_token_a() : BytesObject {
+  return ledger.getData(fromU32(DATA_KEY.TOKEN_A));
+}
+
+function put_token_b(contract_id: BytesObject) : void {
+  ledger.putData(fromU32(DATA_KEY.TOKEN_B), contract_id);
+}
+
+function get_token_b() : BytesObject {
+  return ledger.getData(fromU32(DATA_KEY.TOKEN_B));
+}
+
+function put_token_share(contract_id: BytesObject) : void {
+  ledger.putData(fromU32(DATA_KEY.TOKEN_SHARE), contract_id);
+}
+
+function get_token_share() : BytesObject {
+  return ledger.getData(fromU32(DATA_KEY.TOKEN_SHARE));
+}
+
+function put_total_shares(amount: I128Val) : void {
+  ledger.putData(fromU32(DATA_KEY.TOTAL_SHARES), amount);
+}
+
+function get_total_shares() : I128Val {
+  return ledger.getData(fromU32(DATA_KEY.TOTAL_SHARES));
+}
+
+function put_reserve_a(amount: I128Val) : void {
+  ledger.putData(fromU32(DATA_KEY.RESERVE_A), amount);
+}
+
+function get_reserve_a() : I128Val {
+  return ledger.getData(fromU32(DATA_KEY.RESERVE_A));
+}
+
+function put_reserve_b(amount: I128Val) : void {
+  ledger.putData(fromU32(DATA_KEY.RESERVE_B), amount);
+}
+
+function get_reserve_b() : I128Val{
+  return ledger.getData(fromU32(DATA_KEY.RESERVE_B));
+}
+
+function get_balance(contract_id: BytesObject) : I128Val {
+
+  let current_contract_address = context.getCurrentContractAddress();
+  let args = new Vec();
+  args.pushBack(current_contract_address);
+  return contract.callContract(contract_id, fromSmallSymbolStr("balance"), args.getHostObject());
+
+}
+
+function get_balance_a() : I128Val {
+  return get_balance(get_token_a());
+}
+
+function get_balance_b() : I128Val {
+  return get_balance(get_token_b());
+}
+
+function get_balance_shares() : I128Val {
+  return get_balance(get_token_share());
+}
+
+function mint_shares(to: AddressObject, amount: I128Val) : void {
+   let total = get_total_shares();
+   let share_contract_id = get_token_share();
+
+   let mintArgs = new Vec();
+   mintArgs.pushBack(to);
+   mintArgs.pushBack(amount);
+   contract.callContract(share_contract_id, fromSmallSymbolStr("mint"), mintArgs.getHostObject());
+
+   put_total_shares(i128add(total, amount));
+
+}
+
+function burn_shares(amount: I128Val) : void {
+  let total = get_total_shares();
+  let share_contract_id = get_token_share();
+  let current_contract_address = context.getCurrentContractAddress();
+
+  let burnArgs = new Vec();
+  burnArgs.pushBack(current_contract_address);
+  burnArgs.pushBack(amount);
+  contract.callContract(share_contract_id, fromSmallSymbolStr("burn"), burnArgs.getHostObject());
+
+  put_total_shares(i128sub(total, amount));
+
+}
+
+
+function invariant_factor(balance: I128Val, reserve: I128Val, out:I128Val, residue_numerator: I128Val, residue_denominator:I128Val) : I128Val {
+    
+  let delta = i128sub(i128sub(balance, reserve), out);
+  let zero = fromI128Small(0);
+  
+  var adj_delta = zero;
+  if (i128gt(delta,zero)) {
+    adj_delta = i128mul(residue_numerator, delta);
+  } else {
+    adj_delta = i128mul(residue_denominator, delta);
+  }
+
+  return i128add(i128mul(residue_denominator, reserve), adj_delta);
+}
+
+function transfer(contract_id: BytesObject, to: AddressObject, amount: I128Val) : void {
+
+  let current_contract_address = context.getCurrentContractAddress();
+
+  let transferArgs = new Vec();
+  transferArgs.pushBack(current_contract_address);
+  transferArgs.pushBack(to);
+  transferArgs.pushBack(amount);
+  contract.callContract(contract_id, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+
+}
+
+function transfer_a(to: AddressObject, amount: I128Val) : void {
+  transfer(get_token_a(), to, amount);
+}
+
+function transfer_b(to: AddressObject, amount: I128Val) : void {
+  transfer(get_token_b(), to, amount);
+}
+
+function create_contract(token_wasm_hash: BytesObject, token_a: BytesObject, token_b: BytesObject): BytesObject {
+
+  var salt = new Bytes();
+  salt.append(new Bytes(token_a));
+  salt.append(new Bytes(token_b));
+
+  let cSalt = crypto.compute_hash_sha256(salt.getHostObject());
+  return ledger.deployContract(token_wasm_hash, cSalt);
+
+}

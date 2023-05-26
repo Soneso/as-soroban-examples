@@ -1,8 +1,8 @@
 {
     "name": "crontract b",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "the contract that calls the other contract",
-    "host_functions_version": 32,
+    "host_functions_version": 37,
     "functions": [
         {
             "name" : "callc",

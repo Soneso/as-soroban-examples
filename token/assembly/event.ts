@@ -5,7 +5,7 @@ import { Sym } from "as-soroban-sdk/lib/sym";
 
 export function ev_i_allow(from: AddressObject, to:AddressObject, amount: I128Val): void {
     let topics = new Vec();
-    topics.pushFront(Sym.fromSymbolString("incr_allow").getHostObject()); // more than 9 chars
+    topics.pushFront(Sym.fromSymbolString("increase_allowance").getHostObject()); // more than 9 chars
     topics.pushBack(from);
     topics.pushBack(to);
     context.publishEvent(topics, amount);
@@ -13,7 +13,7 @@ export function ev_i_allow(from: AddressObject, to:AddressObject, amount: I128Va
 
 export function ev_d_allow(from: AddressObject, to:AddressObject, amount: I128Val): void {
     let topics = new Vec();
-    topics.pushFront(fromSmallSymbolStr("dec_allow"));
+    topics.pushFront(Sym.fromSymbolString("decrease_allowance").getHostObject());
     topics.pushBack(from);
     topics.pushBack(to);
     context.publishEvent(topics, amount);
@@ -45,7 +45,7 @@ export function ev_claw(admin: AddressObject, to:AddressObject, amount: I128Val)
 
 export function ev_s_auth(admin: AddressObject, id:AddressObject, authorize: RawVal): void {
     let topics = new Vec();
-    topics.pushFront(fromSmallSymbolStr("set_auth"));
+    topics.pushFront(Sym.fromSymbolString("set_authorized").getHostObject());
     topics.pushBack(admin);
     topics.pushBack(id);
     context.publishEvent(topics, authorize);

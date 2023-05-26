@@ -1,6 +1,6 @@
 {
   "name": "testing",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "show how to test a contracts function",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.1.9"
+    "as-soroban-sdk": "^0.2.1"
   }
 }

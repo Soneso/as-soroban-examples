@@ -2,7 +2,7 @@ import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, isU64Small, fromU64, toU64Small} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, isU64Small, fromU64, toU64Small, toU64} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 
 // This contract demonstrates 'timelock' concept and implements a
@@ -51,11 +51,11 @@ export function deposit(from: AddressObject, token: BytesObject, amount: I128Val
 
     // Transfer token from `from` to this contract address.
     let contract_address = context.getCurrentContractAddress()
-    let xferArgs = new Vec();
-    xferArgs.pushBack(from);
-    xferArgs.pushBack(contract_address);
-    xferArgs.pushBack(amount);
-    contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
+    let transferArgs = new Vec();
+    transferArgs.pushBack(from);
+    transferArgs.pushBack(contract_address);
+    transferArgs.pushBack(amount);
+    contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
     // Store all the necessary info to allow one of the claimants to claim it.
     let claimableBlance = new Vec();
@@ -95,24 +95,24 @@ export function claim(claimant: AddressObject): RawVal {
   let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE));
   let lock_kind = claimableBalance.get(2);
   var timestamp = claimableBalance.get(3);
-  if (isU64Small(timestamp)) { // if not obj => make obj so we can compare
-    timestamp = fromU64(toU64Small(timestamp));
-  }
   
-  // Get the current ledger timestamp.
-  var ledger_timestamp = context.getLedgerTimestamp()
-  if (isU64Small(ledger_timestamp)) { // if not obj => make obj so we can compare
-    ledger_timestamp = fromU64(toU64Small(ledger_timestamp));
+  if (isU64Small(timestamp)) { // get u64 value.
+    timestamp = toU64Small(timestamp);
+  } else {
+    timestamp = toU64(timestamp);
   }
+
+  // Get the current ledger timestamp (u64 value).
+  var ledger_timestamp = context.getLedgerTimestamp();
 
   // The 'timelock' part: check that provided time point is before/after
   // the current ledger timestamp.
-  if (toU32(lock_kind) == 0) { // before
-    if (context.compareObj(timestamp, ledger_timestamp) == 1) { // timestamp > ledger_timestamp
+  if (toU32(lock_kind) == 0) { // must claim before time point
+    if (ledger_timestamp >= timestamp) {
       context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
     }   
-  } else { // after
-    if (context.compareObj(timestamp, ledger_timestamp) == -1) { // timestamp < ledger_timestamp
+  } else { // must claim after after time point
+    if (ledger_timestamp <= timestamp) {
       context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
     }
   }
@@ -131,11 +131,11 @@ export function claim(claimant: AddressObject): RawVal {
   let token = claimableBalance.get(0);
   let amount = claimableBalance.get(1);
   let contract_address = context.getCurrentContractAddress()
-  let xferArgs = new Vec();
-  xferArgs.pushBack(contract_address);
-  xferArgs.pushBack(claimant);
-  xferArgs.pushBack(amount);
-  contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
+  let transferArgs = new Vec();
+  transferArgs.pushBack(contract_address);
+  transferArgs.pushBack(claimant);
+  transferArgs.pushBack(amount);
+  contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
   
   // Remove the balance entry to prevent any further claims.
   ledger.delDataFor(S_BALANCE);

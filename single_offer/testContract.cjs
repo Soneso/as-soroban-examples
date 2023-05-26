@@ -2,7 +2,7 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 var assert = require('assert');
 
-const rpcUrl = 'https://horizon-futurenet.stellar.cash:443/soroban/rpc';
+const rpcUrl = 'https://rpc-futurenet.stellar.org:443';
 const networkPassphrase = "'Test SDF Future Network ; October 2022'";
 const adminSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57";
 const adminId = "GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T";
@@ -38,7 +38,7 @@ async function startTest() {
     let offer_contract_address = await addressForContractId(offer_cid);
 
     // Deposit 100 sell_token from seller into offer.
-    await xfer(sellerSeed, sellerId, offer_contract_address, 100, sell_token_cid);
+    await transfer(sellerSeed, sellerId, offer_contract_address, 100, sell_token_cid);
     balance = await getBalance(offer_contract_address, sell_token_cid);
     assert.equal(balance, '"100"');
 
@@ -179,7 +179,7 @@ async function create_token(token_contract_id, name , symbol) {
 async function mint(to, amount, token_contract_id) {
     const { error, stdout, stderr } = await exec('soroban contract invoke' + 
     ' --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
-    ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --admin ' + adminId +' --to ' + to + ' --amount ' + amount);
+    ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
     if (error) {
         console.log(error);
@@ -338,9 +338,9 @@ async function addressForContractId(contract_id) {
     return stdout.trim();
 }
 
-async function xfer(from_seed, from_id, to_id, amount, token_contract_id) {
+async function transfer(from_seed, from_id, to_id, amount, token_contract_id) {
     let cmd = 'soroban contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
-    ' --network-passphrase ' + networkPassphrase + ' --id '+ token_contract_id + ' -- xfer ' +
+    ' --network-passphrase ' + networkPassphrase + ' --id '+ token_contract_id + ' -- transfer ' +
     '--from ' + from_id +' --to ' + to_id + ' --amount ' + amount;
     console.log(cmd);
 

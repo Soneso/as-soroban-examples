@@ -82,36 +82,36 @@ export function trade(buyer: AddressObject, buy_token_amount: I128Val, min_sell_
 
   let contract_address =  context.getCurrentContractAddress();
 
-  // Perform the trade in 3 `xfer` steps.
+  // Perform the trade in 3 `transfer` steps.
   // Note, that we don't need to verify any balances - the contract would
   // just trap and roll back in case if any of the transfers fails for
   // any reason, including insufficient balance.
 
   // Transfer the `buy_token` from buyer to this contract.
-  // This `xfer` call should be authorized by buyer.
+  // This `transfer` call should be authorized by buyer.
   // This could as well be a direct transfer to the seller, but sending to
   // the contract address allows building more transparent signature
   // payload where the buyer doesn't need to worry about sending token to
   // some 'unknown' third party.
-  let xferArgs1 = new Vec();
-  xferArgs1.pushBack(buyer);
-  xferArgs1.pushBack(contract_address);
-  xferArgs1.pushBack(buy_token_amount);
-  contract.callContract(__buy_token, fromSmallSymbolStr("xfer"), xferArgs1.getHostObject());
+  let transferArgs1 = new Vec();
+  transferArgs1.pushBack(buyer);
+  transferArgs1.pushBack(contract_address);
+  transferArgs1.pushBack(buy_token_amount);
+  contract.callContract(__buy_token, fromSmallSymbolStr("transfer"), transferArgs1.getHostObject());
 
   // Transfer the `sell_token` from contract to buyer.
-  let xferArgs2 = new Vec();
-  xferArgs2.pushBack(contract_address);
-  xferArgs2.pushBack(buyer);
-  xferArgs2.pushBack(sell_token_amount);
-  contract.callContract(__sell_token, fromSmallSymbolStr("xfer"), xferArgs2.getHostObject());
+  let transferArgs2 = new Vec();
+  transferArgs2.pushBack(contract_address);
+  transferArgs2.pushBack(buyer);
+  transferArgs2.pushBack(sell_token_amount);
+  contract.callContract(__sell_token, fromSmallSymbolStr("transfer"), transferArgs2.getHostObject());
 
   // Transfer the `buy_token` to the seller immediately.
-  let xferArgs3 = new Vec();
-  xferArgs3.pushBack(contract_address);
-  xferArgs3.pushBack(__seller);
-  xferArgs3.pushBack(buy_token_amount);
-  contract.callContract(__buy_token, fromSmallSymbolStr("xfer"), xferArgs3.getHostObject());
+  let transferArgs3 = new Vec();
+  transferArgs3.pushBack(contract_address);
+  transferArgs3.pushBack(__seller);
+  transferArgs3.pushBack(buy_token_amount);
+  contract.callContract(__buy_token, fromSmallSymbolStr("transfer"), transferArgs3.getHostObject());
 
   return fromVoid();
 
@@ -133,11 +133,11 @@ export function withdraw(token: BytesObject, amount: I128Val) : VoidVal {
 
     let contract_address =  context.getCurrentContractAddress();
 
-    let xferArgs = new Vec();
-    xferArgs.pushBack(contract_address);
-    xferArgs.pushBack(__seller);
-    xferArgs.pushBack(amount);
-    contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
+    let transferArgs = new Vec();
+    transferArgs.pushBack(contract_address);
+    transferArgs.pushBack(__seller);
+    transferArgs.pushBack(amount);
+    contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
   return fromVoid();
 }

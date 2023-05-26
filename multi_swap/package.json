@@ -1,6 +1,6 @@
 {
   "name": "multi_swap",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "This example demonstrates how authorized calls can be batched together.",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.1.9"
+    "as-soroban-sdk": "^0.2.1"
   }
 }

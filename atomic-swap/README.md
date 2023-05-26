@@ -97,15 +97,15 @@ function move_token(token: BytesObject, from: AddressObject, to:AddressObject,
   incrArgs.pushBack(from);
   incrArgs.pushBack(contract_address);
   incrArgs.pushBack(approve_amount);
-  let func = Sym.fromSymbolString("incr_allow").getHostObject(); // "incr_allow" has more than 9 chars.
+  let func = Sym.fromSymbolString("increase_allowance").getHostObject();
   contract.callContract(token, func, incrArgs.getHostObject());
 
-  let xferArgs = new Vec();
-  xferArgs.pushBack(contract_address);
-  xferArgs.pushBack(from);
-  xferArgs.pushBack(to);
-  xferArgs.pushBack(xfer_amount);
-  contract.callContract(token, fromSmallSymbolStr("xfer_from"), xferArgs.getHostObject());
+  let transferFromArgs = new Vec();
+  transferFromArgs.pushBack(contract_address);
+  transferFromArgs.pushBack(from);
+  transferFromArgs.pushBack(to);
+  transferFromArgs.pushBack(xfer_amount);
+  contract.callContract(token, Sym.fromSymbolString("transfer_from").getHostObject(), transferFromArgs.getHostObject());
 
 }
 
@@ -165,15 +165,15 @@ function move_token(token: BytesObject, from: AddressObject, to:AddressObject,
   incrArgs.pushBack(from);
   incrArgs.pushBack(contract_address);
   incrArgs.pushBack(approve_amount);
-  let func = Sym.fromSymbolString("incr_allow").getHostObject(); // "incr_allow" has more than 9 chars.
+  let func = Sym.fromSymbolString("increase_allowance").getHostObject();
   contract.callContract(token, func, incrArgs.getHostObject());
 
-  let xferArgs = new Vec();
-  xferArgs.pushBack(contract_address);
-  xferArgs.pushBack(from);
-  xferArgs.pushBack(to);
-  xferArgs.pushBack(xfer_amount);
-  contract.callContract(token, fromSmallSymbolStr("xfer_from"), xferArgs.getHostObject());
+  let transferFromArgs = new Vec();
+  transferFromArgs.pushBack(contract_address);
+  transferFromArgs.pushBack(from);
+  transferFromArgs.pushBack(to);
+  transferFromArgs.pushBack(xfer_amount);
+  contract.callContract(token, Sym.fromSymbolString("transfer_from").getHostObject(), transferFromArgs.getHostObject());
 
 }
 ```
@@ -200,3 +200,5 @@ node testContract.cjs
 ```
 
 It will build and deploy the contract to futurenet and then execute the python script [swap_test.py](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/swap_test.py) which prepares the data and then invokes the contract.
+
+**Currently the script is not working because the phython sdk does not yet support the new xdr for soroban preview 9. As soon as available we will update the script.**

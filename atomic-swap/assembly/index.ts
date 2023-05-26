@@ -84,14 +84,14 @@ function move_token(token: BytesObject, from: AddressObject, to:AddressObject,
   incrArgs.pushBack(from);
   incrArgs.pushBack(contract_address);
   incrArgs.pushBack(approve_amount);
-  let func = Sym.fromSymbolString("incr_allow").getHostObject(); // "incr_allow" has more than 9 chars.
+  let func = Sym.fromSymbolString("increase_allowance").getHostObject();
   contract.callContract(token, func, incrArgs.getHostObject());
 
-  let xferArgs = new Vec();
-  xferArgs.pushBack(contract_address);
-  xferArgs.pushBack(from);
-  xferArgs.pushBack(to);
-  xferArgs.pushBack(xfer_amount);
-  contract.callContract(token, fromSmallSymbolStr("xfer_from"), xferArgs.getHostObject());
+  let transferFromArgs = new Vec();
+  transferFromArgs.pushBack(contract_address);
+  transferFromArgs.pushBack(from);
+  transferFromArgs.pushBack(to);
+  transferFromArgs.pushBack(xfer_amount);
+  contract.callContract(token, Sym.fromSymbolString("transfer_from").getHostObject(), transferFromArgs.getHostObject());
 
 }

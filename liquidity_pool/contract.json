@@ -1,0 +1,58 @@
+{
+    "name": "liquidity pool",
+    "version": "0.1.9",
+    "description": "Demonstrates how to write a constant product liquidity pool contract",
+    "host_functions_version": 37,
+    "functions": [
+        {
+            "name" : "initialize",
+            "arguments": [
+                {"name": "token_wasm_hash", "type": "bytes"},
+                {"name": "token_a", "type": "bytes"},
+                {"name": "token_b", "type": "bytes"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "share_id",
+            "arguments": [],
+            "returns" : "bytes"
+        },
+        {
+            "name" : "deposit",
+            "arguments": [
+                {"name": "to", "type": "address"},
+                {"name": "desired_a", "type": "i128"},
+                {"name": "min_a", "type": "i128"},
+                {"name": "desired_b", "type": "i128"},
+                {"name": "min_b", "type": "i128"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "swap",
+            "arguments": [
+                {"name": "to", "type": "address"},
+                {"name": "buy_a", "type": "u32"},
+                {"name": "out", "type": "i128"},
+                {"name": "in_max", "type": "i128"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "withdraw",
+            "arguments": [
+                {"name": "to", "type": "address"},
+                {"name": "share_amount", "type": "i128"},
+                {"name": "min_a", "type": "i128"},
+                {"name": "min_b", "type": "i128"}
+            ],
+            "returns" : "vec[i128]"
+        },
+        {
+            "name" : "get_rsrvs",
+            "arguments": [],
+            "returns" : "vec[i128]"
+        }
+    ]
+}

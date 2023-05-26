@@ -1,8 +1,8 @@
 {
     "name": "multi swap",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "This example demonstrates how authorized calls can be batched together.",
-    "host_functions_version": 32,
+    "host_functions_version": 37,
     "functions": [
         {
             "name" : "multi_swap",

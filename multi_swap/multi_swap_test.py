@@ -143,7 +143,7 @@ a2_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id = token_a_contract_id,
-            function_name = "incr_allow",
+            function_name = "increase_allowance",
             args=[
                 addressA2,  # owner
                 atomic_swap_address,
@@ -166,7 +166,7 @@ a3_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id = token_a_contract_id,
-            function_name = "incr_allow",
+            function_name = "increase_allowance",
             args=[
                 addressA3,  # owner
                 atomic_swap_address,
@@ -189,7 +189,7 @@ b1_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id=token_b_contract_id,
-            function_name="incr_allow",
+            function_name="increase_allowance",
             args=[
                 addressB1,  # owner
                 atomic_swap_address,
@@ -212,7 +212,7 @@ b2_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id=token_b_contract_id,
-            function_name="incr_allow",
+            function_name="increase_allowance",
             args=[
                 addressB2,  # owner
                 atomic_swap_address,
@@ -235,7 +235,7 @@ b3_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id=token_b_contract_id,
-            function_name="incr_allow",
+            function_name="increase_allowance",
             args=[
                 addressB3,  # owner
                 atomic_swap_address,

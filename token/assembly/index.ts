@@ -2,7 +2,7 @@ import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import { ERR_CODE } from "./util";
 import { RawVal, AddressObject, BytesObject, fromVoid, toU32, I128Val, fromBool, toBool, isU32, VoidVal, U32Val} from "as-soroban-sdk/lib/value";
-import { check_admin, has_administrator, write_administrator } from "./admin";
+import { has_administrator, read_administrator, write_administrator } from "./admin";
 import { read_decimal, read_name, read_symbol, write_decimal, write_name, write_symbol } from "./metadata";
 import { read_allowance, spend_allowance, write_allowance } from "./allowance";
 import { ev_burn, ev_claw, ev_d_allow, ev_i_allow, ev_mint, ev_s_admin, ev_s_auth, ev_trans } from "./event";
@@ -30,7 +30,7 @@ export function allowance(from: AddressObject, spender:AddressObject): I128Val {
   return read_allowance(from, spender);
 }
 
-export function incr_allow(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
+export function increase_allowance(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
 
   address.requireAuth(from);
   if (isNegative(amount)){
@@ -43,7 +43,7 @@ export function incr_allow(from: AddressObject, spender:AddressObject, amount: I
   return fromVoid();
 }
 
-export function decr_allow(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
+export function decrease_allowance(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
 
   address.requireAuth(from);
   if (isNegative(amount)){
@@ -65,7 +65,7 @@ export function balance(id: AddressObject) : I128Val {
   return read_balance(id);
 }
 
-export function spendable(id: AddressObject) : I128Val {
+export function spendable_balance(id: AddressObject) : I128Val {
   return read_balance(id);
 }
 
@@ -73,7 +73,7 @@ export function authorized(id: AddressObject) : RawVal {
   return fromBool(is_authorized(id));
 }
 
-export function xfer(from: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
+export function transfer(from: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
   address.requireAuth(from);
 
   if (isNegative(amount)){
@@ -86,7 +86,7 @@ export function xfer(from: AddressObject, to: AddressObject, amount:I128Val) : V
   return fromVoid();
 }
 
-export function xfer_from(spender: AddressObject, from: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
+export function transfer_from(spender: AddressObject, from: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
   address.requireAuth(spender);
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
@@ -120,19 +120,19 @@ export function burn_from(spender: AddressObject, from: AddressObject, amount:I1
   return fromVoid();
 }
 
-export function clawback(admin: AddressObject, from: AddressObject, amount:I128Val) : VoidVal {
+export function clawback(from: AddressObject, amount:I128Val) : VoidVal {
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
-  check_admin(admin);
+  let admin = read_administrator();
   address.requireAuth(admin);
   spend_balance(from, amount);
   ev_claw(admin, from, amount);
   return fromVoid();
 }
 
-export function set_auth(admin: AddressObject, id: AddressObject, authorize:RawVal) : VoidVal {
-  check_admin(admin);
+export function set_authorized(id: AddressObject, authorize:RawVal) : VoidVal {
+  let admin = read_administrator();
   address.requireAuth(admin);
   if (isBoolean(authorize)) {
     write_authorization(id, toBool(authorize));
@@ -146,20 +146,20 @@ export function set_auth(admin: AddressObject, id: AddressObject, authorize:RawV
   return fromVoid();
 }
 
-export function mint(admin: AddressObject, to: AddressObject, amount:I128Val) : VoidVal {
+export function mint(to: AddressObject, amount:I128Val) : VoidVal {
 
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
-  check_admin(admin);
+  let admin = read_administrator();
   address.requireAuth(admin);
   receive_balance(to, amount);
   ev_mint(admin, to, amount);
   return fromVoid();
 }
 
-export function set_admin(admin: AddressObject, new_admin: AddressObject) : VoidVal {
-  check_admin(admin);
+export function set_admin(new_admin: AddressObject) : VoidVal {
+  let admin = read_administrator();
   address.requireAuth(admin);
   write_administrator(new_admin);
   ev_s_admin(admin, new_admin);

@@ -1,8 +1,8 @@
 {
     "name": "single offer",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "single offer contract demo",
-    "host_functions_version": 32,
+    "host_functions_version": 37,
     "functions": [
         {
             "name" : "create",

@@ -171,11 +171,11 @@ To deposit the tokens, they are transfered to the contract's address.
 
 ```typescript
 let contract_address = context.getCurrentContractAddress()
-let xferArgs = new Vec();
-xferArgs.pushBack(from);
-xferArgs.pushBack(contract_address);
-xferArgs.pushBack(amount);
-contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
+let transferArgs = new Vec();
+transferArgs.pushBack(from);
+transferArgs.pushBack(contract_address);
+transferArgs.pushBack(amount);
+contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 ```
 
 ### Store claimable balance
@@ -210,12 +210,15 @@ To validate the request, the contract loads the needed info about the claimable 
 let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE));
 let lock_kind = claimableBalance.get(2);
 var timestamp = claimableBalance.get(3);
-if (isU64Small(timestamp)) { // if not obj => make obj so we can compare
-  timestamp = fromU64(toU64Small(timestamp));
+
+if (isU64Small(timestamp)) { // get u64 value.
+  timestamp = toU64Small(timestamp);
+} else {
+  timestamp = toU64(timestamp);
 }
-  
-// Get the current ledger timestamp.
-var ledger_timestamp = context.getLedgerTimestamp()
+
+// Get the current ledger timestamp (u64 value).
+var ledger_timestamp = context.getLedgerTimestamp();
 ```
 
 and then checks the preconditions:
@@ -223,12 +226,12 @@ and then checks the preconditions:
 ```typescript
 // The 'timelock' part: check that provided time point is before/after
 // the current ledger timestamp.
-if (toU32(lock_kind) == 0) { // before
-  if (context.compareObj(timestamp, ledger_timestamp) == 1) { // timestamp > ledger_timestamp
+if (toU32(lock_kind) == 0) { // must claim before time point
+  if (ledger_timestamp >= timestamp) {
     context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
   }   
-} else { // after
-  if (context.compareObj(timestamp, ledger_timestamp) == -1) { // timestamp < ledger_timestamp
+} else { // must claim after after time point
+  if (ledger_timestamp <= timestamp) {
     context.failWithErrorCode(ERR_CODES.TIME_PREDICATE_NOT_FULFILLED);
   }
 }
@@ -250,11 +253,11 @@ If all preconditions are fulfilled and the claimant is allowed to claim the depo
 
 ```typescript
 let contract_address = context.getCurrentContractAddress()
-let xferArgs = new Vec();
-xferArgs.pushBack(contract_address);
-xferArgs.pushBack(claimant);
-xferArgs.pushBack(amount);
-contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject());
+let transferArgs = new Vec();
+transferArgs.pushBack(contract_address);
+transferArgs.pushBack(claimant);
+transferArgs.pushBack(amount);
+contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 ```
 
 
@@ -263,7 +266,7 @@ contract.callContract(token, fromSmallSymbolStr("xfer"), xferArgs.getHostObject(
 To run a contract in the sandbox, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.7.0 soroban-cli
+cargo install --locked --version 0.8.0 soroban-cli
 ```
 
 Then, to build the contract, navigate it's directory install the sdk. Then build the contract:

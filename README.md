@@ -1,6 +1,6 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
-![v0.1.2](https://img.shields.io/badge/v0.1.2-yellow.svg)
+![v0.2.1](https://img.shields.io/badge/v0.2.1-yellow.svg)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
@@ -16,7 +16,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.7.0 soroban-cli
+cargo install --locked --version 0.8.0 soroban-cli
 ```
 
 ### 3. Run an example contract
@@ -66,6 +66,7 @@ soroban contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to frie
 | [timelock example](https://github.com/Soneso/as-soroban-examples/tree/main/timelock)| Demonstrates how to write a timelock and implements a greatly simplified claimable balance similar to the claimable balance feature available on Stellar.|
 | [multi swap example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap)| This example demonstrates how authorized calls can be batched together. It swaps a pair of tokens between the two groups of users that authorized the swap operation from the atomic swap example.|
 | [single offer sale example](https://github.com/Soneso/as-soroban-examples/tree/main/single_offer)| The single offer sale example demonstrates how to write a contract that allows a seller to set up an offer to sell token A for token B to multiple buyers.|
+| [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/main/liquidity_pool)| Demonstrates how to write a constant product liquidity pool contract.|
 
 ### 5. Create your own contract
 

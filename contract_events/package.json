@@ -1,6 +1,6 @@
 {
   "name": "contract_events",
-  "version": "0.1.0",
+  "version": "0.1.9",
   "description": "soroban contract example that publishes events",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.1.9"
+    "as-soroban-sdk": "^0.2.1"
   }
 }

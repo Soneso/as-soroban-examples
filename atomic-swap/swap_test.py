@@ -64,7 +64,7 @@ alice_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id=token_a_contract_id,
-            function_name="incr_allow",
+            function_name="increase_allowance",
             args=[
                 Address(alice_kp.public_key),  # owner
                 Address.from_raw_contract(atomic_swap_contract_id),
@@ -87,7 +87,7 @@ bob_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id=token_b_contract_id,
-            function_name="incr_allow",
+            function_name="increase_allowance",
             args=[
                 Address(bob_kp.public_key),  # owner
                 Address.from_raw_contract(atomic_swap_contract_id),

@@ -1,7 +1,7 @@
 {
-  "name": "auth",
+  "name": "liquidity_pool",
   "version": "0.1.9",
-  "description": "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework",
+  "description": "liquidity pool example",
   "main": "index.js",
   "scripts": {
     "test": "node tests",
@@ -10,10 +10,15 @@
     "asbuild": "npm run asbuild:debug && npm run asbuild:release",
     "start": "npx serve ."
   },
-  "author": "c.r.",
+  "keywords": [
+    "soroban",
+    "liquidity",
+    "pool"
+  ],
+  "author": "C.R.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assemblyscript": "^0.22.0"
+    "assemblyscript": "^0.27.5"
   },
   "type": "module",
   "exports": {
