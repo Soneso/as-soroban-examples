@@ -144,5 +144,5 @@ if get_transaction_data.status == GetTransactionStatus.SUCCESS:
     transaction_meta = stellar_xdr.TransactionMeta.from_xdr(
         get_transaction_data.result_meta_xdr
     )
-    result = transaction_meta.v3.tx_result.result.results[0].tr.invoke_host_function_result.success  # type: ignore
+    result = transaction_meta.v3.tx_result.result.results[0].tr.invoke_host_function_result.success[0]  # type: ignore
     print(f"Function result: {result}")

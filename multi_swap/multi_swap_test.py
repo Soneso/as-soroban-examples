@@ -120,7 +120,7 @@ a1_root_invocation = AuthorizedInvocation(
     sub_invocations=[
         AuthorizedInvocation(
             contract_id = token_a_contract_id,
-            function_name = "incr_allow",
+            function_name = "increase_allowance",
             args=[
                 addressA1,  # owner
                 atomic_swap_address,
@@ -302,31 +302,26 @@ tx = (
     .build()
 )
 
-simulate_transaction_data = soroban_server.simulate_transaction(tx)
-print(f"simulated transaction: {simulate_transaction_data}")
-
-print(f"setting footprint and signing transaction...")
-assert simulate_transaction_data.results is not None
-tx.set_footpoint(simulate_transaction_data.results[0].footprint)
+tx = soroban_server.prepare_transaction(tx)
 tx.sign(submitter_kp)
 
-print(f"Signed XDR:\n{tx.to_xdr()}")
+#print(f"Signed XDR:\n{tx.to_xdr()}")
 
 send_transaction_data = soroban_server.send_transaction(tx)
-print(f"sent transaction: {send_transaction_data}")
+#print(f"sent transaction: {send_transaction_data}")
 
 while True:
-    print("waiting for transaction to be confirmed...")
+    #print("waiting for transaction to be confirmed...")
     get_transaction_data = soroban_server.get_transaction(send_transaction_data.hash)
     if get_transaction_data.status != GetTransactionStatus.NOT_FOUND:
         break
     time.sleep(3)
-print(f"transaction: {get_transaction_data}")
+#print(f"transaction: {get_transaction_data}")
 
 if get_transaction_data.status == GetTransactionStatus.SUCCESS:
     assert get_transaction_data.result_meta_xdr is not None
     transaction_meta = stellar_xdr.TransactionMeta.from_xdr(
         get_transaction_data.result_meta_xdr
     )
-    result = transaction_meta.v3.tx_result.result.results[0].tr.invoke_host_function_result.success  # type: ignore
+    result = transaction_meta.v3.tx_result.result.results[0].tr.invoke_host_function_result.success[0]  # type: ignore
     print(f"Function result: {result}")
