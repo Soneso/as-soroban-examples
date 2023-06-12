@@ -18,22 +18,22 @@ soroban_server = SorobanServer(rpc_server_url)
 network_passphrase = Network.FUTURENET_NETWORK_PASSPHRASE
 
 submitter_kp = Keypair.from_secret(
-    "SBORMYR6J6IYKD3ZBJXWB6JQ4XLVTUC66QHU45262JQH4DSF22NFFWNM"
-)  # GA5PTU7GGYXXC7CX5SAES3MQP34IHMOSZMRHHYU5GA6QIJETYU6JNE6Y
+    "SAQVVIROUM6R7USECNPTYDJR4RQH4PJN64TQED6GV6ZZWU54HW476UDG"
+)  # GBOKVCPQDINAJCQY7EA7EH7YADMHTU5RH7LSK3YMQ2IRPGVQOM42ZBRD
 alice_kp = Keypair.from_secret(
-    "SCVJOWNMFJLGM73HIJUC6H3NI6EULKIC3TZU5OQYYPDY6MKQK4N2VZB3"
-)  # GBDVESQUNQZTQ67BS6RVATSIAGYNWNO6JQY4KA6V5WNSZ3KXSEWOCMCL
+    "SCOD3C7T454JBJZRK5X4YA4YC7MHG6NN3J5SEDOOPN2HHFVMBAZZG4JA"
+)  # GD6NH26Z4NPK3TYDG3VZBRHXHYYOEMYDXHTXOP6EIHO56SRZWLIC7QET
 bob_kp = Keypair.from_secret(
-    "SDWZ5QGUDKT3OVB6LYOG4WAYWEE64BYO6WKPNPCDP5QPUZ2EPAQJJIZL"
-)  # GCNTVAJRMHUZUNFTZOICCZUPZN64AU5BNHPITMEYLE5HZPM6IWUBLDI3
+    "SAJNWYJFYSFKCZHPZGC7FTZP7TXXV2NWL6G7EN4RB2IQMFTIG4HIIHZQ"
+)  # GCO4TV6P23OJTFW2ZZZ3RTYUFBQFTSAA6CZKJRYKWIODZNYKKROVBQVC
 atomic_swap_contract_id = (
     sys.argv[1]
 )
 token_a_contract_id = (
-    "721934fe4e1a90e2119e6ca71a71d4661bcf6c96f28fc05476bd7965e4e30006"
+    "c3bd6a005f72c317aacdb9476f49a61b23dc432ac1fd843b35d989ab295d0e0b"
 )
 token_b_contract_id = (
-    "1ffecc2bd64667a400c53e71a9a134d3db245b32472f9e14c9de12d1a0609c63"
+    "2f307e3282a3a5d78d5f2343d8744d26b80686b1a211fb8d7ad3630b2c23d3d4"
 )
 
 source = soroban_server.load_account(submitter_kp.public_key)
@@ -123,12 +123,7 @@ tx = (
     .build()
 )
 
-simulate_transaction_data = soroban_server.simulate_transaction(tx)
-# print(f"simulated transaction: {simulate_transaction_data}")
-
-# print(f"setting footprint and signing transaction...")
-assert simulate_transaction_data.results is not None
-tx.set_footpoint(simulate_transaction_data.results[0].footprint)
+tx = soroban_server.prepare_transaction(tx)
 tx.sign(submitter_kp)
 
 # print(f"Signed XDR:\n{tx.to_xdr()}")

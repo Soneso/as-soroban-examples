@@ -12,7 +12,7 @@ async function startTest() {
     let swap_contract_id = await deploy_swap_contract(submitterSeed);
     await pipInstallPythonSDK();
     let result = await pySwap(swap_contract_id);
-    assert.equal('Function result: <SCVal [type=1]>', result); // returns void.
+    assert.equal(true, result.includes('Function result: [<stellar_sdk.xdr.sc_val.SCVal'));
     console.log(`test atomic swap -> OK`);
 } 
 
