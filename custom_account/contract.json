@@ -1,0 +1,32 @@
+{
+    "name": "custom account",
+    "version": "0.0.1",
+    "description": "soroban custom account example",
+    "host_functions_version": 37,
+    "functions": [
+        {
+            "name" : "init",
+            "arguments": [
+                {"name": "owners", "type": "vec[bytesN[32]]"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "add_limit",
+            "arguments": [
+                {"name": "token", "type": "bytesN[32]"},
+                {"name": "limit", "type": "i128"}
+            ],
+            "returns" : "void"
+        },
+        {
+            "name" : "__check_auth",
+            "arguments": [
+                {"name": "signature_payload", "type": "bytesN[32]"},
+                {"name": "signatures", "type": "vec[val]"},
+                {"name": "auth_context", "type": "vec[val]"}
+            ],
+            "returns" : "result[tuple(),udt(AccError)]"
+        }
+    ]
+}
