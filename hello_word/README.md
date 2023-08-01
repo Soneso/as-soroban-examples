@@ -8,7 +8,7 @@ The [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.8.0 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -67,9 +67,9 @@ The concrete types must also be defined in the [contract spec](https://github.co
 ```json
 {
     "name": "hello word",
-    "version": "0.1.8",
+    "version": "0.2.0",
     "description": "my first contract",
-    "host_functions_version": 32,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "hello",

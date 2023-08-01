@@ -8,7 +8,7 @@ The [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.8.0 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -46,21 +46,21 @@ increment/assembly/index.ts
 ```
 
 ```typescript
-import { toU32, fromU32, U32Val } from "as-soroban-sdk/lib/value";
+import { toU32, fromU32, U32Val, 
+storageTypePersistent, fromVoid } from "as-soroban-sdk/lib/value";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 
 export function increment(): U32Val {
 
   let key = "COUNTER";
   var counter = 0;
-  if (ledger.hasDataFor(key)) {
-    let dataObj = ledger.getDataFor(key);
+  if (ledger.hasDataFor(key, storageTypePersistent)) {
+    let dataObj = ledger.getDataFor(key, storageTypePersistent);
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.putDataFor(key, fromU32(counter));
-  return ledger.getDataFor(key);
-
+  ledger.putDataFor(key, fromU32(counter), storageTypePersistent, fromVoid());
+  return ledger.getDataFor(key, storageTypePersistent);
 }
 ```
 
@@ -77,9 +77,9 @@ The concrete types must also be defined in the [contract spec](https://github.co
 ```json
 {
     "name": "increment",
-    "version": "0.1.8",
+    "version": "0.2.0",
     "description": "increment smart contract example using storage",
-    "host_functions_version": 32,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "increment",
@@ -96,9 +96,9 @@ it loads it, decodes it to `u32` and assigns its value to the `counter` variable
 ```typescript
 let key = "COUNTER";
 var counter = 0;
-if (ledger.hasDataFor(key)) {
-    let dataObj = ledger.getDataFor(key);
-    counter = toU32(dataObj);
+if (ledger.hasDataFor(key, storageTypePersistent)) {
+  let dataObj = ledger.getDataFor(key, storageTypePersistent);
+  counter = toU32(dataObj);
 }
 ```
 
@@ -106,12 +106,12 @@ Next, the counter is incremented and stored back into the ledger. To store the c
 
 ```typescript
 counter += 1;
-ledger.putDataFor(key, fromU32(counter));
+ledger.putDataFor(key, fromU32(counter), storageTypePersistent, fromVoid());
 ```
 
 Finally the function loads the counter from storage again and returns it.
 
 ```typescript
-return ledger.getDataFor(key);
+return ledger.getDataFor(key, storageTypePersistent);
 ```
 To store and load data from storage, the contract uses the helper functions provided by the [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk).

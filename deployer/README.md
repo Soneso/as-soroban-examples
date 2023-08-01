@@ -8,7 +8,7 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.8.0 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 ### Install the `add` contract
@@ -76,14 +76,16 @@ deployer/assembly/index.ts
 ```
 
 ```typescript
-import {BytesObject, I32Val, RawVal, SmallSymbolVal, VecObject} from 'as-soroban-sdk/lib/value';
+import {BytesObject, I32Val, SmallSymbolVal, VecObject} from 'as-soroban-sdk/lib/value';
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as contract from "as-soroban-sdk/lib/contract";
+import * as context from "as-soroban-sdk/lib/context";
 
 export function deploy(wasm_hash: BytesObject, salt: BytesObject, 
                       fn_name: SmallSymbolVal, args:VecObject): I32Val {
 
-  let id = ledger.deployContract(wasm_hash, salt);
+  let currentContractAddress = context.getCurrentContractAddress();
+  let id = ledger.deployContract(currentContractAddress, wasm_hash, salt);
   return contract.callContract(id, fn_name, args);
 }
 ```
@@ -97,7 +99,7 @@ The contract calls the SDK function `ledger.deployContract(...)` with the obtain
 The contract ID is deterministic and is derived from the deploying contract and the salt.
 
 ```typescript
-let id = ledger.deployContract(wasm_hash, salt);
+let id = ledger.deployContract(currentContractAddress, wasm_hash, salt);
 ```
 
 Next, deployer contract invokes the `add` contract's function and passes through the arguments.
@@ -114,9 +116,9 @@ The concrete argument and return types of this example deployer contract are def
 ```json
 {
     "name": "deploy",
-    "version": "0.1.8",
+    "version": "0.2.0",
     "description": "example deploys and calls a contract",
-    "host_functions_version": 32,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "deploy",

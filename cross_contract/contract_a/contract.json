@@ -1,8 +1,8 @@
 {
     "name": "contract_a",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "soroban contract to be called by another contract",
-    "host_functions_version": 37,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "add",

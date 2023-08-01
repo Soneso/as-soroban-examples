@@ -4,12 +4,11 @@ import * as contract from "as-soroban-sdk/lib/contract";
 
 export function callc(): I32Val {
 
-  let contractId = "e6dd1c7617ec7b64ed91f444b6eaa46df751c7782a9d7697954decdf271a41ce";
+  let contractId = "9b116b40b2e409bba868455348fb65b9120894ded72b9e42442c067b1cb7294d";
   let func = "add";
   let args = new Vec();
   args.pushBack(fromI32(3));
   args.pushBack(fromI32(12));
-
   return contract.callContractById(contractId, func, args.getHostObject());
 
 }

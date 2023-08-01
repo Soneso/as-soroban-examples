@@ -5,9 +5,6 @@ exec("soroban contract invoke --id 1 --wasm build/release.wasm -- add --a 1 --b 
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
-    }
     assert.equal(stdout, 6);
     console.log(`OK`);
 });

@@ -2,6 +2,9 @@
 
 The [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token) demonstrates how to write a token contract that implements the Stellar [token interface](https://soroban.stellar.org/docs/reference/interfaces/token-interface).
 
+## Outdated
+
+This example is outdated and needs to be updated to support soroban preview version 10. It currently supports soroban preview version 9.
 
 ## Run the example
 

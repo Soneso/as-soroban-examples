@@ -8,7 +8,7 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.8.0 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 The example contains two contracts. To run them first navigate in the directory of the first contract and build the contract (`contract_a`):
@@ -34,9 +34,21 @@ soroban contract deploy --wasm contract_a/build/release.wasm
 You should see an output similar to this:
 
 ```sh
-4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058
+CCNRC22AWLSATO5INBCVGSH3MW4RECEU33LSXHSCIQWAM6Y4W4UU3OPO
 ```
-representing the id of the contract that has been deployed.
+representing the address of the contract that has been deployed as a strkey.
+
+First we need to convert the strkey to a hex contract id:
+
+```
+https://rpciege.com/convert/%3Chex-or-strkey%3E
+```
+
+The result contract id is:
+
+```sh
+9b116b40b2e409bba868455348fb65b9120894ded72b9e42442c067b1cb7294d
+```
 
 Next navigate to the dicrectory of the second contract (`contract_b`) and install the sdk.
 
@@ -49,7 +61,7 @@ Before we build the contract_b, we need to replace the contract id to be called 
 Open the contract_b/assembly/index.ts file and replace the contract id in the code. Paste the contract id of `contract_a` that you received as you deployed it.
 
 ```typescript
-let contractId = "4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058";
+let contractId = "9b116b40b2e409bba868455348fb65b9120894ded72b9e42442c067b1cb7294d";
 ```
 
 Next, build `contract_b`:
@@ -96,12 +108,11 @@ import * as contract from "as-soroban-sdk/lib/contract";
 
 export function callc(): I32Val {
 
-  let contractId = "4014747356d8a39399d6d43609504f0f18c6a127fcaa6fdddcdfa3986bd65058";
+  let contractId = "9b116b40b2e409bba868455348fb65b9120894ded72b9e42442c067b1cb7294d";
   let func = "add";
   let args = new Vec();
   args.pushBack(fromI32(3));
   args.pushBack(fromI32(12));
-
   return contract.callContractById(contractId, func, args.getHostObject());
 
 }

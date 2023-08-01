@@ -6,10 +6,10 @@ export function logging(): VoidVal {
 
   context.logStr("Hello, today is a sunny day!");
 
-  let args = new Vec();
-  args.pushBack(fromI32(30));
-  args.pushBack(fromSmallSymbolStr("celsius"));
-  context.logFtm("We have {} degrees {}!", args);
+  let values = new Vec();
+  values.pushBack(fromI32(30));
+  values.pushBack(fromSmallSymbolStr("celsius"));
+  context.log("Temperature today:", values);
 
   return fromVoid();
 }

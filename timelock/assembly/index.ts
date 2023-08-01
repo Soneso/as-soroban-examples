@@ -2,7 +2,9 @@ import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, isU64Small, fromU64, toU64Small, toU64} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, 
+  RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, 
+  isU64Small, toU64Small, toU64, storageTypePersistent} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 
 // This contract demonstrates 'timelock' concept and implements a
@@ -37,7 +39,7 @@ enum ERR_CODES {
 export function deposit(from: AddressObject, token: BytesObject, amount: I128Val, claimants: VecObject, 
   lock_kind: RawVal, timestamp: U64Object): RawVal {
     
-    if (ledger.hasDataFor(S_INIT)) {
+    if (ledger.hasDataFor(S_INIT, storageTypePersistent)) {
       context.failWithErrorCode(ERR_CODES.ALREADY_INITIALIZED);
     }
 
@@ -64,12 +66,12 @@ export function deposit(from: AddressObject, token: BytesObject, amount: I128Val
     claimableBlance.pushBack(lock_kind); // index 2
     claimableBlance.pushBack(timestamp); // index 3
     claimableBlance.pushBack(claimants); // index 4
-    ledger.putDataFor(S_BALANCE, claimableBlance.getHostObject());
+    ledger.putDataFor(S_BALANCE, claimableBlance.getHostObject(), storageTypePersistent, fromVoid());
 
     // Mark contract as initialized to prevent double-usage.
     // Note, that this is just one way to approach initialization - it may
     // be viable to allow one contract to manage several claimable balances.
-    ledger.putDataFor(S_INIT, fromU32(1));
+    ledger.putDataFor(S_INIT, fromU32(1), storageTypePersistent, fromVoid());
 
     return fromVoid()
 }
@@ -87,12 +89,12 @@ export function claim(claimant: AddressObject): RawVal {
 
  
   // Make sure the contract has already been initialized and not already claimed.
-  if (!ledger.hasDataFor(S_BALANCE)) {
+  if (!ledger.hasDataFor(S_BALANCE, storageTypePersistent)) {
     context.failWithErrorCode(ERR_CODES.NO_BALANCE);
   }
  
   // Load the data from storage.
-  let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE));
+  let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE, storageTypePersistent));
   let lock_kind = claimableBalance.get(2);
   var timestamp = claimableBalance.get(3);
   
@@ -138,7 +140,7 @@ export function claim(claimant: AddressObject): RawVal {
   contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
   
   // Remove the balance entry to prevent any further claims.
-  ledger.delDataFor(S_BALANCE);
+  ledger.delDataFor(S_BALANCE, storageTypePersistent);
 
   return fromVoid()
   

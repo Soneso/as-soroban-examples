@@ -3,6 +3,10 @@
 The [atomic swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap) swaps two tokens between two authorized parties atomically while following the limits they set.
 This example demonstrates advanced usage of Soroban auth framework and assumes the reader is familiar with the [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth) and with [Soroban token usage](https://soroban.stellar.org/docs/reference/interfaces/token-interface). See also [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token)
 
+## Outdated
+
+This example is outdated and needs to be updated to support soroban preview version 10. It currently supports soroban preview version 9.
+
 ## Code
 
 You can find the code in:

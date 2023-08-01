@@ -8,7 +8,7 @@ The [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/lo
 To run a contract in the sandbox, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.8.0 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory install the sdk. Then build the contract:
@@ -29,8 +29,8 @@ soroban contract invoke --wasm build/release.wasm --id 10 -- logging
 
 You should see the output:
 ```sh
-#0: debug: Hello, today is a sunny day!
-#1: debug: We have I32(30) degrees Symbol(celsius)!
+INFO soroban_cli::log::event: log="[Diagnostic Event] contract:..., topics:[log], data:\"Hello, today is a sunny day!\""
+INFO soroban_cli::log::event: log="[Diagnostic Event] contract:..., topics:[log], data:[\"Temperature today:\", 30, celsius]"
 ```
 
 ## Code
@@ -50,10 +50,10 @@ export function logging(): VoidVal {
 
   context.logStr("Hello, today is a sunny day!");
 
-  let args = new Vec();
-  args.pushBack(fromI32(30));
-  args.pushBack(fromSmallSymbolStr("celsius"));
-  context.logFtm("We have {} degrees {}!", args);
+  let values = new Vec();
+  values.pushBack(fromI32(30));
+  values.pushBack(fromSmallSymbolStr("celsius"));
+  context.log("Temperature today:", values);
 
   return fromVoid();
 }
@@ -63,9 +63,9 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/logging
 
 ## How it works
 
-The `context.log_str` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), logs a string. Any logs that occur during execution are outputted to stdout in soroban-cli.
+The `context.logStr` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), logs a string. Any logs that occur during execution are outputted to stdout in soroban-cli.
 
-The `context.log_ftm` method lets the host build a string from the format string, and a list of arguments. Arguments are substituted wherever the {} value appears in the format string.
+The `context.log` method lets you log a string and a list of values.
 
 The arguments must be passed in a Vector containing raw values. Please read more details about raw values in [CAP-46](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0046.md#host-value-type).
 

@@ -1,6 +1,6 @@
 # Auth
 
-The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth) demonstrates how to implement authentication and authorization using the [Soroban Host-managed auth framework](https://soroban.stellar.org/docs/learn/authorization). This example is an extension of the [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment).
+The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth) demonstrates how to implement authentication and authorization using the [Soroban Host-managed auth framework](https://soroban.stellar.org/docs/fundamentals-and-concepts/authorization). This example is an extension of the [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment).
 
 
 ## Run the example
@@ -8,7 +8,7 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.8.0 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -99,7 +99,8 @@ auth/assembly/index.ts
 It contains the function `auth()`, which stores a per-Address counter that can only be incremented by the owner of that Address:
 
 ```typescript
-import {AddressObject, MapObject, RawVal, fromU32, toU32} from 'as-soroban-sdk/lib/value';
+import {AddressObject, MapObject, RawVal, fromU32, 
+fromVoid, storageTypePersistent, toU32} from 'as-soroban-sdk/lib/value';
 import {Map} from 'as-soroban-sdk/lib/map';
 import * as ledger from 'as-soroban-sdk/lib/ledger';
 import * as address from 'as-soroban-sdk/lib/address';
@@ -114,14 +115,14 @@ export function auth(user: AddressObject, value: RawVal): MapObject {
 
   var counter = 0;
   
-  if (ledger.hasData(user)) {
-    let dataValue = ledger.getData(user);
+  if (ledger.hasData(user, storageTypePersistent)) {
+    let dataValue = ledger.getData(user, storageTypePersistent);
     counter = toU32(dataValue);
   }
 
   counter += toU32(value);
   let counterVal = fromU32(counter);
-  ledger.putData(user, counterVal);
+  ledger.putData(user, counterVal, storageTypePersistent, fromVoid());
 
   let map = new Map();
   map.put(user, counterVal);
@@ -142,5 +143,5 @@ Address has another, more extensible version of this method called `requireAuthF
 
 ## Further reading
 
-[Authorization documentation](https://soroban.stellar.org/docs/learn/authorization) provides more details on how Soroban auth framework works.
+[Authorization documentation](https://soroban.stellar.org/docs/fundamentals-and-concepts/authorization) provides more details on how Soroban auth framework works.
 [Atomic Swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap) demonstrates advanced usage of Soroban auth framework.

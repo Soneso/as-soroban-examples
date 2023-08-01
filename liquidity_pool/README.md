@@ -2,6 +2,10 @@
 
 The [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/main/liquidity_pool) demonstrates how to write a constant product liquidity pool contract.
 
+## Outdated
+
+This example is outdated and needs to be updated to support soroban preview version 10. It currently supports soroban preview version 9.
+
 ## Run the example
 
 First, install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).

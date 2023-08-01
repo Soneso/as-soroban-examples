@@ -1,6 +1,6 @@
 {
   "name": "contract_a",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "a soroban contract to be called by another contract",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.1"
+    "as-soroban-sdk": "^0.2.3"
   }
 }
