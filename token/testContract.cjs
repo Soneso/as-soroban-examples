@@ -316,8 +316,12 @@ async function create_token(admin_id) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("CREATE_TOKEN -stderr: " + stderr);
-    console.log("CREATE_TOKEN -stdout: " + stdout);
+    if (stderr) {
+        console.log("CREATE_TOKEN -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("CREATE_TOKEN -stdout: " + stdout);
+    }
 }
 
 async function create_token_err(admin, decimal, err_code) {
@@ -337,8 +341,12 @@ async function mint(admin_name, to, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("MINT -stderr: " + stderr);
-    console.log("MINT -stdout: " + stdout);
+    if (stderr) {
+        console.log("MINT -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("MINT -stdout: " + stdout);
+    }
 }
 
 async function getBalance(user) {
@@ -348,8 +356,13 @@ async function getBalance(user) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("GET_BALANCE -stderr: " + stderr);
-    console.log("GET_BALANCE -stdout: " + stdout);
+    if (stderr) {
+        console.log("GET_BALANCE -stderr: " + stderr);
+    }
+
+    if (stdout) {
+        console.log("GET_BALANCE -stdout: " + stdout);
+    }  
     return stdout.trim();
 }
 
@@ -360,8 +373,12 @@ async function approve(from_name, from_id, spender, amount, expirationLedger) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("APPROVE -stderr: " + stderr);
-    console.log("APPROVE -stdout: " + stdout);
+    if (stderr) {
+        console.log("APPROVE -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("APPROVE -stdout: " + stdout);
+    }
 }
 
 async function getAllowance(from, spender) {
@@ -371,8 +388,12 @@ async function getAllowance(from, spender) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("ALLOWANCE -stderr: " + stderr);
-    console.log("ALLOWANCE -stdout: " + stdout);
+    if (stderr) {
+        console.log("ALLOWANCE -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("ALLOWANCE -stdout: " + stdout);
+    }
     return stdout.trim();
 }
 
@@ -383,8 +404,12 @@ async function transfer(from_name, from_id, to, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("TRANSFER -stderr: " + stderr);
-    console.log("TRANSFER -stdout: " + stdout);
+    if (stderr) {
+        console.log("TRANSFER -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("TRANSFER -stdout: " + stdout);
+    }
 }
 
 async function transfer_err(from_name, from_id, to, amount, err_code) {
@@ -394,8 +419,12 @@ async function transfer_err(from_name, from_id, to, amount, err_code) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("TRANSFER_ERR -stderr: " + stderr);
-    console.log("TRANSFER_ERR -stdout: " + stdout);
+    if (stderr) {
+        console.log("TRANSFER_ERR -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("TRANSFER_ERR -stdout: " + stdout);
+    }
     assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
@@ -406,9 +435,12 @@ async function transfer_from(spender_name, spender_id, from, to, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-
-    console.log("TRANSFER_FROM -stderr: " + stderr);
-    console.log("TRANSFER_FROM -stdout: " + stdout);
+    if (stderr) {
+        console.log("TRANSFER_FROM -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("TRANSFER_FROM -stdout: " + stdout);
+    }
 }
 
 async function transfer_from_err(spender_name, spender_id, from, to, amount, err_code) {
@@ -428,8 +460,12 @@ async function set_admin(admin_name, newAdmin) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("SET_ADMIN -stderr: " + stderr);
-    console.log("SET_ADMIN -stdout: " + stdout);
+    if (stderr) {
+        console.log("SET_ADMIN -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("SET_ADMIN -stdout: " + stdout);
+    }
 }
 
 async function set_authorized(admin_name, id, authorize) {
@@ -439,8 +475,12 @@ async function set_authorized(admin_name, id, authorize) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("SET_AUTH -stderr: " + stderr);
-    console.log("SET_AUTH -stdout: " + stdout);
+    if (stderr) {
+        console.log("SET_AUTH -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("SET_AUTH -stdout: " + stdout);
+    }
 }
 
 async function getAuthorized(user) {
@@ -450,8 +490,12 @@ async function getAuthorized(user) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("GET_AUTH -stderr: " + stderr);
-    console.log("GET_AUTH -stdout: " + stdout);
+    if (stderr) {
+        console.log("GET_AUTH -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("GET_AUTH -stdout: " + stdout);
+    }
 
     return stdout.trim();
 }
@@ -463,8 +507,12 @@ async function clawback(admin_name, from, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("CLAWBACK -stderr: " + stderr);
-    console.log("CLAWBACK -stdout: " + stdout);
+    if (stderr) {
+        console.log("CLAWBACK -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("CLAWBACK -stdout: " + stdout);
+    }
 }
 
 async function burn_from(spender_name, spender_id, from, amount) {
@@ -474,8 +522,12 @@ async function burn_from(spender_name, spender_id, from, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("BURN_FROM -stderr: " + stderr);
-    console.log("BURN_FROM -stdout: " + stdout);
+    if (stderr) {
+        console.log("BURN_FROM -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("BURN_FROM -stdout: " + stdout);
+    }
 }
 
 async function burn(from_name, from_id, amount) {
@@ -485,10 +537,12 @@ async function burn(from_name, from_id, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log("BURN -stderr: " + stderr);
-    console.log("BURN -stdout: " + stdout);
+    if (stderr) {
+        console.log("BURN -stderr: " + stderr);
+    }
+    if (stdout) {
+        console.log("BURN -stdout: " + stdout);
+    }
 }
-
-
 
 startTest()
