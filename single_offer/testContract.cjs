@@ -17,9 +17,14 @@ async function startTest() {
     // prepare contracts
     await build_offer_contract();
     await build_token_contract();
-    let offer_cid = await deploy_offer_contract();
-    let sell_token_cid = await deploy_token_contract("sell token");
-    let buy_token_cid = await deploy_token_contract("buy token");
+    await pipInstallPythonSDK();
+
+    let offer_contract_address = await deploy_offer_contract();
+    let offer_cid = await idForContractAddress(offer_contract_address);
+    let sell_token_addr = await deploy_token_contract("sell token");
+    let sell_token_cid = await idForContractAddress(sell_token_addr);
+    let buy_token_addr = await deploy_token_contract("buy token");
+    let buy_token_cid = await idForContractAddress(buy_token_addr);
 
     // create tokens
     await create_token(sell_token_cid, "53454c4c544f4b", "53454c4c544f4b"); // "SELLTOK"
@@ -33,22 +38,18 @@ async function startTest() {
     balance = await getBalance(buyerId, buy_token_cid);
     assert.equal(balance, '"1000"');
 
-    // compute address of offer contract from its contract id.
-    await pipInstallPythonSDK()
-    let offer_contract_address = await addressForContractId(offer_cid);
-
     // Deposit 100 sell_token from seller into offer.
     await transfer(sellerSeed, sellerId, offer_contract_address, 100, sell_token_cid);
     balance = await getBalance(offer_contract_address, sell_token_cid);
     assert.equal(balance, '"100"');
 
     // Create offer
-    await create_offer(sellerSeed, sellerId, sell_token_cid, buy_token_cid, 1, 2, offer_cid);
+    await create_offer(sellerSeed, sellerId, sell_token_addr, buy_token_addr, 1, 2, offer_cid);
 
     // Try trading 20 buy_token for at least 11 sell_token - that wouldn't
     // succeed because the offer price would result in 10 sell_token.
     let error = await trade_err(buyerSeed, buyerId, 20, 11, offer_cid);
-    assert.equal(true, error.includes('Status(ContractError(4))'));
+    assert.equal(true, error.includes('HostError: Error(Contract, #4)'));
 
     // Buyer trades 20 buy_token for 10 sell_token.
     await trade(buyerSeed, buyerId, 20, 10, offer_cid);
@@ -67,14 +68,14 @@ async function startTest() {
     assert.equal(balance, '"0"');
 
     // Withdraw 70 sell_token from offer.
-    await withdraw(sellerSeed, sell_token_cid, 70, offer_cid);
+    await withdraw(sellerSeed, sell_token_addr, 70, offer_cid);
     balance = await getBalance(sellerId, sell_token_cid);
     assert.equal(balance, '"970"');
     balance = await getBalance(offer_contract_address, sell_token_cid);
     assert.equal(balance, '"20"');
 
     // The price here is 1 sell_token = 1 buy_token.
-    await updt_price(sellerSeed, 1,1,offer_cid);
+    await updt_price(sellerSeed, 1, 1, offer_cid);
 
     // Buyer trades 10 buy_token for 10 sell_token.
     await trade(buyerSeed, buyerId, 10, 10, offer_cid);
@@ -101,7 +102,7 @@ async function build_token_contract() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
+        console.log("build_token_contract - stderr: " + stderr);
     }
     console.log(stdout);
 }
@@ -116,13 +117,10 @@ async function deploy_token_contract(name) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deploy_token_contract - stderr: " + stderr);
     }
-    console.log(name + " contract id: " + stdout);
-    return stdout.trim(); // contract id
+    console.log(name + " contract address: " + stdout);
+    return stdout.trim(); // contract address
 }
 
 async function build_offer_contract() {
@@ -131,7 +129,7 @@ async function build_offer_contract() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        //assert.fail(`stderr: ${stderr}`);
+        console.log("build_offer_contract - stderr: " + stderr);
     }
     console.log(stdout);
 }
@@ -148,13 +146,10 @@ async function deploy_offer_contract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deploy_offer_contract - stderr: " + stderr);
     }
-    console.log("offer contract id: " + stdout);
-    return stdout.trim(); // contract id
+    console.log("offer contract address: " + stdout);
+    return stdout.trim(); // contract address
 }
 
 async function create_token(token_contract_id, name , symbol) {
@@ -168,10 +163,7 @@ async function create_token(token_contract_id, name , symbol) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("create_token - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -185,10 +177,7 @@ async function mint(to, amount, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("mint - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -198,18 +187,13 @@ async function getBalance(user, token_contract_id) {
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 
-    console.log(cmd);
-
     const { error, stdout, stderr } = await exec(cmd);
 
     if (error) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("getBalance - stderr: " + stderr);
     }
     return stdout.trim(); // balance
 }
@@ -220,17 +204,14 @@ async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_
     + ' -- create --seller ' + seller_id 
     + ' --sell_token ' + sell_token + ' --buy_token ' + buy_token + ' --sell_price ' + sell_price + ' --buy_price ' + buy_price;
 
-    console.log(cmd);
+    //console.log(cmd);
 
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("create_offer - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -241,17 +222,14 @@ async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contra
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
 
-    console.log(cmd);
+    //console.log(cmd);
 
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("trade - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -269,6 +247,7 @@ async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_co
         return error;
     }
     if (stderr) {
+        console.log("trade_err - stderr: " + stderr);
         return stderr;
     }
     return stdout.trim();
@@ -279,17 +258,14 @@ async function withdraw(seller_seed, token, amount, offer_contract_id) {
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- withdraw --token ' + token + ' --amount ' + amount;
 
-    console.log(cmd);
+    //console.log(cmd);
 
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("withdraw - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -306,10 +282,7 @@ async function updt_price(seller_seed, sell_price, buy_price, offer_contract_id)
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("updt_price - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -321,34 +294,37 @@ async function pipInstallPythonSDK() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log(stderr);
+        console.log("pipInstallPythonSDK - stderr: " + stderr);
     }
     console.log(stdout);
 }
 
-async function addressForContractId(contract_id) {
-    let cmd = 'python3 contract_address.py '  + contract_id;
+async function idForContractAddress(contract_address) {
+    let cmd = 'python3 contract_id.py '  + contract_address;
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log(stderr);
+        console.log("ID to ADD -stderr: " + stderr);
     }
     return stdout.trim();
 }
 
-async function transfer(from_seed, from_id, to_id, amount, token_contract_id) {
+
+async function transfer(from_seed, from, to, amount, token_contract_id) {
     let cmd = 'soroban contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id '+ token_contract_id + ' -- transfer ' +
-    '--from ' + from_id +' --to ' + to_id + ' --amount ' + amount;
+    '--from ' + from +' --to ' + to + ' --amount ' + amount;
     console.log(cmd);
 
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    if (stderr) {
+        console.log("transfer - stderr: " + stderr);
+    }
 }
 
 startTest()

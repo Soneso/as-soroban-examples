@@ -37,7 +37,7 @@ enum ERR_CODE {
  * @param buy_price Seller-defined price of the buy token in arbitrary units.
  * @returns void
  */
-export function create(seller: AddressObject, sell_token: BytesObject, buy_token:BytesObject, sell_price:U32Val, buy_price:U32Val): VoidVal {
+export function create(seller: AddressObject, sell_token: AddressObject, buy_token:AddressObject, sell_price:U32Val, buy_price:U32Val): VoidVal {
   if (has_offer()) {
     context.failWithErrorCode(ERR_CODE.OFFER_ALREADY_EXISTS);
   }
@@ -121,7 +121,7 @@ export function trade(buyer: AddressObject, buy_token_amount: I128Val, min_sell_
 // This is intentionally flexible so that the seller can withdraw any
 // outstanding balance of the contract (in case if they mistakenly transferred wrong token to it).
 // Must be authorized by seller.
-export function withdraw(token: BytesObject, amount: I128Val) : VoidVal {
+export function withdraw(token: AddressObject, amount: I128Val) : VoidVal {
 
     // Load the offer
     if (!has_offer()) {

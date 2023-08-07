@@ -1,15 +1,15 @@
 {
     "name": "single offer",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "single offer contract demo",
-    "host_functions_version": 37,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "create",
             "arguments": [
                 {"name": "seller", "type": "address"},
-                {"name": "sell_token", "type": "bytes"},
-                {"name": "buy_token", "type": "bytes"},
+                {"name": "sell_token", "type": "address"},
+                {"name": "buy_token", "type": "address"},
                 {"name": "sell_price", "type": "u32"},
                 {"name": "buy_price", "type": "u32"}
             ],
@@ -27,7 +27,7 @@
         {
             "name" : "withdraw",
             "arguments": [
-                {"name": "token", "type": "bytes"},
+                {"name": "token", "type": "address"},
                 {"name": "amount", "type": "i128"}
             ],
             "returns" : "void"

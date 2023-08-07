@@ -189,7 +189,6 @@ async function testDoubleClaimNotPossible(timelock_contract_id, token_contract_i
     let error = await claim(claimant2_id, claimant2_seed, timelock_contract_id);
     console.log(error);
     assert.equal(true, error.includes('HostError: Error(Contract, #3)'));
-    //assert.equal(true, error.includes('Status(ContractError(3))'));
     console.log(`test double claim not possible -> OK`);
 }
 
@@ -204,7 +203,6 @@ async function testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_co
     let error = await claim(claimant2_id, claimant2_seed, timelock_contract_id);
     console.log(error);
     assert.equal(true, error.includes('HostError: Error(Contract, #4)'));
-    //assert.equal(true, error.includes('Status(ContractError(4))'));
     console.log(`test claim out of timebound not possible -> OK`);
 }
 
@@ -218,7 +216,6 @@ async function testDepositAfterClaimNotPossible(timelock_contract_id, token_cont
     now = Math.floor(Date.now() / 1000);
     let error = await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
     assert.equal(true, error.includes('HostError: Error(Contract, #1)'));
-    //assert.equal(true, error.includes('Status(ContractError(1))'));
 
     console.log(`test deposit after claim not possiblee -> OK`);
 }
