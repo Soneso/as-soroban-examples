@@ -1,27 +1,27 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import { BytesObject, RawVal } from "as-soroban-sdk/lib/value";
+import { BytesObject, RawVal, fromVoid, storageTypePersistent } from "as-soroban-sdk/lib/value";
 import { S_DECIMALS, S_NAME, S_SYMBOL} from "./util";
 
 export function read_decimal(): RawVal {
-    return ledger.getDataFor(S_DECIMALS);
+    return ledger.getDataFor(S_DECIMALS, storageTypePersistent);
 }
 
 export function write_decimal(d: RawVal): void {
-    ledger.putDataFor(S_DECIMALS, d);
+    ledger.putDataFor(S_DECIMALS, d, storageTypePersistent, fromVoid());
 }
 
 export function read_name(): BytesObject {
-    return ledger.getDataFor(S_NAME);
+    return ledger.getDataFor(S_NAME, storageTypePersistent);
 }
 
 export function write_name(n: BytesObject): void {
-    ledger.putDataFor(S_NAME, n);
+    ledger.putDataFor(S_NAME, n, storageTypePersistent, fromVoid());
 }
 
 export function read_symbol(): BytesObject {
-    return ledger.getDataFor(S_SYMBOL);
+    return ledger.getDataFor(S_SYMBOL, storageTypePersistent);
 }
 
 export function write_symbol(s: BytesObject): void {
-    ledger.putDataFor(S_SYMBOL, s);
+    ledger.putDataFor(S_SYMBOL, s, storageTypePersistent, fromVoid());
 }

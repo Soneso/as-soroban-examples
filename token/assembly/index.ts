@@ -1,13 +1,16 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import { ERR_CODE } from "./util";
-import { RawVal, AddressObject, BytesObject, fromVoid, toU32, I128Val, fromBool, toBool, isU32, VoidVal, U32Val} from "as-soroban-sdk/lib/value";
+import { RawVal, AddressObject, BytesObject, fromVoid, toU32, I128Val, fromBool, toBool, isU32, VoidVal, U32Val, fromU32} from "as-soroban-sdk/lib/value";
 import { has_administrator, read_administrator, write_administrator } from "./admin";
 import { read_decimal, read_name, read_symbol, write_decimal, write_name, write_symbol } from "./metadata";
 import { read_allowance, spend_allowance, write_allowance } from "./allowance";
-import { ev_burn, ev_claw, ev_d_allow, ev_i_allow, ev_mint, ev_s_admin, ev_s_auth, ev_trans } from "./event";
+import { ev_burn, ev_claw, ev_approve, ev_mint, ev_s_admin, ev_s_auth, ev_trans } from "./event";
 import { is_authorized, read_balance, receive_balance, spend_balance, write_authorization } from "./balance";
-import { isNegative, i128lt, i128sub, i128add } from "as-soroban-sdk/lib/val128";
+import { isNegative } from "as-soroban-sdk/lib/val128";
+import { bump_current_contract_instance_and_code } from "as-soroban-sdk/lib/env";
+
+const INSTANCE_BUMP_AMOUNT = 34560; // 2 days
 
 export function initialize(admin: AddressObject, decimal: U32Val, name:BytesObject, symbol:BytesObject): VoidVal {
     if (has_administrator()) {
@@ -27,49 +30,37 @@ export function initialize(admin: AddressObject, decimal: U32Val, name:BytesObje
 }
 
 export function allowance(from: AddressObject, spender:AddressObject): I128Val {
-  return read_allowance(from, spender);
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+  return read_allowance(from, spender).get(0);
 }
 
-export function increase_allowance(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
+export function approve(from: AddressObject, spender:AddressObject, amount: I128Val, expiration_ledger:U32Val): VoidVal {
 
   address.requireAuth(from);
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 
-  let allowance = read_allowance(from, spender);
-  write_allowance(from, spender, i128add(allowance, amount));
-  ev_i_allow(from, spender, amount);
-  return fromVoid();
-}
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
 
-export function decrease_allowance(from: AddressObject, spender:AddressObject, amount: I128Val): VoidVal {
+  write_allowance(from, spender, amount, expiration_ledger);
+  ev_approve(from, spender, amount, expiration_ledger);
 
-  address.requireAuth(from);
-  if (isNegative(amount)){
-    context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
-  }
-
-  let allowance = read_allowance(from, spender);
-
-  if (i128lt(allowance, amount)) {
-    context.failWithErrorCode(ERR_CODE.INSUFFICIENT_ALLOWANCE);
-  }
-  
-  write_allowance(from, spender, i128sub(allowance, amount));
-  ev_d_allow(from, spender, amount);
   return fromVoid();
 }
 
 export function balance(id: AddressObject) : I128Val {
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
   return read_balance(id);
 }
 
 export function spendable_balance(id: AddressObject) : I128Val {
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
   return read_balance(id);
 }
 
 export function authorized(id: AddressObject) : RawVal {
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
   return fromBool(is_authorized(id));
 }
 
@@ -79,6 +70,8 @@ export function transfer(from: AddressObject, to: AddressObject, amount:I128Val)
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
+  
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
 
   spend_balance(from, amount);
   receive_balance(to, amount);
@@ -91,6 +84,9 @@ export function transfer_from(spender: AddressObject, from: AddressObject, to: A
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
+  
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   spend_allowance(from, spender, amount);
   spend_balance(from, amount);
   receive_balance(to, amount);
@@ -104,6 +100,8 @@ export function burn(from: AddressObject, amount:I128Val) : VoidVal {
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   spend_balance(from, amount);
   ev_burn(from, amount);
   return fromVoid();
@@ -114,6 +112,9 @@ export function burn_from(spender: AddressObject, from: AddressObject, amount:I1
   if (isNegative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
+
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   spend_allowance(from, spender, amount);
   spend_balance(from, amount);
   ev_burn(from, amount);
@@ -126,6 +127,9 @@ export function clawback(from: AddressObject, amount:I128Val) : VoidVal {
   }
   let admin = read_administrator();
   address.requireAuth(admin);
+
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   spend_balance(from, amount);
   ev_claw(admin, from, amount);
   return fromVoid();
@@ -134,6 +138,9 @@ export function clawback(from: AddressObject, amount:I128Val) : VoidVal {
 export function set_authorized(id: AddressObject, authorize:RawVal) : VoidVal {
   let admin = read_administrator();
   address.requireAuth(admin);
+
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   if (isBoolean(authorize)) {
     write_authorization(id, toBool(authorize));
   } else if (isU32(authorize)) {
@@ -153,6 +160,9 @@ export function mint(to: AddressObject, amount:I128Val) : VoidVal {
   }
   let admin = read_administrator();
   address.requireAuth(admin);
+
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   receive_balance(to, amount);
   ev_mint(admin, to, amount);
   return fromVoid();
@@ -161,6 +171,9 @@ export function mint(to: AddressObject, amount:I128Val) : VoidVal {
 export function set_admin(new_admin: AddressObject) : VoidVal {
   let admin = read_administrator();
   address.requireAuth(admin);
+
+  bump_current_contract_instance_and_code(fromU32(INSTANCE_BUMP_AMOUNT));
+
   write_administrator(new_admin);
   ev_s_admin(admin, new_admin);
   return fromVoid();

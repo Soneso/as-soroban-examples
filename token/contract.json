@@ -1,8 +1,8 @@
 {
     "name": "token",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "token example implementing the token interface",
-    "host_functions_version": 37,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "initialize",
@@ -22,19 +22,12 @@
             "returns" : "i128"
         },
         {
-            "name" : "increase_allowance",
+            "name" : "approve",
             "arguments": [
                 {"name": "from", "type": "address"},
                 {"name": "spender", "type": "address"},
-                {"name": "amount", "type": "i128"}
-            ]
-        },
-        {
-            "name" : "decrease_allowance",
-            "arguments": [
-                {"name": "from", "type": "address"},
-                {"name": "spender", "type": "address"},
-                {"name": "amount", "type": "i128"}
+                {"name": "amount", "type": "i128"},
+                {"name": "expiration_ledger", "type": "u32"}
             ]
         },
         {

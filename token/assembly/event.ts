@@ -1,22 +1,17 @@
-import { AddressObject, fromSmallSymbolStr, RawVal, I128Val } from "as-soroban-sdk/lib/value";
+import { AddressObject, fromSmallSymbolStr, RawVal, I128Val, U32Val } from "as-soroban-sdk/lib/value";
 import * as context from "as-soroban-sdk/lib/context";
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { Sym } from "as-soroban-sdk/lib/sym";
 
-export function ev_i_allow(from: AddressObject, to:AddressObject, amount: I128Val): void {
+export function ev_approve(from: AddressObject, to:AddressObject, amount: I128Val, expirationLedger: U32Val): void {
     let topics = new Vec();
-    topics.pushFront(Sym.fromSymbolString("increase_allowance").getHostObject()); // more than 9 chars
+    topics.pushFront(fromSmallSymbolStr("approve"));
     topics.pushBack(from);
     topics.pushBack(to);
-    context.publishEvent(topics, amount);
-}
-
-export function ev_d_allow(from: AddressObject, to:AddressObject, amount: I128Val): void {
-    let topics = new Vec();
-    topics.pushFront(Sym.fromSymbolString("decrease_allowance").getHostObject());
-    topics.pushBack(from);
-    topics.pushBack(to);
-    context.publishEvent(topics, amount);
+    let data = new Vec();
+    data.pushBack(amount);
+    data.pushBack(expirationLedger);
+    context.publishEvent(topics, data.getHostObject());
 }
 
 export function ev_trans(from: AddressObject, to:AddressObject, amount: I128Val): void {

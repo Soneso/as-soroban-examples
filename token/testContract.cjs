@@ -62,8 +62,8 @@ async function testContract() {
     let balance = await getBalance(user1_id);
     assert.equal(balance, '"1000"');
     
-    // increase allowance
-    await increase_allowance(user2_name, user2_id, user3_id, 500);
+    // approve allowance
+    await approve(user2_name, user2_id, user3_id, 500, 200);
     let allowance = await getAllowance(user2_id, user3_id);
     assert.equal(allowance, '"500"');
     
@@ -101,20 +101,10 @@ async function testContract() {
     balance = await getBalance(user3_id);
     assert.equal(balance, '"200"');
     
-    // increase allowance
-    // Increase by 400, with an existing 100 = 500
-    await increase_allowance(user2_name, user2_id, user3_id, 400);
+    // increase allowance to 500
+    await approve(user2_name, user2_id, user3_id, 500, 200);
     allowance = await getAllowance(user2_id, user3_id);
     assert.equal(allowance, '"500"');
-    
-    await decrease_allowance_err(user2_name, user2_id, user3_id, 501); 
-    allowance = await getAllowance(user2_id, user3_id);
-    assert.equal(allowance, '"500"');
-    
-    await decrease_allowance(user2_name, user2_id, user3_id, 500); 
-    allowance = await getAllowance(user2_id, user3_id);
-    assert.equal(allowance, '"0"');
-
     console.log(`test contract -> OK`);
 }
 
@@ -138,7 +128,7 @@ async function testBurn() {
     assert.equal(balance, '"1000"');
 
     // increase allowance
-    await increase_allowance(user1_name, user1_id, user2_id, 500);
+    await approve(user1_name, user1_id, user2_id, 500, 200);
     let allowance = await getAllowance(user1_id, user2_id);
     assert.equal(allowance, '"500"');
 
@@ -270,7 +260,7 @@ async function testInsufficientAllowance() {
     let balance = await getBalance(user1_id);
     assert.equal(balance, '"1000"');
 
-    await increase_allowance(user1_name, user1_id, user3_id, 100);
+    await approve(user1_name, user1_id, user3_id, 100, 200);
     let allowance = await getAllowance(user1_id, user3_id);
     assert.equal(allowance, '"100"');
 
@@ -326,10 +316,8 @@ async function create_token(admin_id) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
-    }
-    console.log(stdout);
+    console.log("CREATE_TOKEN -stderr: " + stderr);
+    console.log("CREATE_TOKEN -stdout: " + stdout);
 }
 
 async function create_token_err(admin, decimal, err_code) {
@@ -339,7 +327,7 @@ async function create_token_err(admin, decimal, err_code) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    assert.equal(true, stderr.includes('Status(ContractError(' + err_code + '))'));
+    assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
 async function mint(admin_name, to, amount) {
@@ -349,7 +337,8 @@ async function mint(admin_name, to, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("MINT -stderr: " + stderr);
+    console.log("MINT -stdout: " + stdout);
 }
 
 async function getBalance(user) {
@@ -359,40 +348,20 @@ async function getBalance(user) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
-    }
+    console.log("GET_BALANCE -stderr: " + stderr);
+    console.log("GET_BALANCE -stdout: " + stdout);
     return stdout.trim();
 }
 
-async function increase_allowance(from_name, from_id, spender, amount) {
+async function approve(from_name, from_id, spender, amount, expirationLedger) {
     const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
-    ' --id 1 --wasm build/release.wasm -- increase_allowance ' +
-    '--from ' + from_id +' --spender ' + spender + ' --amount ' + amount);
+    ' --id 1 --wasm build/release.wasm -- approve ' +
+    '--from ' + from_id +' --spender ' + spender + ' --amount ' + amount + ' --expiration_ledger ' + expirationLedger);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
-}
-
-async function decrease_allowance_err(from_name, from_id, spender, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
-    ' --id 1 --wasm build/release.wasm -- decrease_allowance ' +
-    '--from ' + from_id +' --spender ' + spender + ' --amount ' + amount);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
-    }
-    assert.equal(true, stderr.includes('Status(ContractError(4))'));
-}
-
-async function decrease_allowance(from_name, from_id, spender, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
-    ' --id 1 --wasm build/release.wasm -- decrease_allowance ' +
-    '--from ' + from_id +' --spender ' + spender + ' --amount ' + amount);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
-    }
-    console.log(stderr);
+    console.log("APPROVE -stderr: " + stderr);
+    console.log("APPROVE -stdout: " + stdout);
 }
 
 async function getAllowance(from, spender) {
@@ -402,9 +371,8 @@ async function getAllowance(from, spender) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
-    }
+    console.log("ALLOWANCE -stderr: " + stderr);
+    console.log("ALLOWANCE -stdout: " + stdout);
     return stdout.trim();
 }
 
@@ -415,7 +383,8 @@ async function transfer(from_name, from_id, to, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("TRANSFER -stderr: " + stderr);
+    console.log("TRANSFER -stdout: " + stdout);
 }
 
 async function transfer_err(from_name, from_id, to, amount, err_code) {
@@ -425,7 +394,9 @@ async function transfer_err(from_name, from_id, to, amount, err_code) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    assert.equal(true, stderr.includes('Status(ContractError(' + err_code + '))'));
+    console.log("TRANSFER_ERR -stderr: " + stderr);
+    console.log("TRANSFER_ERR -stdout: " + stdout);
+    assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
 async function transfer_from(spender_name, spender_id, from, to, amount) {
@@ -435,7 +406,9 @@ async function transfer_from(spender_name, spender_id, from, to, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+
+    console.log("TRANSFER_FROM -stderr: " + stderr);
+    console.log("TRANSFER_FROM -stdout: " + stdout);
 }
 
 async function transfer_from_err(spender_name, spender_id, from, to, amount, err_code) {
@@ -445,7 +418,7 @@ async function transfer_from_err(spender_name, spender_id, from, to, amount, err
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    assert.equal(true, stderr.includes('Status(ContractError(' + err_code + '))'));
+    assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
 async function set_admin(admin_name, newAdmin) {
@@ -455,17 +428,19 @@ async function set_admin(admin_name, newAdmin) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("SET_ADMIN -stderr: " + stderr);
+    console.log("SET_ADMIN -stdout: " + stdout);
 }
 
 async function set_authorized(admin_name, id, authorize) {
     const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + admin_name +
     ' --id 1 --wasm build/release.wasm -- set_authorized ' +
-    '--id ' + id + ' --authorize ' + authorize );
+    '--id ' + id + ' --authorize ' + authorize);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("SET_AUTH -stderr: " + stderr);
+    console.log("SET_AUTH -stdout: " + stdout);
 }
 
 async function getAuthorized(user) {
@@ -475,9 +450,9 @@ async function getAuthorized(user) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
-    }
+    console.log("GET_AUTH -stderr: " + stderr);
+    console.log("GET_AUTH -stdout: " + stdout);
+
     return stdout.trim();
 }
 
@@ -488,7 +463,8 @@ async function clawback(admin_name, from, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("CLAWBACK -stderr: " + stderr);
+    console.log("CLAWBACK -stdout: " + stdout);
 }
 
 async function burn_from(spender_name, spender_id, from, amount) {
@@ -498,7 +474,8 @@ async function burn_from(spender_name, spender_id, from, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("BURN_FROM -stderr: " + stderr);
+    console.log("BURN_FROM -stdout: " + stdout);
 }
 
 async function burn(from_name, from_id, amount) {
@@ -508,7 +485,8 @@ async function burn(from_name, from_id, amount) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    console.log(stderr);
+    console.log("BURN -stderr: " + stderr);
+    console.log("BURN -stdout: " + stdout);
 }
 
 

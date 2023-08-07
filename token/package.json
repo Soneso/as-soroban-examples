@@ -1,6 +1,6 @@
 {
   "name": "token",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Token example",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "file:../../as-soroban-sdk"
+    "as-soroban-sdk": "^0.2.3"
   }
 }
