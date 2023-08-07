@@ -1,4 +1,4 @@
-import { BytesObject, VecObject, VoidVal, fromSmallSymbolStr, fromVoid} from "as-soroban-sdk/lib/value";
+import { AddressObject, VecObject, VoidVal, fromSmallSymbolStr, fromVoid} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { i128ge, i128le} from "as-soroban-sdk/lib/val128";
 import * as contract from "as-soroban-sdk/lib/contract";
@@ -22,7 +22,7 @@ enum DATA_INDEX {
  * swap A->B and parties that want to swap B->A.
  * All the parties should have authorized the `swap` via `swap_contract`,
  * but they don't need to authorize `multi_swap` itself.
- * @param swap_contract contract id of the atomic swap contract to be used.
+ * @param swap_contract address of the atomic swap contract to be used.
  * @param token_a token A
  * @param token_b token B
  * @param swaps_a parties A { "vec": [
@@ -39,7 +39,7 @@ enum DATA_INDEX {
  *                          }
  * @returns void
  */
-export function multi_swap(swap_contract: BytesObject, token_a: BytesObject, token_b:BytesObject, swaps_a: VecObject, swaps_b: VecObject): VoidVal {
+export function multi_swap(swap_contract: AddressObject, token_a: AddressObject, token_b: AddressObject, swaps_a: VecObject, swaps_b: VecObject): VoidVal {
 
   let swapsA = new Vec(swaps_a);
   let swapsB = new Vec(swaps_b);

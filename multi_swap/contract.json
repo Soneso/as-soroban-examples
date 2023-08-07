@@ -1,15 +1,15 @@
 {
     "name": "multi swap",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "This example demonstrates how authorized calls can be batched together.",
-    "host_functions_version": 37,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "multi_swap",
             "arguments": [
-                {"name": "swap_contract", "type": "bytes"},
-                {"name": "token_a", "type": "bytes"},
-                {"name": "token_b", "type": "bytes"},
+                {"name": "swap_contract", "type": "address"},
+                {"name": "token_a", "type": "address"},
+                {"name": "token_b", "type": "address"},
                 {"name": "swaps_a", "type": "vec[val]"},
                 {"name": "swaps_b", "type": "vec[val]"}
             ],

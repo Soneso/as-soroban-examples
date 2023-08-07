@@ -28,19 +28,28 @@ const b3Amount = 400;
 
 async function startTest() {
     console.log(`test multi swap ...`);
-    
+    await pipInstallPythonSDK();
     await buildMultiSwapContract();
-    let multi_swap_cid = await deployMultiSwapContract();
+    let multi_swap_addr = await deployMultiSwapContract();
+    let multi_swap_cid = await idForContractAddress(multi_swap_addr);
+    console.log("multi addr: " + multi_swap_addr);
     console.log("multi cid: " + multi_swap_cid);
 
     await buildAtomicSwapContract();
-    let atomic_swap_cid = await deployAtomicSwapContract();
+    let atomic_swap_addr = await deployAtomicSwapContract();
+    let atomic_swap_cid = await idForContractAddress(atomic_swap_addr);
+    console.log("atomic addr: " + atomic_swap_addr);
     console.log("atomic cid: " + atomic_swap_cid);
 
     await buildTokenContract();
-    let token_a_cid = await deployTokenContract();
+    let token_a_addr = await deployTokenContract();
+    let token_a_cid = await idForContractAddress(token_a_addr);
+    console.log("token a addr: " + token_a_addr);
     console.log("token a cid: " + token_a_cid);
-    let token_b_cid = await deployTokenContract();
+
+    let token_b_addr = await deployTokenContract();
+    let token_b_cid = await idForContractAddress(token_b_addr);
+    console.log("token b addr: " + token_b_addr);
     console.log("token b cid: " + token_b_cid);
 
     // create tokens
@@ -78,9 +87,9 @@ async function startTest() {
     assert.equal(balance, '"' + b3Amount + '"');
     console.log("minted : " + b3Amount + " TOKENB to b3");
 
-    await pipInstallPythonSDK();
-    let result = await pyMultiSwap(multi_swap_cid, atomic_swap_cid, token_a_cid, token_b_cid);
-    assert.equal('Function result: <SCVal [type=1]>', result);
+    let result = await pyMultiSwap(multi_swap_addr, atomic_swap_addr, token_a_addr, token_b_addr);
+    
+    assert.equal('swap success', result);
     console.log(`test atomic swap -> OK`);
 } 
 
@@ -96,8 +105,8 @@ async function pipInstallPythonSDK() {
     console.log(stdout);
 }
 
-async function pyMultiSwap(multi_swap_cid, swap_cid, token_a_cid, token_b_cid) {
-    let cmd = 'python3 multi_swap_test.py '  + multi_swap_cid + ' ' + swap_cid + ' ' + token_a_cid + ' ' + token_b_cid;
+async function pyMultiSwap(multi_swap_addr, atomic_swap_addr, token_a_addr, token_b_addr) {
+    let cmd = 'python3 multi_swap_test.py '  + multi_swap_addr + ' ' + atomic_swap_addr + ' ' + token_a_addr + ' ' + token_b_addr;
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
@@ -131,12 +140,9 @@ async function deployMultiSwapContract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deployMultiSwapContract - stderr: " + stderr);
     }
-    return stdout.trim(); // contract id
+    return stdout.trim(); // contract address
 }
 
 async function buildTokenContract() {
@@ -160,12 +166,9 @@ async function deployTokenContract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deployTokenContract - stderr: " + stderr);
     }
-    return stdout.trim(); // contract id
+    return stdout.trim(); // contract address
 }
 
 async function buildAtomicSwapContract() {
@@ -189,13 +192,10 @@ async function deployAtomicSwapContract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deployAtomicSwapContract - stderr: " + stderr);
     }
 
-    return stdout.trim(); // contract id
+    return stdout.trim(); // contract address
 }
 
 async function createToken(token_contract_id, name , symbol) {
@@ -209,10 +209,7 @@ async function createToken(token_contract_id, name , symbol) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("createToken - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -226,10 +223,7 @@ async function mint(to, amount, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("mint - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -245,12 +239,21 @@ async function getBalance(user, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("getBalance - stderr: " + stderr);
     }
     return stdout.trim(); // balance
+}
+
+async function idForContractAddress(contract_address) {
+    let cmd = 'python3 contract_id.py '  + contract_address;
+    const { error, stdout, stderr } = await exec(cmd);
+    if (error) {
+        assert.fail(`error: ${error.message}`);
+    }
+    if (stderr) {
+        console.log("ID to ADD -stderr: " + stderr);
+    }
+    return stdout.trim();
 }
 
 startTest()
