@@ -1,10 +1,10 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
-import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, fromVoid, VoidVal} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Val, fromVoid, VoidVal, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { Sym } from "as-soroban-sdk/lib/sym";
-import { i128lt } from "as-soroban-sdk/lib/val128";
+import { i128lt, i128sub } from "as-soroban-sdk/lib/val128";
 
 enum SWAP_ERR_CODES {
   NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A = 1,
@@ -19,8 +19,8 @@ enum SWAP_ERR_CODES {
  * Swaps token A for token B atomically.
  * @param {AddressObject} a The Address holding token a.
  * @param {AddressObject} b The Address holding token b.
- * @param {BytesObject} token_a The contract id representing token a.
- * @param {BytesObject} token_b The contract id representing token b.
+ * @param {AddressObject} token_a The contract address representing token a.
+ * @param {AddressObject} token_b The contract address representing token b.
  * @param {I128Val} amount_a The amount of token a offered.
  * @param {I128Val} min_b_for_a The min amount of token b requested for the amount of token a offered.
  * @param {I128Val} amount_b The amount of token b offered.
@@ -28,7 +28,7 @@ enum SWAP_ERR_CODES {
  * @returns {VoidVal} void. Traps on error.
  */
 export function swap(a: AddressObject, b: AddressObject, 
-  token_a: BytesObject, token_b: BytesObject, 
+  token_a: AddressObject, token_b: AddressObject, 
   amount_a: I128Val, min_b_for_a: I128Val, 
   amount_b: I128Val, min_a_for_b: I128Val): VoidVal {
   
@@ -71,27 +71,35 @@ export function swap(a: AddressObject, b: AddressObject,
 
 }
 
-function move_token(token: BytesObject, from: AddressObject, to:AddressObject, 
-  approve_amount:I128Val, xfer_amount:I128Val): void {
+function move_token(token: AddressObject, from: AddressObject, to:AddressObject, 
+  max_spend_amount:I128Val, transfer_amount:I128Val): void {
   
   let contract_address =  context.getCurrentContractAddress();
 
-  // This call needs to be authorized by `from` address. Since it increases
-  // the allowance on behalf of the contract, `from` doesn't need to know `to`
-  // at the signature time.
+  // This call needs to be authorized by `from` address. It transfers the
+  // maximum spend amount to the swap contract's address in order to decouple
+  // the signature from `to` address (so that parties don't need to know each
+  // other).
 
-  let incrArgs = new Vec();
-  incrArgs.pushBack(from);
-  incrArgs.pushBack(contract_address);
-  incrArgs.pushBack(approve_amount);
-  let func = Sym.fromSymbolString("increase_allowance").getHostObject();
-  contract.callContract(token, func, incrArgs.getHostObject());
+  let func = fromSmallSymbolStr("transfer");
 
-  let transferFromArgs = new Vec();
-  transferFromArgs.pushBack(contract_address);
-  transferFromArgs.pushBack(from);
-  transferFromArgs.pushBack(to);
-  transferFromArgs.pushBack(xfer_amount);
-  contract.callContract(token, Sym.fromSymbolString("transfer_from").getHostObject(), transferFromArgs.getHostObject());
+  let t1Args = new Vec();
+  t1Args.pushBack(from);
+  t1Args.pushBack(contract_address);
+  t1Args.pushBack(max_spend_amount);
+  contract.callContract(token, func, t1Args.getHostObject());
 
+  // Transfer the necessary amount to `to`.
+  let t2Args = new Vec();
+  t2Args.pushBack(contract_address);
+  t2Args.pushBack(to);
+  t2Args.pushBack(transfer_amount);
+  contract.callContract(token, func, t2Args.getHostObject());
+
+  // Refund the remaining balance to `from`.
+  let t3Args = new Vec();
+  t3Args.pushBack(contract_address);
+  t3Args.pushBack(from);
+  t3Args.pushBack(i128sub(max_spend_amount,transfer_amount));
+  contract.callContract(token, func, t3Args.getHostObject());
 }

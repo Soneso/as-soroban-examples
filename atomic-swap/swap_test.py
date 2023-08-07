@@ -3,113 +3,47 @@
 See https://soroban.stellar.org/docs/how-to-guides/atomic-swap
 https://soroban.stellar.org/docs/learn/authorization
 """
-import binascii
+
 import time
 import sys
 
-from stellar_sdk import Network, Keypair, TransactionBuilder
+from stellar_sdk import Network, Keypair, TransactionBuilder, InvokeHostFunction
 from stellar_sdk import xdr as stellar_xdr
-from stellar_sdk.soroban import AuthorizedInvocation, ContractAuth, SorobanServer
+from stellar_sdk.soroban import SorobanServer
+from stellar_sdk.soroban.authorization_entry import AuthorizationEntry
 from stellar_sdk.soroban.soroban_rpc import GetTransactionStatus
-from stellar_sdk.soroban.types import Address, Bytes, Int128
+from stellar_sdk.soroban.types import Address, Int128
 
 rpc_server_url = "https://rpc-futurenet.stellar.org:443/"
 soroban_server = SorobanServer(rpc_server_url)
 network_passphrase = Network.FUTURENET_NETWORK_PASSPHRASE
 
 submitter_kp = Keypair.from_secret(
-    "SAQVVIROUM6R7USECNPTYDJR4RQH4PJN64TQED6GV6ZZWU54HW476UDG"
-)  # GBOKVCPQDINAJCQY7EA7EH7YADMHTU5RH7LSK3YMQ2IRPGVQOM42ZBRD
+    "SAAPYAPTTRZMCUZFPG3G66V4ZMHTK4TWA6NS7U4F7Z3IMUD52EK4DDEV"
+)
 alice_kp = Keypair.from_secret(
-    "SCOD3C7T454JBJZRK5X4YA4YC7MHG6NN3J5SEDOOPN2HHFVMBAZZG4JA"
-)  # GD6NH26Z4NPK3TYDG3VZBRHXHYYOEMYDXHTXOP6EIHO56SRZWLIC7QET
+    "SBSJM6ISC2I6DCMPAMOXW3WMXWWJ53IRCXIRLOBL7T5XHKLPZKQTGSXH"
+)
 bob_kp = Keypair.from_secret(
-    "SAJNWYJFYSFKCZHPZGC7FTZP7TXXV2NWL6G7EN4RB2IQMFTIG4HIIHZQ"
-)  # GCO4TV6P23OJTFW2ZZZ3RTYUFBQFTSAA6CZKJRYKWIODZNYKKROVBQVC
-atomic_swap_contract_id = (
-    sys.argv[1]
+    "SDOBRTNMP5A4ORTKT2J47F7GCSLCYXAMII3KMWV4JBN4RI3CCZWD4XE3"
 )
-token_a_contract_id = (
-    "c3bd6a005f72c317aacdb9476f49a61b23dc432ac1fd843b35d989ab295d0e0b"
-)
-token_b_contract_id = (
-    "2f307e3282a3a5d78d5f2343d8744d26b80686b1a211fb8d7ad3630b2c23d3d4"
-)
+atomic_swap_contract_id = (sys.argv[1])
+native_token_contract_id = "CCLE4PGRKHYFDSSBXVR5FZ4VJDPKQXV2YTNVKBS2SFEHGFZZDJOASRLW"
+cat_token_contract_id = "CAZ3333PHW6EYXIZOPXZRH5AU3J3R2OS2USRH7E3KM6ZDDQ7H6HTYGJ6"
+
 
 source = soroban_server.load_account(submitter_kp.public_key)
 
 args = [
     Address(alice_kp.public_key),  # a
     Address(bob_kp.public_key),  # b
-    Bytes(binascii.unhexlify(token_a_contract_id)),  # token_a
-    Bytes(binascii.unhexlify(token_b_contract_id)),  # token_b
+    Address(native_token_contract_id),  # token_a
+    Address(cat_token_contract_id),  # token_b
     Int128(1000),  # amount_a
     Int128(4500),  # min_b_for_a
     Int128(5000),  # amount_b
     Int128(950),  # min_a_for_b
 ]
-
-alice_nonce = soroban_server.get_nonce(atomic_swap_contract_id, alice_kp.public_key)
-bob_nonce = soroban_server.get_nonce(atomic_swap_contract_id, bob_kp.public_key)
-
-alice_root_invocation = AuthorizedInvocation(
-    contract_id=atomic_swap_contract_id,
-    function_name="swap",
-    args=[
-        Bytes(binascii.unhexlify(token_a_contract_id)),  # token_a
-        Bytes(binascii.unhexlify(token_b_contract_id)),  # token_b
-        Int128(1000),  # amount_a
-        Int128(4500),  # min_b_for_a
-    ],
-    sub_invocations=[
-        AuthorizedInvocation(
-            contract_id=token_a_contract_id,
-            function_name="increase_allowance",
-            args=[
-                Address(alice_kp.public_key),  # owner
-                Address.from_raw_contract(atomic_swap_contract_id),
-                Int128(1000),
-            ],
-            sub_invocations=[],
-        )
-    ],
-)
-
-bob_root_invocation = AuthorizedInvocation(
-    contract_id=atomic_swap_contract_id,
-    function_name="swap",
-    args=[
-        Bytes(binascii.unhexlify(token_b_contract_id)),  # token_b
-        Bytes(binascii.unhexlify(token_a_contract_id)),  # token_a
-        Int128(5000),  # amount_b
-        Int128(950),  # min_a_for_b
-    ],
-    sub_invocations=[
-        AuthorizedInvocation(
-            contract_id=token_b_contract_id,
-            function_name="increase_allowance",
-            args=[
-                Address(bob_kp.public_key),  # owner
-                Address.from_raw_contract(atomic_swap_contract_id),
-                Int128(5000),
-            ],
-            sub_invocations=[],
-        )
-    ],
-)
-
-alice_contract_auth = ContractAuth(
-    address=Address(alice_kp.public_key),
-    nonce=alice_nonce,
-    root_invocation=alice_root_invocation,
-)
-alice_contract_auth.sign(alice_kp, network_passphrase)
-bob_contract_auth = ContractAuth(
-    address=Address(bob_kp.public_key),
-    nonce=bob_nonce,
-    root_invocation=bob_root_invocation,
-)
-bob_contract_auth.sign(bob_kp, network_passphrase)
 
 tx = (
     TransactionBuilder(source, network_passphrase)
@@ -118,31 +52,46 @@ tx = (
         contract_id=atomic_swap_contract_id,
         function_name="swap",
         parameters=args,
-        auth=[alice_contract_auth, bob_contract_auth],
     )
     .build()
 )
 
 tx = soroban_server.prepare_transaction(tx)
-tx.sign(submitter_kp)
+tx.transaction.fee = 1000000
 
-# print(f"Signed XDR:\n{tx.to_xdr()}")
+# Let's optimize it later.
+latest_ledger = soroban_server.get_latest_ledger().sequence
+
+op = tx.transaction.operations[0]
+assert isinstance(op, InvokeHostFunction)
+alice_authorization_entry: AuthorizationEntry = op.auth[0]
+bob_authorization_entry: AuthorizationEntry = op.auth[1]
+
+alice_authorization_entry.set_signature_expiration_ledger(latest_ledger + 3)
+alice_authorization_entry.sign(alice_kp, network_passphrase)
+
+bob_authorization_entry.set_signature_expiration_ledger(latest_ledger + 3)
+bob_authorization_entry.sign(bob_kp, network_passphrase)
+
+tx.sign(submitter_kp)
+#print(f"Signed XDR:\n{tx.to_xdr()}")
 
 send_transaction_data = soroban_server.send_transaction(tx)
-# print(f"sent transaction: {send_transaction_data}")
+#print(f"sent transaction: {send_transaction_data}")
 
 while True:
-    # print("waiting for transaction to be confirmed...")
+    #print("waiting for transaction to be confirmed...")
     get_transaction_data = soroban_server.get_transaction(send_transaction_data.hash)
     if get_transaction_data.status != GetTransactionStatus.NOT_FOUND:
         break
     time.sleep(3)
-# print(f"transaction: {get_transaction_data}")
+
+#print(f"transaction: {get_transaction_data}")
 
 if get_transaction_data.status == GetTransactionStatus.SUCCESS:
     assert get_transaction_data.result_meta_xdr is not None
     transaction_meta = stellar_xdr.TransactionMeta.from_xdr(
         get_transaction_data.result_meta_xdr
     )
-    result = transaction_meta.v3.tx_result.result.results[0].tr.invoke_host_function_result.success[0]  # type: ignore
-    print(f"Function result: {result}")
+    if transaction_meta.v3.soroban_meta.return_value.type == stellar_xdr.SCValType.SCV_VOID:  # type: ignore[union-attr]
+        print("swap success")

@@ -1,16 +1,16 @@
 {
     "name": "atomic_swap",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "atomic swap contract example",
-    "host_functions_version": 37,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "swap",
             "arguments": [
                 {"name": "a", "type": "address"},
                 {"name": "b", "type": "address"},
-                {"name": "token_a", "type": "bytes"},
-                {"name": "token_b", "type": "bytes"},
+                {"name": "token_a", "type": "address"},
+                {"name": "token_b", "type": "address"},
                 {"name": "amount_a", "type": "i128"},
                 {"name": "min_b_for_a", "type": "i128"},
                 {"name": "amount_b", "type": "i128"},

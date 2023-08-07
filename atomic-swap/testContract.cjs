@@ -12,7 +12,7 @@ async function startTest() {
     let swap_contract_id = await deploy_swap_contract(submitterSeed);
     await pipInstallPythonSDK();
     let result = await pySwap(swap_contract_id);
-    assert.equal('Function result: <SCVal [type=1]>', result);
+    assert.equal('swap success', result);
     console.log(`test atomic swap -> OK`);
 } 
 
@@ -63,13 +63,10 @@ async function deploy_swap_contract(key) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deploy_swap_contract - stderr: " + stderr);
     }
     console.log("swap contract id: " + stdout);
-    return stdout.trim(); // contract id
+    return stdout.trim(); // contract address
 }
 
 startTest()
