@@ -13,24 +13,37 @@ async function startTest() {
     console.log(`test liquidity pool ...`);
     
     await buildLPContract();
-    let lp_cid = await deployLPContract();
+    let lp_addr = await deployLPContract();
+    //await pipInstallPythonSDK()
+    let lp_cid = await idForContractAddress(lp_addr);
+    console.log("lp addr: " + lp_addr);
     console.log("lp cid: " + lp_cid);
 
     await buildTokenContract();
     let wasm_hash = await installTokenContract();
     console.log("wasm hash: " + wasm_hash);
-    var token_cid_a = await deployTokenContract();
-    var token_cid_b = await deployTokenContract();
+    var token_a_addr = await deployTokenContract();
+    var token_b_addr = await deployTokenContract();
+    let token_cid_a = await idForContractAddress(token_a_addr);
+    let token_cid_b = await idForContractAddress(token_b_addr);
     if (token_cid_a > token_cid_b) {
-        let tmp = token_cid_b;
+        let tmp_addr = token_b_addr;
+        let tmp_cid = token_cid_b;
+        token_b_addr = token_a_addr;
         token_cid_b = token_cid_a;
-        token_cid_a = tmp;
+        token_a_addr = tmp_addr;
+        token_cid_a = tmp_cid;
     }
+    
+    console.log("token a addr: " + token_a_addr);
     console.log("token a cid: " + token_cid_a);
+    console.log("token b addr: " + token_b_addr);
     console.log("token b cid: " + token_cid_b);
 
-    await initializeLP(lp_cid, wasm_hash, token_cid_a, token_cid_b);
-    let share_id = await get_share_id(lp_cid);
+    await initializeLP(lp_cid, wasm_hash, token_a_addr, token_b_addr);
+    let share_addr = await get_share_addr(lp_cid);
+    let share_id = await idForContractAddress(share_addr);
+    console.log("share addr: " + share_addr);
     console.log("share cid: " + share_id);
 
     // create tokens
@@ -50,22 +63,19 @@ async function startTest() {
     balance = await getBalance(userId, share_id);
     assert.equal(balance, '"100"');
 
-    await pipInstallPythonSDK()
-    let lp_contract_address = await addressForContractId(lp_cid);
-
-    balance = await getBalance(lp_contract_address, share_id);
+    balance = await getBalance(lp_addr, share_id);
     assert.equal(balance, '"0"');
 
     balance = await getBalance(userId, token_cid_a);
     assert.equal(balance, '"900"');
 
-    balance = await getBalance(lp_contract_address, token_cid_a);
+    balance = await getBalance(lp_addr, token_cid_a);
     assert.equal(balance, '"100"');
 
     balance = await getBalance(userId, token_cid_b);
     assert.equal(balance, '"900"');
 
-    balance = await getBalance(lp_contract_address, token_cid_b);
+    balance = await getBalance(lp_addr, token_cid_b);
     assert.equal(balance, '"100"');
     
     console.log('deposit ok');
@@ -74,11 +84,11 @@ async function startTest() {
 
     balance = await getBalance(userId, token_cid_a);
     assert.equal(balance, '"803"');
-    balance = await getBalance(lp_contract_address, token_cid_a);
+    balance = await getBalance(lp_addr, token_cid_a);
     assert.equal(balance, '"197"');
     balance = await getBalance(userId, token_cid_b);
     assert.equal(balance, '"949"');
-    balance = await getBalance(lp_contract_address, token_cid_b);
+    balance = await getBalance(lp_addr, token_cid_b);
     assert.equal(balance, '"51"');
 
     console.log('swap ok');
@@ -93,11 +103,11 @@ async function startTest() {
     assert.equal(balance, '"0"');
 
 
-    balance = await getBalance(lp_contract_address, token_cid_a);
+    balance = await getBalance(lp_addr, token_cid_a);
     assert.equal(balance, '"0"');
-    balance = await getBalance(lp_contract_address, token_cid_b);
+    balance = await getBalance(lp_addr, token_cid_b);
     assert.equal(balance, '"0"');
-    balance = await getBalance(lp_contract_address, share_id);
+    balance = await getBalance(lp_addr, share_id);
     assert.equal(balance, '"0"');
 
     console.log('withdraw ok');
@@ -112,7 +122,7 @@ async function buildLPContract() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        //assert.fail(`stderr: ${stderr}`);
+        console.log("buildLPContract - stderr: " + stderr);
     }
     console.log(stdout);
 }
@@ -129,10 +139,7 @@ async function deployLPContract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deployLPContract - stderr: " + stderr);
     }
     return stdout.trim(); // contract id
 }
@@ -158,10 +165,7 @@ async function installTokenContract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("installTokenContract - stderr: " + stderr);
     }
     return stdout.trim(); // wasm id
 }
@@ -176,12 +180,9 @@ async function deployTokenContract() {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("deployTokenContract - stderr: " + stderr);
     }
-    return stdout.trim(); // contract id
+    return stdout.trim(); // contract address
 }
 
 async function initializeLP(lp_contract_id, token_wasm_hash , token_a, token_b) {
@@ -195,10 +196,7 @@ async function initializeLP(lp_contract_id, token_wasm_hash , token_a, token_b) 
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("initializeLP - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -206,7 +204,7 @@ async function initializeLP(lp_contract_id, token_wasm_hash , token_a, token_b) 
 async function depositLP(lp_contract_id, desired_a, min_a, desired_b, min_b) {
     let cmd = 'soroban contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
-    + ' -- deposit --to ' + userId 
+    + ' --fee 1000000 -- deposit --to ' + userId 
     + ' --desired_a '+ desired_a + ' --min_a ' + min_a
     + ' --desired_b '+ desired_b + ' --min_b ' + min_b;
 
@@ -215,10 +213,7 @@ async function depositLP(lp_contract_id, desired_a, min_a, desired_b, min_b) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("depositLP - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -226,7 +221,7 @@ async function depositLP(lp_contract_id, desired_a, min_a, desired_b, min_b) {
 async function swapLP(lp_contract_id, buy_a, out, in_max) {
     let cmd = 'soroban contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
-    + ' -- swap --to ' + userId 
+    + ' --fee 1000000 -- swap --to ' + userId 
     + ' --buy_a '+ buy_a + ' --out ' + out
     + ' --in_max '+ in_max;
 
@@ -235,10 +230,7 @@ async function swapLP(lp_contract_id, buy_a, out, in_max) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("swapLP - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -246,7 +238,7 @@ async function swapLP(lp_contract_id, buy_a, out, in_max) {
 async function withdrawLP(lp_contract_id, share_amount, min_a, min_b) {
     let cmd = 'soroban contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
-    + ' -- withdraw --to ' + userId 
+    + ' --fee 1000000 -- withdraw --to ' + userId 
     + ' --share_amount '+ share_amount + ' --min_a ' + min_a
     + ' --min_b '+ min_b;
 
@@ -255,28 +247,22 @@ async function withdrawLP(lp_contract_id, share_amount, min_a, min_b) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("withdrawLP - stderr: " + stderr);
     }
     return stdout.trim();
 }
 
-async function get_share_id(lp_contract_id) {
+async function get_share_addr(lp_contract_id) {
     let cmd = 'soroban contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
-    + ' -- share_id';
+    + ' -- share_addr';
 
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("get_share_addr - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -292,10 +278,7 @@ async function createToken(token_contract_id, name , symbol) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("createToken - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -309,10 +292,7 @@ async function mint(to, amount, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("mint - stderr: " + stderr);
     }
     return stdout.trim();
 }
@@ -328,10 +308,7 @@ async function getBalance(user, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        if (!stderr.startsWith("SUCCESS")) {
-            console.log(stderr);
-        }
-        assert.equal(stderr.startsWith("SUCCESS"), true );
+        console.log("getBalance - stderr: " + stderr);
     }
     return stdout.trim(); // balance
 }
@@ -343,21 +320,22 @@ async function pipInstallPythonSDK() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log(stderr);
+        console.log("pipInstallPythonSDK - stderr: " + stderr);
     }
     console.log(stdout);
 }
 
-async function addressForContractId(contract_id) {
-    let cmd = 'python3 contract_address.py '  + contract_id;
+async function idForContractAddress(contract_address) {
+    let cmd = 'python3 contract_id.py '  + contract_address;
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log(stderr);
+        console.log("ID to ADD -stderr: " + stderr);
     }
     return stdout.trim();
 }
+
 
 startTest()

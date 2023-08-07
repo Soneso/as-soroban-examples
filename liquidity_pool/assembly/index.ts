@@ -1,4 +1,4 @@
-import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, fromVoid, VecObject, fromU32, toU32, VoidVal, fromI128Pieces, fromI128Small, U32Val} from "as-soroban-sdk/lib/value";
+import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, fromVoid, VecObject, fromU32, toU32, VoidVal, fromI128Pieces, fromI128Small, U32Val, storageTypeInstance} from "as-soroban-sdk/lib/value";
 import * as context from "as-soroban-sdk/lib/context";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
@@ -9,6 +9,7 @@ import { Bytes} from "as-soroban-sdk/lib/bytes";
 import { Sym } from "as-soroban-sdk/lib/sym";
 import { __deposit_b, get_deposit_amounts } from "./deposit";
 import { i128add, i128div, i128gt, i128le, i128lt, i128mul, i128muldiv, i128sqrt, i128sub } from "as-soroban-sdk/lib/val128";
+import { serialize_to_bytes } from "as-soroban-sdk/lib/env";
 
 
 enum DATA_KEY {
@@ -21,7 +22,7 @@ enum DATA_KEY {
 }
 
 export enum ERR_CODES {
-  TOKEN_A_MUST_BE_LESS_TOKEN_A = 1,
+  TOKEN_A_MUST_BE_LESS_TOKEN_B = 1,
   TOO_MANY_CLAIMANTS = 2,
   NO_BALANCE = 3,
   TIME_PREDICATE_NOT_FULFILLED = 4,
@@ -33,13 +34,13 @@ export enum ERR_CODES {
   MIN_NOT_SATISFIED = 10
 }
 
-export function initialize(token_wasm_hash: BytesObject, token_a: BytesObject, token_b: BytesObject): VoidVal {
+export function initialize(token_wasm_hash: BytesObject, token_a: AddressObject, token_b: AddressObject): VoidVal {
 
   if (context.compareObj(token_a, token_b) != -1) { // token_a >= token_b
-    context.failWithErrorCode(ERR_CODES.TOKEN_A_MUST_BE_LESS_TOKEN_A);
+    context.failWithErrorCode(ERR_CODES.TOKEN_A_MUST_BE_LESS_TOKEN_B);
   }
 
-  let share_contract_id = create_contract(token_wasm_hash, token_a, token_b);
+  let share_contract = create_contract(token_wasm_hash, token_a, token_b);
 
   let args = new Vec();
   args.pushBack(context.getCurrentContractAddress());
@@ -49,11 +50,11 @@ export function initialize(token_wasm_hash: BytesObject, token_a: BytesObject, t
   let symbol = Bytes.fromString("POOL");
   args.pushBack(symbol.getHostObject());
 
-  contract.callContract(share_contract_id, Sym.fromSymbolString("initialize").getHostObject(), args.getHostObject());
+  contract.callContract(share_contract, Sym.fromSymbolString("initialize").getHostObject(), args.getHostObject());
 
   put_token_a(token_a);
   put_token_b(token_b);
-  put_token_share(share_contract_id);
+  put_token_share(share_contract);
   put_total_shares(fromI128Pieces(0,0));
   put_reserve_a(fromI128Pieces(0,0));
   put_reserve_b(fromI128Pieces(0,0));
@@ -61,7 +62,7 @@ export function initialize(token_wasm_hash: BytesObject, token_a: BytesObject, t
   return fromVoid();
 }
 
-export function share_id() : BytesObject {
+export function share_addr() : AddressObject {
   return get_token_share();
 }
 
@@ -201,7 +202,7 @@ export function withdraw(to: AddressObject, share_amount: I128Val, min_a: I128Va
   address.requireAuth(to);
 
   // First transfer the pool shares that need to be redeemed
-  let share_token_cid = get_token_share();
+  let share_token = get_token_share();
 
   let current_contract_address = context.getCurrentContractAddress();
 
@@ -209,7 +210,7 @@ export function withdraw(to: AddressObject, share_amount: I128Val, min_a: I128Va
   transferArgs.pushBack(to);
   transferArgs.pushBack(current_contract_address);
   transferArgs.pushBack(share_amount);
-  contract.callContract(share_token_cid, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+  contract.callContract(share_token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
   let balance_a = get_balance_a();
   let balance_b = get_balance_b();
@@ -247,52 +248,52 @@ export function get_rsrvs() :  VecObject {
   return result.getHostObject();
 }
 
-function put_token_a(contract_id: BytesObject) : void {
-  ledger.putData(fromU32(DATA_KEY.TOKEN_A), contract_id);
+function put_token_a(address: AddressObject) : void {
+  ledger.putData(fromU32(DATA_KEY.TOKEN_A), address, storageTypeInstance, fromVoid());
 }
 
 function get_token_a() : BytesObject {
-  return ledger.getData(fromU32(DATA_KEY.TOKEN_A));
+  return ledger.getData(fromU32(DATA_KEY.TOKEN_A), storageTypeInstance);
 }
 
-function put_token_b(contract_id: BytesObject) : void {
-  ledger.putData(fromU32(DATA_KEY.TOKEN_B), contract_id);
+function put_token_b(address: AddressObject) : void {
+  ledger.putData(fromU32(DATA_KEY.TOKEN_B), address, storageTypeInstance, fromVoid());
 }
 
 function get_token_b() : BytesObject {
-  return ledger.getData(fromU32(DATA_KEY.TOKEN_B));
+  return ledger.getData(fromU32(DATA_KEY.TOKEN_B), storageTypeInstance);
 }
 
-function put_token_share(contract_id: BytesObject) : void {
-  ledger.putData(fromU32(DATA_KEY.TOKEN_SHARE), contract_id);
+function put_token_share(address: AddressObject) : void {
+  ledger.putData(fromU32(DATA_KEY.TOKEN_SHARE), address, storageTypeInstance, fromVoid());
 }
 
-function get_token_share() : BytesObject {
-  return ledger.getData(fromU32(DATA_KEY.TOKEN_SHARE));
+function get_token_share() : AddressObject {
+  return ledger.getData(fromU32(DATA_KEY.TOKEN_SHARE), storageTypeInstance);
 }
 
 function put_total_shares(amount: I128Val) : void {
-  ledger.putData(fromU32(DATA_KEY.TOTAL_SHARES), amount);
+  ledger.putData(fromU32(DATA_KEY.TOTAL_SHARES), amount, storageTypeInstance, fromVoid());
 }
 
 function get_total_shares() : I128Val {
-  return ledger.getData(fromU32(DATA_KEY.TOTAL_SHARES));
+  return ledger.getData(fromU32(DATA_KEY.TOTAL_SHARES), storageTypeInstance);
 }
 
 function put_reserve_a(amount: I128Val) : void {
-  ledger.putData(fromU32(DATA_KEY.RESERVE_A), amount);
+  ledger.putData(fromU32(DATA_KEY.RESERVE_A), amount, storageTypeInstance, fromVoid());
 }
 
 function get_reserve_a() : I128Val {
-  return ledger.getData(fromU32(DATA_KEY.RESERVE_A));
+  return ledger.getData(fromU32(DATA_KEY.RESERVE_A), storageTypeInstance);
 }
 
 function put_reserve_b(amount: I128Val) : void {
-  ledger.putData(fromU32(DATA_KEY.RESERVE_B), amount);
+  ledger.putData(fromU32(DATA_KEY.RESERVE_B), amount, storageTypeInstance, fromVoid());
 }
 
 function get_reserve_b() : I128Val{
-  return ledger.getData(fromU32(DATA_KEY.RESERVE_B));
+  return ledger.getData(fromU32(DATA_KEY.RESERVE_B), storageTypeInstance);
 }
 
 function get_balance(contract_id: BytesObject) : I128Val {
@@ -318,12 +319,12 @@ function get_balance_shares() : I128Val {
 
 function mint_shares(to: AddressObject, amount: I128Val) : void {
    let total = get_total_shares();
-   let share_contract_id = get_token_share();
+   let share_contract = get_token_share();
 
    let mintArgs = new Vec();
    mintArgs.pushBack(to);
    mintArgs.pushBack(amount);
-   contract.callContract(share_contract_id, fromSmallSymbolStr("mint"), mintArgs.getHostObject());
+   contract.callContract(share_contract, fromSmallSymbolStr("mint"), mintArgs.getHostObject());
 
    put_total_shares(i128add(total, amount));
 
@@ -331,13 +332,13 @@ function mint_shares(to: AddressObject, amount: I128Val) : void {
 
 function burn_shares(amount: I128Val) : void {
   let total = get_total_shares();
-  let share_contract_id = get_token_share();
+  let share_contract = get_token_share();
   let current_contract_address = context.getCurrentContractAddress();
 
   let burnArgs = new Vec();
   burnArgs.pushBack(current_contract_address);
   burnArgs.pushBack(amount);
-  contract.callContract(share_contract_id, fromSmallSymbolStr("burn"), burnArgs.getHostObject());
+  contract.callContract(share_contract, fromSmallSymbolStr("burn"), burnArgs.getHostObject());
 
   put_total_shares(i128sub(total, amount));
 
@@ -379,13 +380,13 @@ function transfer_b(to: AddressObject, amount: I128Val) : void {
   transfer(get_token_b(), to, amount);
 }
 
-function create_contract(token_wasm_hash: BytesObject, token_a: BytesObject, token_b: BytesObject): BytesObject {
+function create_contract(token_wasm_hash: BytesObject, token_a: AddressObject, token_b: AddressObject): AddressObject {
 
   var salt = new Bytes();
-  salt.append(new Bytes(token_a));
-  salt.append(new Bytes(token_b));
+  salt.append(new Bytes(serialize_to_bytes(token_a)));
+  salt.append(new Bytes(serialize_to_bytes(token_b)));
 
-  let cSalt = crypto.compute_hash_sha256(salt.getHostObject());
-  return ledger.deployContract(token_wasm_hash, cSalt);
+  let cSalt = crypto.computeHashSha256(salt);
+  return ledger.deployContract(context.getCurrentContractAddress(), token_wasm_hash, cSalt.getHostObject());
 
 }

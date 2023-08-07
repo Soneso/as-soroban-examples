@@ -1,22 +1,22 @@
 {
     "name": "liquidity pool",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "Demonstrates how to write a constant product liquidity pool contract",
-    "host_functions_version": 37,
+    "host_functions_version": 85899345971,
     "functions": [
         {
             "name" : "initialize",
             "arguments": [
                 {"name": "token_wasm_hash", "type": "bytes"},
-                {"name": "token_a", "type": "bytes"},
-                {"name": "token_b", "type": "bytes"}
+                {"name": "token_a", "type": "address"},
+                {"name": "token_b", "type": "address"}
             ],
             "returns" : "void"
         },
         {
-            "name" : "share_id",
+            "name" : "share_addr",
             "arguments": [],
-            "returns" : "bytes"
+            "returns" : "address"
         },
         {
             "name" : "deposit",
