@@ -1,6 +1,6 @@
 {
   "name": "custom_account",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.2"
+    "as-soroban-sdk": "^0.2.3"
   }
 }

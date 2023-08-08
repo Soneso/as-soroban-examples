@@ -4,10 +4,6 @@ The [custom account example](https://github.com/Soneso/as-soroban-examples/tree/
 
 Custom accounts are exclusive to Soroban and can't be used to perform other Stellar operations.
 
-## Outdated
-
-This example is outdated and needs to be updated to support soroban preview version 10. It currently supports soroban preview version 9.
-
 **Danger**
 
 Implementing a custom account contract requires a very good understanding of
@@ -48,7 +44,7 @@ const SPEND_LIMIT = "SpendMax";
 export function init(owners:VecObject): VoidVal {
   // In reality this would need some additional validation on owners
   // (deduplication etc.).
-  ledger.putDataFor(OWNERS, owners);
+  ledger.putDataFor(OWNERS, owners, storageTypeInstance, fromVoid());
   return fromVoid();
 }
 ```
@@ -60,8 +56,8 @@ initialize the contract with ed25519 keys.
 
 ```typescript
 // Adds a limit on any token transfers that aren't signed by every owner.
-export function add_limit(token:BytesObject, limit: I128Val): VoidVal {
-  if(!ledger.hasDataFor(OWNERS)) {
+export function add_limit(token:AddressObject, limit: I128Val): VoidVal {
+  if(!ledger.hasDataFor(OWNERS, storageTypeInstance)) {
     context.failWithErrorCode(ERR_CODE.NOT_INITIALIZED);
   }
 
@@ -76,7 +72,7 @@ export function add_limit(token:BytesObject, limit: I128Val): VoidVal {
 
   let map = new Map();
   map.put(token,limit);
-  ledger.putDataFor(SPEND_LIMIT, map.getHostObject());
+  ledger.putDataFor(SPEND_LIMIT, map.getHostObject(), storageTypeInstance, fromVoid());
 
   return fromVoid();
 }
@@ -92,12 +88,10 @@ to write duplicate authorization and authentication logic.
 
 ```typescript
 export function __check_auth(signature_payload:BytesObject, signatures: VecObject, auth_context:VecObject): VoidVal {
-  let signatureArgs = new Vec(signatures);
-  let signaturesVec = new Vec(signatureArgs.get(0));
-
-  let ownersObj = ledger.getDataFor(OWNERS);
+  let signaturesVec = new Vec(signatures);
+  let ownersObj = ledger.getDataFor(OWNERS, storageTypeInstance);
   let ownersVec = new Vec(ownersObj);
-
+  
   // Perform authentication.
   let signers_count:u32 = 0;
   for (signers_count = 0; signers_count < signaturesVec.len(); signers_count++) {
@@ -113,7 +107,7 @@ export function __check_auth(signature_payload:BytesObject, signatures: VecObjec
         public_key = signature_map.get(key);
       }
     }
-    authenticate(ownersVec, public_key, signature, signature_payload);
+    authenticate(ownersVec, public_key,signature,signature_payload);
   }
 
   // This is a map for tracking the token spend limits per token. This
@@ -124,10 +118,9 @@ export function __check_auth(signature_payload:BytesObject, signatures: VecObjec
   let all_signed = signers_count == ownersVec.len();
   let context_vec = new Vec(auth_context);
   let contract_address = context.getCurrentContractAddress();
-  let contract_id = address.address_to_contract_id(contract_address);
   // Verify the authorization policy.
   for (let i:u32 = 0; i < context_vec.len(); i++) {
-      verify_authorization_policy(context_vec.get(i), contract_id, all_signed, spend_left_per_token);
+      verify_authorization_policy(context_vec.get(i), contract_address, all_signed, spend_left_per_token);
   }
   return fromVoid();
 }
@@ -166,7 +159,7 @@ function authenticate(ownersVec: Vec, public_key:BytesObject, signature:BytesObj
   if (!hasSigner) {
     context.failWithErrorCode(ERR_CODE.UNKNOWN_SIGNER);
   }
-  crypto.verify_sig_ed25519(public_key, payload, signature);
+  env.verify_sig_ed25519(public_key, payload, signature);
 }
 ```
 
@@ -175,16 +168,18 @@ the payload and also that they belong to the owners of this account contract.
 
 ### Authorization policy
 ```typescript
-function verify_authorization_policy(context_entry:MapObject, curr_contract_cid:BytesObject, all_signed:bool, spend_left_per_token: Map) : void {
-    let ctxt = new Map(context_entry);
-    let ctxt_keys = ctxt.keys(); // contract (bytes), fn_name (symbol/str), args (vec[val])
-    let ctxt_cid = fromVoid();
-    let ctxt_fn_name = fromVoid();
-    let ctxt_args = fromVoid();
+function verify_authorization_policy(context_entry:VectorObject, curr_contract_addr:AddressObject, all_signed:bool, spend_left_per_token: Map) : void {
+
+    let contextVec = new Vec(context_entry); //["Contract", ContextMap]
+    let ctxt = new Map(contextVec.get(1));
+    let ctxt_keys = ctxt.keys(); // contract (address), fn_name (symbol/str), args (vec[val])
+    var ctxt_caddr = fromVoid();
+    var ctxt_fn_name = fromVoid();
+    var ctxt_args = fromVoid();
     for (let i:u32 = 0; i < ctxt_keys.len(); i++) {
       let key = ctxt_keys.get(i);
       if (fromSmallSymbolStr("contract") == key) {
-        ctxt_cid = ctxt.get(key);
+        ctxt_caddr = ctxt.get(key);
       } else if (fromSmallSymbolStr("fn_name") == key) {
         ctxt_fn_name = ctxt.get(key);
       } else if (fromSmallSymbolStr("args") == key) {
@@ -193,7 +188,7 @@ function verify_authorization_policy(context_entry:MapObject, curr_contract_cid:
     }
 
     // For the account control every signer must sign the invocation.
-    if (context.compareObj(ctxt_cid, curr_contract_cid) == 0) {
+    if (context.compareObj(ctxt_caddr, curr_contract_addr) == 0) {
         if(!all_signed) {
           context.failWithErrorCode(ERR_CODE.NOT_ENOUGH_SIGNERS);
         }
@@ -206,19 +201,18 @@ call.
 
 ```typescript
     // Otherwise, we're only interested in functions that spend tokens.
-    let incall_name = Sym.fromSymbolString("increase_allowance").getHostObject();
-    if (ctxt_fn_name != fromSmallSymbolStr("transfer") && context.compareObj(ctxt_fn_name, incall_name) != 0) {
+    if (ctxt_fn_name != fromSmallSymbolStr("approve") && ctxt_fn_name != fromSmallSymbolStr("transfer")) {
       return;
     }
 
     let spend_left = fromVoid();
 
-    if (spend_left_per_token.has(curr_contract_cid)) {
-      spend_left = spend_left_per_token.get(curr_contract_cid);
-    } else if (ledger.hasDataFor(SPEND_LIMIT)){
-       let spend_limit_map = new Map(ledger.getDataFor(SPEND_LIMIT));
-       if (spend_limit_map.has(ctxt_cid)) {
-          spend_left = spend_limit_map.get(ctxt_cid);
+    if (spend_left_per_token.has(curr_contract_addr)) {
+      spend_left = spend_left_per_token.get(curr_contract_addr);
+    } else if (ledger.hasDataFor(SPEND_LIMIT, storageTypeInstance)){
+       let spend_limit_map = new Map(ledger.getDataFor(SPEND_LIMIT, storageTypeInstance));
+       if (spend_limit_map.has(ctxt_caddr)) {
+          spend_left = spend_limit_map.get(ctxt_caddr);
        }
     }
 
@@ -236,7 +230,7 @@ call.
           context.failWithErrorCode(ERR_CODE.NOT_ENOUGH_SIGNERS);
         }
         if (!isNegative(spend_left)) {
-          spend_left_per_token.put(curr_contract_cid, i128sub(spend_left, spent));
+          spend_left_per_token.put(curr_contract_addr, i128sub(spend_left, spent));
         }
     }
 }
