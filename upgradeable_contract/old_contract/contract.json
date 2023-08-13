@@ -1,0 +1,25 @@
+{
+    "name": "upgradable",
+    "version": "0.2.0",
+    "description": "upgradable contract example - old contract",
+    "host_functions_version": 85899345971,
+    "functions": [
+        {
+            "name" : "init",
+            "arguments": [
+                {"name": "admin", "type": "address"}
+            ]
+        },
+        {
+            "name" : "version",
+            "arguments": [],
+            "returns" : "u32"
+        },
+        {
+            "name" : "upgrade",
+            "arguments": [
+                {"name": "new_wasm_hash", "type": "bytes"}
+            ]
+        }
+    ]
+}
