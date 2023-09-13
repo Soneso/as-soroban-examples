@@ -1,8 +1,5 @@
 {
-    "name": "atomic_swap",
-    "version": "0.2.0",
-    "description": "atomic swap contract example",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "swap",
@@ -16,6 +13,20 @@
                 {"name": "amount_b", "type": "i128"},
                 {"name": "min_a_for_b", "type": "i128"}
             ]
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "atomic_swap"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "atomic swap contract example"
         }
     ]
 }

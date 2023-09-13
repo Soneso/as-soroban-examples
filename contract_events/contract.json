@@ -1,13 +1,24 @@
 {
-    "name": "events",
-    "version": "0.2.0",
-    "description": "soroban contract example publishing events",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "events",
             "arguments": [],
             "returns" : "u32"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "events"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "soroban contract example publishing events"
         }
     ]
 }

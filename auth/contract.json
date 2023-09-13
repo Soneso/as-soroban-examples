@@ -1,8 +1,5 @@
 {
-    "name": "auth",
-    "version": "0.2.0",
-    "description": "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "auth",
@@ -11,6 +8,20 @@
                 {"name": "value", "type": "u32"}
             ],
             "returns" : "map[address, u32]"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "auth"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework"
         }
     ]
 }

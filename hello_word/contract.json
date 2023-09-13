@@ -1,13 +1,24 @@
 {
-    "name": "hello word",
-    "version": "0.2.0",
-    "description": "my first contract",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "hello",
             "arguments": [{"name": "to", "type": "symbol"}],
             "returns" : "vec[symbol]"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "hello word"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "my first contract"
         }
     ]
 }

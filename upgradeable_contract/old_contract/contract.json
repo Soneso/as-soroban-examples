@@ -1,8 +1,5 @@
 {
-    "name": "upgradable",
-    "version": "0.2.0",
-    "description": "upgradable contract example - old contract",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "init",
@@ -20,6 +17,20 @@
             "arguments": [
                 {"name": "new_wasm_hash", "type": "bytes"}
             ]
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "upgradable (old contract)"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "upgradable contract example - old contract"
         }
     ]
 }

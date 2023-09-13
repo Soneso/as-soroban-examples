@@ -1,8 +1,5 @@
 {
-    "name": "timelock",
-    "version": "0.2.0",
-    "description": "This contract demonstrates 'timelock' concept",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "deposit",
@@ -20,6 +17,20 @@
             "arguments": [
                 {"name": "claimant", "type": "address"}
             ]
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "timelock"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "This contract demonstrates the timelock concept"
         }
     ]
 }

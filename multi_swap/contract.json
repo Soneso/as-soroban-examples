@@ -1,8 +1,5 @@
 {
-    "name": "multi swap",
-    "version": "0.2.0",
-    "description": "This example demonstrates how authorized calls can be batched together.",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "multi_swap",
@@ -14,6 +11,20 @@
                 {"name": "swaps_b", "type": "vec[val]"}
             ],
             "returns" : "void"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "multi swap"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "This example demonstrates how authorized calls can be batched together."
         }
     ]
 }

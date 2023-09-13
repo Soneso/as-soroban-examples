@@ -1,6 +1,6 @@
 {
   "name": "increment",
-  "version": "0.1.9",
+  "version": "0.2.1",
   "description": "soroban example using storage to increment",
   "scripts": {
     "asbuild:debug": "asc assembly/index.ts --target debug",
@@ -25,6 +25,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.3"
+    "as-soroban-sdk": "^0.2.4"
   }
 }

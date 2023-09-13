@@ -1,8 +1,5 @@
 {
-    "name": "liquidity pool",
-    "version": "0.2.0",
-    "description": "Demonstrates how to write a constant product liquidity pool contract",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "initialize",
@@ -53,6 +50,20 @@
             "name" : "get_rsrvs",
             "arguments": [],
             "returns" : "vec[i128]"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "liquidity pool"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "Demonstrates how to write a constant product liquidity pool contract"
         }
     ]
 }

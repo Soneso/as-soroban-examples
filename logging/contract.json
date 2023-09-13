@@ -1,13 +1,24 @@
 {
-    "name": "logging",
-    "version": "0.2.0",
-    "description": "example of logging in the soroban cli",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "logging",
             "arguments": [],
             "returns" : "void"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "logging"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "example of logging"
         }
     ]
 }

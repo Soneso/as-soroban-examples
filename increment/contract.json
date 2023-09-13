@@ -1,13 +1,24 @@
 {
-    "name": "increment",
-    "version": "0.2.0",
-    "description": "increment smart contract example using storage",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "increment",
             "arguments": [],
             "returns" : "u32"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "increment"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "increment smart contract example using storage"
         }
     ]
 }

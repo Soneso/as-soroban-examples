@@ -115,10 +115,7 @@ The concrete argument and return types of this example deployer contract are def
 
 ```json
 {
-    "name": "deploy",
-    "version": "0.2.0",
-    "description": "example deploys and calls a contract",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "deploy",
@@ -129,6 +126,20 @@ The concrete argument and return types of this example deployer contract are def
                 {"name": "args", "type": "vec[i32]"}
             ],
             "returns" : "i32"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "deployer"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "this example deploys and invokes a contract"
         }
     ]
 }

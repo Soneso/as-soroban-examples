@@ -64,10 +64,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
 
 ```json
 {
-    "name": "add",
-    "version": "0.2.0",
-    "description": "soroban contract example adding 2 integers",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "add",
@@ -76,6 +73,20 @@ The concrete types must also be defined in the [contract spec](https://github.co
                 {"name": "b", "type": "i32"}
             ],
             "returns" : "i32"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "add"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "soroban contract example adding 2 integers"
         }
     ]
 }

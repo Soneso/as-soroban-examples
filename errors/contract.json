@@ -1,8 +1,5 @@
 {
-    "name": "checkAge",
-    "version": "0.2.0",
-    "description": "soroban contract example with error codes",
-    "host_functions_version": 85899345971,
+    "host_functions_version": 51,
     "functions": [
         {
             "name" : "checkAge",
@@ -10,6 +7,20 @@
                 {"name": "age", "type": "i32"}
             ],
             "returns" : "symbol"
+        }
+    ],
+    "meta": [
+        {
+            "key" : "name",
+            "value" : "check age"
+        },
+        {
+            "key" : "version",
+            "value" : "0.2.1"
+        },
+        {
+            "key" : "description",
+            "value" : "soroban contract example with error codes"
         }
     ]
 }
