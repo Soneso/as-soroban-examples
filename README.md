@@ -1,12 +1,10 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
-![v0.2.4](https://img.shields.io/badge/v0.2.4-yellow.svg)
+![v0.2.5](https://img.shields.io/badge/v0.2.5-green.svg)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
 Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
-
-**This repository contains code that is in early development, incomplete, not tested, and not recommended for use. The Examples and the SDK are unstable, experimental, and are receiving breaking changes frequently.**
 
 ## Quick Start
 
@@ -16,7 +14,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 ### 3. Run an example contract
@@ -44,7 +42,7 @@ You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` fol
 Run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to friend
+soroban -q contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to friend
 ```
 
 ### 4. Available examples
@@ -65,7 +63,6 @@ soroban contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to frie
 | [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token)| Demonstrates how to write a token contract that implements the Stellar [token interface](https://soroban.stellar.org/docs/reference/interfaces/token-interface).|
 | [atomic swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap)| Swaps two tokens between two authorized parties atomically while following the limits they set. This example demonstrates advanced usage of Soroban auth framework and assumes the reader is familiar with the auth example and with Soroban token usage.|
 | [timelock example](https://github.com/Soneso/as-soroban-examples/tree/main/timelock)| Demonstrates how to write a timelock and implements a greatly simplified claimable balance similar to the claimable balance feature available on Stellar.|
-| [multi swap example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap)| This example demonstrates how authorized calls can be batched together. It swaps a pair of tokens between the two groups of users that authorized the swap operation from the atomic swap example.|
 | [single offer sale example](https://github.com/Soneso/as-soroban-examples/tree/main/single_offer)| The single offer sale example demonstrates how to write a contract that allows a seller to set up an offer to sell token A for token B to multiple buyers.|
 | [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/main/liquidity_pool)| Demonstrates how to write a constant product liquidity pool contract.|
 | [custom account example](https://github.com/Soneso/as-soroban-examples/tree/main/custom_account)| This example is an advanced auth example which demonstrates how to implement a simple account contract that supports multisig and customizable authorization policies.|

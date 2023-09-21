@@ -1,9 +1,9 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-var assert = require('assert');
+let assert = require('assert');
 
-const rpcUrl = 'https://rpc-futurenet.stellar.org:443';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
 
 const submitterSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57";
 const submitterId = "GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T";
@@ -25,7 +25,7 @@ const claimant3_seed = "SCLA2LEFHL56X2HDP5ZIRJRRESVNR4D3BOUERKWBQWAL6G7GZUTVEA7O
 
 async function startTest() {
 
-    //await fundAccounts(); // only needed once after futurenet reset
+    await fundAccounts(); // only needed once after testnet reset
 
     await buildTimelockContract();
 
@@ -140,7 +140,7 @@ async function deployTokenContract() {
 
 async function testDepositAndClaim(timelock_contract_id, token_contract_id, token_contract_address) {
     console.log(`test deposit and claim ...`);
-    var now = Math.floor(Date.now() / 1000);
+    let now = Math.floor(Date.now() / 1000);
     await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
     let balance = await getBalance(spenderId, token_contract_id);
     assert.equal(balance, '"9900"');
@@ -158,12 +158,16 @@ async function testDepositAndClaim(timelock_contract_id, token_contract_id, toke
 async function testDoubleDepositNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
     console.log(`test double deposit not possible ...`);
     
-    var now = Math.floor(Date.now() / 1000);
+    let now = Math.floor(Date.now() / 1000);
     await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
 
     now = Math.floor(Date.now() / 1000);
-    let error = await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
-    assert.equal(true, error.includes('HostError: Error(Contract, #1)'));
+    try {
+        let error = await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
+        assert.equal(true, error.includes('HostError: Error(Contract, #1)'));
+    } catch(error) {
+        assert.equal(true, error.message.includes('HostError: Error(Contract, #1)'));
+    }
 
     console.log(`test double deposit not possible -> OK`);
 }
@@ -171,57 +175,72 @@ async function testDoubleDepositNotPossible(timelock_contract_id, token_contract
 async function testUnauthorizedClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
     console.log(`test unauthorized claim not possible ...`);
     
-    var now = Math.floor(Date.now() / 1000);
+    let now = Math.floor(Date.now() / 1000);
     await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
+    try {
+        let error = await claim(claimant3_id, claimant3_seed, timelock_contract_id);
+        assert.equal(true, error.includes('HostError: Error(Contract, #5)'));
+    } catch(error) {
+        assert.equal(true, error.message.includes('HostError: Error(Contract, #5)'));
+    }
 
-    let error = await claim(claimant3_id, claimant3_seed, timelock_contract_id);
-    assert.equal(true, error.includes('HostError: Error(Contract, #5)'));
     console.log(`test unauthorized claim not possible -> OK`);
 }
 
 async function testDoubleClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
     console.log(`test double claim not possible ...`);
     
-    var now = Math.floor(Date.now() / 1000);
+    let now = Math.floor(Date.now() / 1000);
     await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
     await claim(claimant2_id, claimant2_seed, timelock_contract_id);
 
-    let error = await claim(claimant2_id, claimant2_seed, timelock_contract_id);
-    console.log(error);
-    assert.equal(true, error.includes('HostError: Error(Contract, #3)'));
+    try {
+        let error = await claim(claimant2_id, claimant2_seed, timelock_contract_id);
+        assert.equal(true, error.includes('HostError: Error(Contract, #3)'));
+    } catch(error) {
+        assert.equal(true, error.message.includes('HostError: Error(Contract, #3)'));
+    }
+
     console.log(`test double claim not possible -> OK`);
 }
 
 async function testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
     console.log(`test claim out of timebound not possible ...`);
     
-    var now = Math.floor(Date.now() / 1000);
+    let now = Math.floor(Date.now() / 1000);
 
     await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 1, now + 15000, timelock_contract_id);
-    await claim(claimant2_id, claimant2_seed, timelock_contract_id);
+    try {
+        await claim(claimant2_id, claimant2_seed, timelock_contract_id);
+        let error = await claim(claimant2_id, claimant2_seed, timelock_contract_id);
+        assert.equal(true, error.includes('HostError: Error(Contract, #4)'));
+    } catch(error) {
+        assert.equal(true, error.message.includes('HostError: Error(Contract, #4)'));
+    }
 
-    let error = await claim(claimant2_id, claimant2_seed, timelock_contract_id);
-    console.log(error);
-    assert.equal(true, error.includes('HostError: Error(Contract, #4)'));
     console.log(`test claim out of timebound not possible -> OK`);
 }
 
 async function testDepositAfterClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
     console.log(`test deposit after claim not possible ...`);
     
-    var now = Math.floor(Date.now() / 1000);
+    let now = Math.floor(Date.now() / 1000);
     await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
     await claim(claimant2_id, claimant2_seed, timelock_contract_id);
 
     now = Math.floor(Date.now() / 1000);
-    let error = await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
-    assert.equal(true, error.includes('HostError: Error(Contract, #1)'));
-
+    try {
+        let error = await deposit(spenderId, spenderSeed, token_contract_address, 100, [claimant1_pk, claimant2_pk], 0, now + 5000, timelock_contract_id);
+        assert.equal(true, error.includes('HostError: Error(Contract, #1)'));    
+    } catch(error) {
+        assert.equal(true, error.message.includes('HostError: Error(Contract, #1)'));
+    }
+    
     console.log(`test deposit after claim not possiblee -> OK`);
 }
 
 async function deposit(from, from_seed, token, amount, claimants, lock_kind, timestamp, timelock_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + timelock_contract_id + ' --fee 1000000 -- deposit --from ' + from +' --token ' + token + ' --amount ' + amount  +
     ' --lock_kind ' + lock_kind + ' --timestamp ' + timestamp +
     ' --claimants \'{ "vec": [';
@@ -249,7 +268,7 @@ async function deposit(from, from_seed, token, amount, claimants, lock_kind, tim
 }
 
 async function claim(claimant_id, claimant_seed, timelock_contract_id) {
-    let cmd = 'soroban contract invoke ' + 
+    let cmd = 'soroban -q contract invoke ' + 
     '--source ' + claimant_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + timelock_contract_id + ' -- claim --claimant ' + claimant_id;
     console.log(cmd);
@@ -268,23 +287,25 @@ async function claim(claimant_id, claimant_seed, timelock_contract_id) {
 }
 
 async function getBalance(user, token_contract_id) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke ' +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke ' +
     '--source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user);
 
     if (error) {
         console.log(error);
     }
-    console.log("GET BALANCE - stderr: " + stderr);
+    if (stderr) {
+        console.log("GET BALANCE - stderr: " + stderr);
+    }
     return stdout.trim(); // balance
 }
 
 async function fundAccount(account_id) {
-    const { error, stdout, stderr } = await exec('curl https://friendbot-futurenet.stellar.org?addr=' + account_id);
+    const { error, stdout, stderr } = await exec('curl https://friendbot.stellar.org?addr=' + account_id);
 }
 
 async function create_token(token_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + submitterId 
     + ' --decimal 8 --name 536f6e65736f --symbol 534f4e';
@@ -300,7 +321,7 @@ async function create_token(token_contract_id) {
 }
 
 async function mint(to, amount, token_contract_id) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke' + 
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke' + 
     ' --source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -314,7 +335,7 @@ async function mint(to, amount, token_contract_id) {
 }
 
 async function pipInstallPythonSDK() {
-    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban'; // 'pip3 install -U stellar-sdk'
+    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git'; // 'pip3 install -U stellar-sdk'
     const { error, stdout, stderr } = await exec(pip);
     if (error) {
         assert.fail(`error: ${error.message}`);

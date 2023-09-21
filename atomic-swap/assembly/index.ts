@@ -1,9 +1,8 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
-import {AddressObject, BytesObject, I128Val, fromVoid, VoidVal, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
+import {AddressObject, I128Val, fromVoid, VoidVal, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
-import { Sym } from "as-soroban-sdk/lib/sym";
 import { i128lt, i128sub } from "as-soroban-sdk/lib/val128";
 
 enum SWAP_ERR_CODES {

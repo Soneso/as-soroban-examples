@@ -61,7 +61,7 @@ To validate the request, the contract loads the needed info about the claimable 
 // Load the data from storage.
 let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE));
 let lock_kind = claimableBalance.get(2);
-var timestamp = claimableBalance.get(3);
+let timestamp = claimableBalance.get(3);
 
 if (isU64Small(timestamp)) { // get u64 value.
   timestamp = toU64Small(timestamp);
@@ -70,7 +70,7 @@ if (isU64Small(timestamp)) { // get u64 value.
 }
 
 // Get the current ledger timestamp (u64 value).
-var ledger_timestamp = context.getLedgerTimestamp();
+let ledger_timestamp = context.getLedgerTimestamp();
 ```
 
 and then checks the preconditions:
@@ -118,7 +118,7 @@ contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHos
 To run a contract in the sandbox, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, to build the contract, navigate it's directory install the sdk. Then build the contract:

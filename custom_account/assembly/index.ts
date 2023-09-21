@@ -30,7 +30,7 @@ enum ERR_CODE {
 export function init(owners:VecObject): VoidVal {
   // In reality this would need some additional validation on owners
   // (deduplication etc.).
-  ledger.putDataFor(OWNERS, owners, storageTypeInstance, fromVoid());
+  ledger.putDataFor(OWNERS, owners, storageTypeInstance);
   return fromVoid();
 }
 
@@ -51,7 +51,7 @@ export function add_limit(token:AddressObject, limit: I128Val): VoidVal {
 
   let map = new Map();
   map.put(token,limit);
-  ledger.putDataFor(SPEND_LIMIT, map.getHostObject(), storageTypeInstance, fromVoid());
+  ledger.putDataFor(SPEND_LIMIT, map.getHostObject(), storageTypeInstance);
 
   return fromVoid();
 }
@@ -87,7 +87,7 @@ export function __check_auth(signature_payload:BytesObject, signatures: VecObjec
   
   // Perform authentication.
   let signers_count:u32 = 0;
-  for (signers_count = 0; signers_count < signaturesVec.len(); signers_count++) {
+  for (; signers_count < signaturesVec.len(); signers_count++) {
     let signature_map = new Map(signaturesVec.get(signers_count));
     let keys = signature_map.keys();
     let public_key = fromVoid();
@@ -139,9 +139,9 @@ function verify_authorization_policy(context_entry:VecObject, curr_contract_addr
     let contextVec = new Vec(context_entry); //["Contract", ContextMap]
     let ctxt = new Map(contextVec.get(1));
     let ctxt_keys = ctxt.keys(); // contract (address), fn_name (symbol/str), args (vec[val])
-    var ctxt_caddr = fromVoid();
-    var ctxt_fn_name = fromVoid();
-    var ctxt_args = fromVoid();
+    let ctxt_caddr = fromVoid();
+    let ctxt_fn_name = fromVoid();
+    let ctxt_args = fromVoid();
     for (let i:u32 = 0; i < ctxt_keys.len(); i++) {
       let key = ctxt_keys.get(i);
       if (fromSmallSymbolStr("contract") == key) {

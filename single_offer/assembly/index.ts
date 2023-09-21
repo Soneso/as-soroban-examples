@@ -13,7 +13,7 @@ How this contract should be used:
 4. Seller may call `withdraw` to claim any remaining `sell_token` balance.
 */
 
-import { AddressObject, BytesObject, U32Val, VoidVal, toU32, fromVoid, I128Val, fromI128Small, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
+import { AddressObject, U32Val, VoidVal, toU32, fromVoid, I128Val, fromI128Small, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
 import * as context from "as-soroban-sdk/lib/context";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as address from "as-soroban-sdk/lib/address";

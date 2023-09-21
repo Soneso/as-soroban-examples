@@ -2,7 +2,7 @@ import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, 
+import {AddressObject, I128Val, fromSmallSymbolStr, 
   RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, 
   isU64Small, toU64Small, toU64, storageTypeInstance} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
@@ -66,12 +66,12 @@ export function deposit(from: AddressObject, token: AddressObject, amount: I128V
     claimableBlance.pushBack(lock_kind); // index 2
     claimableBlance.pushBack(timestamp); // index 3
     claimableBlance.pushBack(claimants); // index 4
-    ledger.putDataFor(S_BALANCE, claimableBlance.getHostObject(), storageTypeInstance, fromVoid());
+    ledger.putDataFor(S_BALANCE, claimableBlance.getHostObject(), storageTypeInstance);
 
     // Mark contract as initialized to prevent double-usage.
     // Note, that this is just one way to approach initialization - it may
     // be viable to allow one contract to manage several claimable balances.
-    ledger.putDataFor(S_INIT, fromU32(1), storageTypeInstance, fromVoid());
+    ledger.putDataFor(S_INIT, fromU32(1), storageTypeInstance);
     
     return fromVoid()
 }
@@ -96,7 +96,7 @@ export function claim(claimant: AddressObject): RawVal {
   // Load the data from storage.
   let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE, storageTypeInstance));
   let lock_kind = claimableBalance.get(2);
-  var timestamp = claimableBalance.get(3);
+  let timestamp = claimableBalance.get(3);
   
   if (isU64Small(timestamp)) { // get u64 value.
     timestamp = toU64Small(timestamp);
@@ -105,7 +105,7 @@ export function claim(claimant: AddressObject): RawVal {
   }
 
   // Get the current ledger timestamp (u64 value).
-  var ledger_timestamp = context.getLedgerTimestamp();
+  let ledger_timestamp = context.getLedgerTimestamp();
 
   // The 'timelock' part: check that provided time point is before/after
   // the current ledger timestamp.

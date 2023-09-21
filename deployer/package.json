@@ -1,6 +1,6 @@
 {
   "name": "deployer",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "description": "The deployer example demonstrates how to deploy contracts using a contract.",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.4"
+    "as-soroban-sdk": "^0.2.5"
   }
 }

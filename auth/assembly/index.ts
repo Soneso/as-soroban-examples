@@ -20,7 +20,7 @@ export function auth(user: AddressObject, value: RawVal): MapObject {
 
   counter += toU32(value);
   let counterVal = fromU32(counter);
-  ledger.putData(user, counterVal, storageTypePersistent, fromVoid());
+  ledger.putData(user, counterVal, storageTypePersistent);
 
   let map = new Map();
   map.put(user, counterVal);

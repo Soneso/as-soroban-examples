@@ -1,10 +1,10 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-var assert = require('assert');
+let assert = require('assert');
 
-const rpcUrl = 'https://rpc-futurenet.stellar.org:443';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
-const submitterSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57"; // GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
+const submitterSeed = "SDXD5UCF3QVFQCN6KOZL52IUYDQXCD7NQRQ7QBHRPOAHCDTIAJNUQDFF"; // GBSYL2UNRDE523CJB5BL3GBTXZR2U3E5AXRD5GJXT5UKGAYRIIEQDWPC
 
 async function startTest() {
     console.log(`test atomic swap ...`);
@@ -17,7 +17,7 @@ async function startTest() {
 } 
 
 async function pipInstallPythonSDK() {
-    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban'; // 'pip3 install -U stellar-sdk'
+    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git'; // 'pip3 install -U stellar-sdk'
     const { error, stdout, stderr } = await exec(pip);
     if (error) {
         assert.fail(`error: ${error.message}`);

@@ -8,7 +8,7 @@ The [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add) d
 To run a contract in the sandbox, you must first install the official ```soroban cli``` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` fol
 Run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 6 -- add --a 1 --b 5
+soroban -q contract invoke --wasm build/release.wasm --id 6 -- add --a 1 --b 5
 ```
 
 You should see the output:
@@ -64,7 +64,6 @@ The concrete types must also be defined in the [contract spec](https://github.co
 
 ```json
 {
-    "host_functions_version": 51,
     "functions": [
         {
             "name" : "add",
@@ -82,7 +81,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
         },
         {
             "key" : "version",
-            "value" : "0.2.1"
+            "value" : "0.2.2"
         },
         {
             "key" : "description",

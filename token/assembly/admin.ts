@@ -1,5 +1,5 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import {AddressObject, fromVoid, storageTypePersistent} from 'as-soroban-sdk/lib/value';
+import {AddressObject, storageTypePersistent} from 'as-soroban-sdk/lib/value';
 import { S_ADMIN } from "./util";
 
 export function has_administrator(): bool {
@@ -11,5 +11,5 @@ export function read_administrator() : AddressObject {
 }
 
 export function write_administrator(id: AddressObject) : void {
-    return ledger.putDataFor(S_ADMIN, id, storageTypePersistent, fromVoid());
+    return ledger.putDataFor(S_ADMIN, id, storageTypePersistent);
 }

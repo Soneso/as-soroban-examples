@@ -1,7 +1,7 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as context from "as-soroban-sdk/lib/context";
 import {Map} from "as-soroban-sdk/lib/map";
-import { AddressObject, fromI128Small, fromSmallSymbolStr, fromU32, fromVoid, I128Val, storageTypeTemporary, toU32, U32Val } from "as-soroban-sdk/lib/value";
+import { AddressObject, fromI128Small, fromSmallSymbolStr, fromU32, I128Val, storageTypeTemporary, toU32, U32Val } from "as-soroban-sdk/lib/value";
 import { isNegative, i128lt, i128sub, i128gt } from "as-soroban-sdk/lib/val128";
 import { ERR_CODE, S_ALLOWANCE } from "./util";
 import { Vec } from "as-soroban-sdk/lib/vec";
@@ -57,7 +57,7 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
         let spenderMap = new Map();
         spenderMap.put(spender, allowanceVec.getHostObject());
         dataMap.put(from, spenderMap.getHostObject());
-        ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject(), storageTypeTemporary, fromVoid());
+        ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject(), storageTypeTemporary);
         return;
     }
 
@@ -73,11 +73,11 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
         dataMap.put(from, spenderMap.getHostObject());
     }
 
-    ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject(), storageTypeTemporary, fromVoid());
+    ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject(), storageTypeTemporary);
 
     if (amountGtZero) {
-        let sub = toU32(expirationLedger) - currentLedgerSequence;
-        bump_contract_data(fromSmallSymbolStr(S_ALLOWANCE), storageTypeTemporary, fromU32(sub));
+        //let sub = toU32(expirationLedger) - currentLedgerSequence;
+        bump_contract_data(fromSmallSymbolStr(S_ALLOWANCE), storageTypeTemporary, expirationLedger, expirationLedger);
     }
 }
 

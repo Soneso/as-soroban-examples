@@ -1,5 +1,5 @@
 import * as ledger from "as-soroban-sdk/lib/ledger";
-import { AddressObject, U32Val, fromVoid, storageTypeInstance } from "as-soroban-sdk/lib/value";
+import { AddressObject, U32Val, storageTypeInstance } from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 
 const S_OFFER = "Offer";
@@ -16,11 +16,11 @@ enum DATA_INDEX {
 // If a seller wants to sell 1000 XLM for 100 USDC the `sell_price` would be 1000
 // and `buy_price` would be 100 (or 100 and 10, or any other pair of integers
 // in 10:1 ratio).
-export var __seller: AddressObject = 0; // Owner of this offer. Sells sell_token to get buy_token.
-export var __sell_token: AddressObject = 0;
-export var __buy_token: AddressObject = 0;
-export var __sell_price: U32Val = 0; // Seller-defined price of the sell token in arbitrary units.
-export var __buy_price: U32Val = 0; // Seller-defined price of the buy token in arbitrary units.
+export let __seller: AddressObject = 0; // Owner of this offer. Sells sell_token to get buy_token.
+export let __sell_token: AddressObject = 0;
+export let __buy_token: AddressObject = 0;
+export let __sell_price: U32Val = 0; // Seller-defined price of the sell token in arbitrary units.
+export let __buy_price: U32Val = 0; // Seller-defined price of the buy token in arbitrary units.
   
 export function has_offer() : bool {
     return ledger.hasDataFor(S_OFFER, storageTypeInstance);
@@ -39,7 +39,7 @@ export function write_offer(seller: AddressObject,
     offerVec.pushBack(sell_price);
     offerVec.pushBack(buy_price);
 
-    ledger.putDataFor(S_OFFER, offerVec.getHostObject(), storageTypeInstance, fromVoid());
+    ledger.putDataFor(S_OFFER, offerVec.getHostObject(), storageTypeInstance);
 
     __seller = seller;
     __sell_token = sell_token;

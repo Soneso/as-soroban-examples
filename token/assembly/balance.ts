@@ -14,7 +14,8 @@ export function read_balance(addr: AddressObject): I128Val {
     if (ledger.hasDataFor(S_BALANCE, storageTypePersistent)) {
         let balanceMap = new Map(ledger.getDataFor(S_BALANCE, storageTypePersistent));
         if (balanceMap.has(addr)) {
-            bump_contract_data(fromSmallSymbolStr(S_BALANCE), storageTypePersistent, fromU32(BALANCE_BUMP_AMOUNT));
+            let bump = fromU32(BALANCE_BUMP_AMOUNT);
+            bump_contract_data(fromSmallSymbolStr(S_BALANCE), storageTypePersistent, bump, bump);
             return balanceMap.get(addr);
         }
     }
@@ -28,19 +29,21 @@ export function write_balance(addr: AddressObject, amount: I128Val): void {
         context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
     }
 
+    let bump = fromU32(BALANCE_BUMP_AMOUNT);
+
     // S_BALANCE : map[addr, amount]
     if (!ledger.hasDataFor(S_BALANCE, storageTypePersistent)) {
         let balanceMap = new Map();
         balanceMap.put(addr, amount);
-        ledger.putDataFor(S_BALANCE, balanceMap.getHostObject(), storageTypePersistent, fromVoid());
-        bump_contract_data(fromSmallSymbolStr(S_BALANCE), storageTypePersistent, fromU32(BALANCE_BUMP_AMOUNT));
+        ledger.putDataFor(S_BALANCE, balanceMap.getHostObject(), storageTypePersistent);
+        bump_contract_data(fromSmallSymbolStr(S_BALANCE), storageTypePersistent, bump, bump);
         return;
     }
 
     let balanceMap = new Map(ledger.getDataFor(S_BALANCE, storageTypePersistent));
     balanceMap.put(addr,amount);
-    ledger.putDataFor(S_BALANCE, balanceMap.getHostObject(), storageTypePersistent, fromVoid());
-    bump_contract_data(fromSmallSymbolStr(S_BALANCE), storageTypePersistent, fromU32(BALANCE_BUMP_AMOUNT));
+    ledger.putDataFor(S_BALANCE, balanceMap.getHostObject(), storageTypePersistent);
+    bump_contract_data(fromSmallSymbolStr(S_BALANCE), storageTypePersistent, bump, bump);
 }
 
 export function receive_balance(addr: AddressObject, amount: I128Val): void {
@@ -83,11 +86,11 @@ export function write_authorization(addr: AddressObject, is_authorized: bool): v
     if (!ledger.hasDataFor(S_AUTHORIZED, storageTypePersistent)) {
         let authMap = new Map();
         authMap.put(addr, u32Auth);
-        ledger.putDataFor(S_AUTHORIZED, authMap.getHostObject(), storageTypePersistent, fromVoid());
+        ledger.putDataFor(S_AUTHORIZED, authMap.getHostObject(), storageTypePersistent);
         return;
     }
 
     let authMap = new Map(ledger.getDataFor(S_AUTHORIZED, storageTypePersistent));
     authMap.put(addr, u32Auth);
-    ledger.putDataFor(S_AUTHORIZED, authMap.getHostObject(), storageTypePersistent, fromVoid());
+    ledger.putDataFor(S_AUTHORIZED, authMap.getHostObject(), storageTypePersistent);
 }

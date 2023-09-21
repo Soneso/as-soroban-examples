@@ -6,13 +6,13 @@ import {publishEvent} from 'as-soroban-sdk/lib/context';
 export function events(): U32Val {
 
   let key = "COUNTER";
-  var counter = 0;
+  let counter = 0;
   if (ledger.hasDataFor(key, storageTypePersistent)) {
     let dataObj = ledger.getDataFor(key, storageTypePersistent);
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.putDataFor(key, fromU32(counter), storageTypePersistent, fromU32(0));
+  ledger.putDataFor(key, fromU32(counter), storageTypePersistent);
   
   // prepare and publish event
   let topics = new Vec();

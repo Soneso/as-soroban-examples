@@ -1,9 +1,9 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-var assert = require('assert');
+let assert = require('assert');
 
-const rpcUrl = 'https://rpc-futurenet.stellar.org:443';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
 const adminSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57";
 const adminId = "GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T";
 const userSeed = "SBY2KFCZM6YDWLT5GXHWAC2BOEPFFFDCRZ4RR7LHTMZ6DGJRSG7QROAW";
@@ -22,8 +22,8 @@ async function startTest() {
     await buildTokenContract();
     let wasm_hash = await installTokenContract();
     console.log("wasm hash: " + wasm_hash);
-    var token_a_addr = await deployTokenContract();
-    var token_b_addr = await deployTokenContract();
+    let token_a_addr = await deployTokenContract();
+    let token_b_addr = await deployTokenContract();
     let token_cid_a = await idForContractAddress(token_a_addr);
     let token_cid_b = await idForContractAddress(token_b_addr);
     if (token_cid_a > token_cid_b) {
@@ -52,7 +52,7 @@ async function startTest() {
 
 
     await mint(userId, 1000, token_cid_a);
-    var balance = await getBalance(userId, token_cid_a);
+    let balance = await getBalance(userId, token_cid_a);
     assert.equal(balance, '"1000"');
 
     await mint(userId, 1000, token_cid_b);
@@ -186,7 +186,7 @@ async function deployTokenContract() {
 }
 
 async function initializeLP(lp_contract_id, token_wasm_hash , token_a, token_b) {
-    let cmd = 'soroban contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
     + ' -- initialize --token_wasm_hash ' + token_wasm_hash 
     + ' --token_a '+ token_a + ' --token_b ' + token_b;
@@ -202,7 +202,7 @@ async function initializeLP(lp_contract_id, token_wasm_hash , token_a, token_b) 
 }
 
 async function depositLP(lp_contract_id, desired_a, min_a, desired_b, min_b) {
-    let cmd = 'soroban contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
     + ' --fee 1000000 -- deposit --to ' + userId 
     + ' --desired_a '+ desired_a + ' --min_a ' + min_a
@@ -219,7 +219,7 @@ async function depositLP(lp_contract_id, desired_a, min_a, desired_b, min_b) {
 }
 
 async function swapLP(lp_contract_id, buy_a, out, in_max) {
-    let cmd = 'soroban contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
     + ' --fee 1000000 -- swap --to ' + userId 
     + ' --buy_a '+ buy_a + ' --out ' + out
@@ -236,7 +236,7 @@ async function swapLP(lp_contract_id, buy_a, out, in_max) {
 }
 
 async function withdrawLP(lp_contract_id, share_amount, min_a, min_b) {
-    let cmd = 'soroban contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + userSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
     + ' --fee 1000000 -- withdraw --to ' + userId 
     + ' --share_amount '+ share_amount + ' --min_a ' + min_a
@@ -253,7 +253,7 @@ async function withdrawLP(lp_contract_id, share_amount, min_a, min_b) {
 }
 
 async function get_share_addr(lp_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + lp_contract_id 
     + ' -- share_addr';
 
@@ -268,7 +268,7 @@ async function get_share_addr(lp_contract_id) {
 }
 
 async function createToken(token_contract_id, name , symbol) {
-    let cmd = 'soroban contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + adminId 
     + ' --decimal 8 --name '+ name + ' --symbol ' + symbol;
@@ -284,7 +284,7 @@ async function createToken(token_contract_id, name , symbol) {
 }
 
 async function mint(to, amount, token_contract_id) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke' + 
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke' + 
     ' --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -298,7 +298,7 @@ async function mint(to, amount, token_contract_id) {
 }
 
 async function getBalance(user, token_contract_id) {
-    let cmd = 'soroban contract invoke ' +
+    let cmd = 'soroban -q contract invoke ' +
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 
@@ -314,7 +314,7 @@ async function getBalance(user, token_contract_id) {
 }
 
 async function pipInstallPythonSDK() {
-    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban'; // 'pip3 install -U stellar-sdk'
+    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git'; // 'pip3 install -U stellar-sdk'
     const { error, stdout, stderr } = await exec(pip);
     if (error) {
         assert.fail(`error: ${error.message}`);

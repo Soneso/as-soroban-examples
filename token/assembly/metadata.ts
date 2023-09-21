@@ -7,7 +7,7 @@ export function read_decimal(): RawVal {
 }
 
 export function write_decimal(d: RawVal): void {
-    ledger.putDataFor(S_DECIMALS, d, storageTypePersistent, fromVoid());
+    ledger.putDataFor(S_DECIMALS, d, storageTypePersistent);
 }
 
 export function read_name(): BytesObject {
@@ -15,7 +15,7 @@ export function read_name(): BytesObject {
 }
 
 export function write_name(n: BytesObject): void {
-    ledger.putDataFor(S_NAME, n, storageTypePersistent, fromVoid());
+    ledger.putDataFor(S_NAME, n, storageTypePersistent);
 }
 
 export function read_symbol(): BytesObject {
@@ -23,5 +23,5 @@ export function read_symbol(): BytesObject {
 }
 
 export function write_symbol(s: BytesObject): void {
-    ledger.putDataFor(S_SYMBOL, s, storageTypePersistent, fromVoid());
+    ledger.putDataFor(S_SYMBOL, s, storageTypePersistent);
 }

@@ -2,12 +2,18 @@
 
 The [multi swap example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap) demonstrates how authorized calls can be batched together. It swaps a pair of tokens between the two groups of users that authorized the swap operation from the atomic swap example.
 
+## On hold
+
+This example is currently not working due to this issue:
+
+https://discord.com/channels/897514728459468821/1149701029387055166
+
 ## Run the example
 
 First, install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, navigate it's directory and install the sdk.
@@ -22,6 +28,5 @@ You can now run the test:
 ```sh
 node testContract.cjs
 ```
-**Currently the test is not working because there is a limit in prev. 10 (HostError: Error(Budget, ExceededLimit) for the simulation**
 
 The comments in the [source code](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap/assembly/index.ts) explain how the contract should be used.

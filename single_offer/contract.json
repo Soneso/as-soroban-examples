@@ -1,5 +1,4 @@
 {
-    "host_functions_version": 51,
     "functions": [
         {
             "name" : "create",
@@ -50,7 +49,7 @@
         },
         {
             "key" : "version",
-            "value" : "0.2.1"
+            "value" : "0.2.5"
         },
         {
             "key" : "description",

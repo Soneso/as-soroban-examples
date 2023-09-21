@@ -8,7 +8,7 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 ### Install the `add` contract
@@ -52,7 +52,7 @@ asc assembly/index.ts --target release
 Next execute the deployer contract (change the wash_hash in the command first):
 
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --wasm build/release.wasm \
     --id 0 \
     -- deploy \
@@ -115,7 +115,6 @@ The concrete argument and return types of this example deployer contract are def
 
 ```json
 {
-    "host_functions_version": 51,
     "functions": [
         {
             "name" : "deploy",
@@ -135,7 +134,7 @@ The concrete argument and return types of this example deployer contract are def
         },
         {
             "key" : "version",
-            "value" : "0.2.1"
+            "value" : "0.2.5"
         },
         {
             "key" : "description",

@@ -97,7 +97,7 @@ export function deposit(to: AddressObject, desired_a: I128Val, min_a: I128Val, d
   let total_shares = get_total_shares();
 
   let zero = fromI128Small(0);
-  var new_total_shares = zero;
+  let new_total_shares = zero;
   if (i128gt(reserve_a, zero) && i128gt(reserve_b, zero)) {
     let shares_a = i128muldiv(balance_a, total_shares, reserve_a);
     let shares_b = i128muldiv(balance_b, total_shares, reserve_b);
@@ -126,8 +126,8 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
   let reserve_a = get_reserve_a();
   let reserve_b = get_reserve_b();
 
-  var reserve_sell = reserve_a;
-  var reserve_buy = reserve_b;
+  let reserve_sell = reserve_a;
+  let reserve_buy = reserve_b;
 
   let buy = toU32(buy_a) > 0; // TODO: replace with bool ass soon as it can be passed by the cli
   // let buy = toBool(buy_a);
@@ -146,7 +146,7 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
   }
 
   // Xfer the amount being sold to the contract
-  var sell_token = get_token_a();
+  let sell_token = get_token_a();
   if (buy) {
     sell_token = get_token_b();
   }
@@ -169,8 +169,8 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
   let residue_denominator = fromI128Small(1000);
   let zero = fromI128Small(0);
 
-  var out_a = zero;
-  var out_b = zero;
+  let out_a = zero;
+  let out_b = zero;
   if (buy) {
     out_a = out;
   } else {
@@ -249,7 +249,7 @@ export function get_rsrvs() :  VecObject {
 }
 
 function put_token_a(address: AddressObject) : void {
-  ledger.putData(fromU32(DATA_KEY.TOKEN_A), address, storageTypeInstance, fromVoid());
+  ledger.putData(fromU32(DATA_KEY.TOKEN_A), address, storageTypeInstance);
 }
 
 function get_token_a() : BytesObject {
@@ -257,7 +257,7 @@ function get_token_a() : BytesObject {
 }
 
 function put_token_b(address: AddressObject) : void {
-  ledger.putData(fromU32(DATA_KEY.TOKEN_B), address, storageTypeInstance, fromVoid());
+  ledger.putData(fromU32(DATA_KEY.TOKEN_B), address, storageTypeInstance);
 }
 
 function get_token_b() : BytesObject {
@@ -265,7 +265,7 @@ function get_token_b() : BytesObject {
 }
 
 function put_token_share(address: AddressObject) : void {
-  ledger.putData(fromU32(DATA_KEY.TOKEN_SHARE), address, storageTypeInstance, fromVoid());
+  ledger.putData(fromU32(DATA_KEY.TOKEN_SHARE), address, storageTypeInstance);
 }
 
 function get_token_share() : AddressObject {
@@ -273,7 +273,7 @@ function get_token_share() : AddressObject {
 }
 
 function put_total_shares(amount: I128Val) : void {
-  ledger.putData(fromU32(DATA_KEY.TOTAL_SHARES), amount, storageTypeInstance, fromVoid());
+  ledger.putData(fromU32(DATA_KEY.TOTAL_SHARES), amount, storageTypeInstance);
 }
 
 function get_total_shares() : I128Val {
@@ -281,7 +281,7 @@ function get_total_shares() : I128Val {
 }
 
 function put_reserve_a(amount: I128Val) : void {
-  ledger.putData(fromU32(DATA_KEY.RESERVE_A), amount, storageTypeInstance, fromVoid());
+  ledger.putData(fromU32(DATA_KEY.RESERVE_A), amount, storageTypeInstance);
 }
 
 function get_reserve_a() : I128Val {
@@ -289,7 +289,7 @@ function get_reserve_a() : I128Val {
 }
 
 function put_reserve_b(amount: I128Val) : void {
-  ledger.putData(fromU32(DATA_KEY.RESERVE_B), amount, storageTypeInstance, fromVoid());
+  ledger.putData(fromU32(DATA_KEY.RESERVE_B), amount, storageTypeInstance);
 }
 
 function get_reserve_b() : I128Val{
@@ -350,7 +350,7 @@ function invariant_factor(balance: I128Val, reserve: I128Val, out:I128Val, resid
   let delta = i128sub(i128sub(balance, reserve), out);
   let zero = fromI128Small(0);
   
-  var adj_delta = zero;
+  let adj_delta = zero;
   if (i128gt(delta,zero)) {
     adj_delta = i128mul(residue_numerator, delta);
   } else {
@@ -382,7 +382,7 @@ function transfer_b(to: AddressObject, amount: I128Val) : void {
 
 function create_contract(token_wasm_hash: BytesObject, token_a: AddressObject, token_b: AddressObject): AddressObject {
 
-  var salt = new Bytes();
+  let salt = new Bytes();
   salt.append(new Bytes(serialize_to_bytes(token_a)));
   salt.append(new Bytes(serialize_to_bytes(token_b)));
 

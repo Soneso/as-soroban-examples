@@ -45,11 +45,11 @@ export function multi_swap(swap_contract: AddressObject, token_a: AddressObject,
   let swapsB = new Vec(swaps_b);
 
 
-  var i:u32 = 0;
-  var j:u32 = 0;
+  let i:u32 = 0;
+  let j:u32 = 0;
   let countA = swapsA.len();
 
-  for (i = 0; i < countA; i++) {
+  for (; i < countA; i++) {
     let swapA = new Vec(swapsA.get(i));
     let addressA = swapA.get(DATA_INDEX.ADDRESS);
     let amountA = swapA.get(DATA_INDEX.AMOUNT);

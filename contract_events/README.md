@@ -8,7 +8,7 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -29,25 +29,71 @@ soroban contract invoke --wasm build/release.wasm --id 9 -- events
 
 You should see the output:
 ```sh
+// ...
+
+2023-09-21T09:37:35.301585Z  INFO soroban_cli::log::host_event: 1: HostEvent {
+    event: ContractEvent {
+        ext: V0,
+        contract_id: Some(
+            Hash(0000000000000000000000000000000000000000000000000000000000000009),
+        ),
+        type_: Contract,
+        body: V0(
+            ContractEventV0 {
+                topics: VecM(
+                    [
+                        Symbol(
+                            ScSymbol(
+                                StringM(COUNTER),
+                            ),
+                        ),
+                        Symbol(
+                            ScSymbol(
+                                StringM(increment),
+                            ),
+                        ),
+                    ],
+                ),
+                data: U32(
+                    1,
+                ),
+            },
+        ),
+    },
+    failed_call: false,
+}
+
+// ...
 1
 ```
 
-The `soroban cli` logs events locally in the file .soroban/events.json. Look into that file to see the published event:
+The `soroban cli` also logs events locally in the file .soroban/events.json. Look into that file to see the published event:
 
 ```sh
 more .soroban/events.json 
 ```
 
-You should see the output:
-```sh
+You should be able to find this event:
+```json
 
-2023-08-01T10:03:27.256760Z  INFO soroban_cli::log::event: 
-
-log="[Contract Event] contract:0000000000000000000000000000000000000000000000000000000000000009, 
-
-topics:[COUNTER, increment], data:1"
-
+{
+  "type": "contract",
+  "ledger": "1",
+  "ledgerClosedAt": "1970-01-01T00:00:05Z",
+  "id": "0000000004294971393-0000000002",
+  "pagingToken": "0000000004294971393-0000000002",
+  "contractId": "0000000000000000000000000000000000000000000000000000000000000009",
+  "topic": [
+    "AAAADwAAAAdDT1VOVEVSAA==",
+    "AAAADwAAAAlpbmNyZW1lbnQAAAA="
+  ],
+  "value": {
+    "xdr": "AAAAAwAAAAE="
+  }
+}
 ```
+
+
 
 ## Code
 
@@ -66,13 +112,13 @@ import {publishEvent} from 'as-soroban-sdk/lib/context';
 export function events(): U32Val {
 
   let key = "COUNTER";
-  var counter = 0;
+  let counter = 0;
   if (ledger.hasDataFor(key, storageTypePersistent)) {
     let dataObj = ledger.getDataFor(key, storageTypePersistent);
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.putDataFor(key, fromU32(counter), storageTypePersistent, fromU32(0));
+  ledger.putDataFor(key, fromU32(counter), storageTypePersistent);
   
   // prepare and publish event
   let topics = new Vec();

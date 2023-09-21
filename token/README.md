@@ -7,7 +7,7 @@ The [token example](https://github.com/Soneso/as-soroban-examples/tree/main/toke
 To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory, install the sdk and build the contract:

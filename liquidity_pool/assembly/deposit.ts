@@ -3,7 +3,7 @@ import { i128le, i128lt, i128gt, i128isZero, i128muldiv} from "as-soroban-sdk/li
 import * as context from "as-soroban-sdk/lib/context";
 import { ERR_CODES } from "./index";
 
-export var __deposit_b: I128Val = fromI128Pieces(0,0);
+export let __deposit_b: I128Val = fromI128Pieces(0,0);
 
 export function get_deposit_amounts(desired_a: I128Val, min_a: I128Val, desired_b: I128Val, min_b: I128Val, reserve_a: I128Val, reserve_b: I128Val): I128Val {
 

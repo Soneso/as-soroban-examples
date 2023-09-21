@@ -1,9 +1,9 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-var assert = require('assert');
+let assert = require('assert');
 
-const rpcUrl = 'https://rpc-futurenet.stellar.org:443';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
 const adminSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57";
 const adminId = "GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T";
 const sellerSeed = "SD67PZDY26PAIHROO76HWDJLWTOPEZHUNSIT4P4DBXIIGVJB2VWFLNNN";
@@ -32,7 +32,7 @@ async function startTest() {
 
     // Give some sell_token to seller and buy_token to buyer.
     await mint(sellerId, 1000, sell_token_cid);
-    var balance = await getBalance(sellerId, sell_token_cid);
+    let balance = await getBalance(sellerId, sell_token_cid);
     assert.equal(balance, '"1000"');
     await mint(buyerId, 1000, buy_token_cid);
     balance = await getBalance(buyerId, buy_token_cid);
@@ -48,8 +48,12 @@ async function startTest() {
 
     // Try trading 20 buy_token for at least 11 sell_token - that wouldn't
     // succeed because the offer price would result in 10 sell_token.
-    let error = await trade_err(buyerSeed, buyerId, 20, 11, offer_cid);
-    assert.equal(true, error.includes('HostError: Error(Contract, #4)'));
+    try {
+        let error = await trade_err(buyerSeed, buyerId, 20, 11, offer_cid);
+        assert.equal(true, error.includes('HostError: Error(Contract, #4)'));
+    } catch (error) {
+        assert.equal(true, error.message.includes('HostError: Error(Contract, #4)'));
+    }
 
     // Buyer trades 20 buy_token for 10 sell_token.
     await trade(buyerSeed, buyerId, 20, 10, offer_cid);
@@ -153,7 +157,7 @@ async function deploy_offer_contract() {
 }
 
 async function create_token(token_contract_id, name , symbol) {
-    let cmd = 'soroban contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + adminId 
     + ' --decimal 8 --name '+ name + ' --symbol ' + symbol;
@@ -169,7 +173,7 @@ async function create_token(token_contract_id, name , symbol) {
 }
 
 async function mint(to, amount, token_contract_id) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke' + 
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke' + 
     ' --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -183,7 +187,7 @@ async function mint(to, amount, token_contract_id) {
 }
 
 async function getBalance(user, token_contract_id) {
-    let cmd = 'soroban contract invoke ' +
+    let cmd = 'soroban -q contract invoke ' +
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 
@@ -199,7 +203,7 @@ async function getBalance(user, token_contract_id) {
 }
 
 async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_price, buy_price, offer_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- create --seller ' + seller_id 
     + ' --sell_token ' + sell_token + ' --buy_token ' + buy_token + ' --sell_price ' + sell_price + ' --buy_price ' + buy_price;
@@ -217,7 +221,7 @@ async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_
 }
 
 async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
@@ -235,7 +239,7 @@ async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contra
 }
 
 async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
@@ -254,7 +258,7 @@ async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_co
 }
 
 async function withdraw(seller_seed, token, amount, offer_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- withdraw --token ' + token + ' --amount ' + amount;
 
@@ -271,7 +275,7 @@ async function withdraw(seller_seed, token, amount, offer_contract_id) {
 }
 
 async function updt_price(seller_seed, sell_price, buy_price, offer_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- updt_price --sell_price ' + sell_price + ' --buy_price ' + buy_price;
 
@@ -288,7 +292,7 @@ async function updt_price(seller_seed, sell_price, buy_price, offer_contract_id)
 }
 
 async function pipInstallPythonSDK() {
-    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git@soroban'; // 'pip3 install -U stellar-sdk'
+    let pip = 'pip3 install git+https://github.com/StellarCN/py-stellar-base.git'; // 'pip3 install -U stellar-sdk'
     const { error, stdout, stderr } = await exec(pip);
     if (error) {
         assert.fail(`error: ${error.message}`);
@@ -313,7 +317,7 @@ async function idForContractAddress(contract_address) {
 
 
 async function transfer(from_seed, from, to, amount, token_contract_id) {
-    let cmd = 'soroban contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'soroban -q contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id '+ token_contract_id + ' -- transfer ' +
     '--from ' + from +' --to ' + to + ' --amount ' + amount;
     console.log(cmd);

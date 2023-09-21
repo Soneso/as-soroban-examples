@@ -16,7 +16,7 @@ U32Val, fromU32, storageTypeInstance} from "as-soroban-sdk/lib/value";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 
 export function init(admin: AddressObject): VoidVal {
-    ledger.putDataFor("admin", admin, storageTypeInstance, fromVoid());
+    ledger.putDataFor("admin", admin, storageTypeInstance);
     return fromVoid();
 }
 
@@ -53,7 +53,7 @@ The `update_current_contract_wasm` host function will also emit a `SYSTEM` contr
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory, install the sdk in both folders (old and new) and build the contracts:
@@ -73,7 +73,7 @@ Since we are dealing with authorization, we need to set up an admin identity to 
 
 ```sh
 soroban config identity generate admin && \
-soroban config identity address admin &&
+soroban config identity address admin
 ```
 
 Example output with the account id of the admin:
@@ -93,7 +93,7 @@ CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG
 
 Next initialize the old contract:
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
     -- init \
     --admin GCJSVXJV6RR67KTEUA2HWW25OSCV6PCJQWYELHGEQ4SMAJARXYXXGIWE
@@ -101,7 +101,7 @@ soroban contract invoke \
 
 Let's invoke the `version` function:
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
     -- version
 ```
@@ -123,7 +123,7 @@ Example output with the wasm hash of the new wasm executable:
 Now we can upgrade our old contract. Notice the `--source` must be the identity name matching the address passed to the `init` function (admin).
 
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
 	--source admin \
     --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
     -- upgrade \
@@ -132,7 +132,7 @@ soroban contract invoke \
 
 Let's invoke the `version` function again:
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
     -- version
 ```
@@ -142,7 +142,7 @@ Now that the contract was upgraded, you'll see a new version:
 
 We can also invoke the new function added by the new contract:
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
     -- new_v2_fn
 ```

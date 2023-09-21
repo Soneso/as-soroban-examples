@@ -310,7 +310,7 @@ async function generateIdentity(name) {
 }
 
 async function create_token(admin_id) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --id 1 ' 
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --id 1 ' 
     + '--wasm build/release.wasm -- initialize --admin ' + admin_id 
     + ' --decimal 8 --name 536f6e65736f --symbol 534f4e');
     if (error) {
@@ -325,17 +325,20 @@ async function create_token(admin_id) {
 }
 
 async function create_token_err(admin, decimal, err_code) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --id 1 ' 
-    + '--wasm build/release.wasm -- initialize --admin ' + admin 
-    + ' --decimal '+ decimal + ' --name 536f6e65736f --symbol 534f4e');
-    if (error) {
-        assert.fail(`error: ${error.message}`);
+    try {
+        const { error, stdout, stderr } = await exec('soroban contract invoke --id 1 ' 
+        + '--wasm build/release.wasm -- initialize --admin ' + admin 
+        + ' --decimal '+ decimal + ' --name 536f6e65736f --symbol 534f4e');
+        if (error) {
+            assert.fail(`error: ${error.message}`);
+        }
+    } catch (error) {
+        assert(error.message.includes('HostError: Error(Contract, #' + err_code + ')'));
     }
-    assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
 async function mint(admin_name, to, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + admin_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + admin_name +
     ' --id 1 --wasm build/release.wasm -- mint ' +
     '--to ' + to + ' --amount ' + amount);
     if (error) {
@@ -350,7 +353,7 @@ async function mint(admin_name, to, amount) {
 }
 
 async function getBalance(user) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke ' +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke ' +
     ' --id 1 --wasm build/release.wasm -- balance ' +
     '--id ' + user);
     if (error) {
@@ -367,7 +370,7 @@ async function getBalance(user) {
 }
 
 async function approve(from_name, from_id, spender, amount, expirationLedger) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + from_name +
     ' --id 1 --wasm build/release.wasm -- approve ' +
     '--from ' + from_id +' --spender ' + spender + ' --amount ' + amount + ' --expiration_ledger ' + expirationLedger);
     if (error) {
@@ -382,7 +385,7 @@ async function approve(from_name, from_id, spender, amount, expirationLedger) {
 }
 
 async function getAllowance(from, spender) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke ' +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke ' +
     ' --id 1 --wasm build/release.wasm -- allowance ' +
     '--from ' + from + ' --spender ' + spender);
     if (error) {
@@ -398,7 +401,7 @@ async function getAllowance(from, spender) {
 }
 
 async function transfer(from_name, from_id, to, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + from_name +
     ' --id 1 --wasm build/release.wasm -- transfer ' +
     '--from ' + from_id +' --to ' + to + ' --amount ' + amount);
     if (error) {
@@ -413,23 +416,27 @@ async function transfer(from_name, from_id, to, amount) {
 }
 
 async function transfer_err(from_name, from_id, to, amount, err_code) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
-    ' --id 1 --wasm build/release.wasm -- transfer ' +
-    '--from ' + from_id +' --to ' + to + ' --amount ' + amount);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
+    try {
+        const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
+        ' --id 1 --wasm build/release.wasm -- transfer ' +
+        '--from ' + from_id +' --to ' + to + ' --amount ' + amount);
+        if (error) {
+            assert.fail(`error: ${error.message}`);
+        }
+        if (stderr) {
+            console.log("TRANSFER_ERR -stderr: " + stderr);
+        }
+        if (stdout) {
+            console.log("TRANSFER_ERR -stdout: " + stdout);
+        }
+    } catch (error) {
+        assert(error.message.includes('HostError: Error(Contract, #' + err_code + ')'));
+        console.log(`OK`);
     }
-    if (stderr) {
-        console.log("TRANSFER_ERR -stderr: " + stderr);
-    }
-    if (stdout) {
-        console.log("TRANSFER_ERR -stdout: " + stdout);
-    }
-    assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
 async function transfer_from(spender_name, spender_id, from, to, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + spender_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + spender_name +
     ' --id 1 --wasm build/release.wasm -- transfer_from ' +
     '--spender ' + spender_id + ' --from ' + from +' --to ' + to + ' --amount ' + amount);
     if (error) {
@@ -444,17 +451,21 @@ async function transfer_from(spender_name, spender_id, from, to, amount) {
 }
 
 async function transfer_from_err(spender_name, spender_id, from, to, amount, err_code) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + spender_name +
-    ' --id 1 --wasm build/release.wasm -- transfer_from ' +
-    '--spender ' + spender_id + ' --from ' + from +' --to ' + to + ' --amount ' + amount);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
+    try {
+        const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + spender_name +
+        ' --id 1 --wasm build/release.wasm -- transfer_from ' +
+        '--spender ' + spender_id + ' --from ' + from +' --to ' + to + ' --amount ' + amount);
+        if (error) {
+            assert.fail(`error: ${error.message}`);
+        }
+    } catch (error) {
+        assert(error.message.includes('HostError: Error(Contract, #' + err_code + ')'));
+        console.log(`OK`);
     }
-    assert.equal(true, stderr.includes('HostError: Error(Contract, #' + err_code + ')'));
 }
 
 async function set_admin(admin_name, newAdmin) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + admin_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + admin_name +
     ' --id 1 --wasm build/release.wasm -- set_admin ' +
     '--new_admin ' + newAdmin);
     if (error) {
@@ -469,7 +480,7 @@ async function set_admin(admin_name, newAdmin) {
 }
 
 async function set_authorized(admin_name, id, authorize) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + admin_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + admin_name +
     ' --id 1 --wasm build/release.wasm -- set_authorized ' +
     '--id ' + id + ' --authorize ' + authorize);
     if (error) {
@@ -484,7 +495,7 @@ async function set_authorized(admin_name, id, authorize) {
 }
 
 async function getAuthorized(user) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke ' +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke ' +
     ' --id 1 --wasm build/release.wasm -- authorized ' +
     '--id ' + user);
     if (error) {
@@ -501,7 +512,7 @@ async function getAuthorized(user) {
 }
 
 async function clawback(admin_name, from, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + admin_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + admin_name +
     ' --id 1 --wasm build/release.wasm -- clawback ' +
     '--from ' + from + ' --amount ' + amount);
     if (error) {
@@ -516,7 +527,7 @@ async function clawback(admin_name, from, amount) {
 }
 
 async function burn_from(spender_name, spender_id, from, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + spender_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + spender_name +
     ' --id 1 --wasm build/release.wasm -- burn_from ' +
     '--spender ' + spender_id +' --from ' + from + ' --amount ' + amount);
     if (error) {
@@ -531,7 +542,7 @@ async function burn_from(spender_name, spender_id, from, amount) {
 }
 
 async function burn(from_name, from_id, amount) {
-    const { error, stdout, stderr } = await exec('soroban contract invoke --source ' + from_name +
+    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + from_name +
     ' --id 1 --wasm build/release.wasm -- burn ' +
     '--from ' + from_id + ' --amount ' + amount);
     if (error) {

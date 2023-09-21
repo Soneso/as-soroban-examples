@@ -4,7 +4,7 @@ import { AddressObject, BytesObject, fromVoid, VoidVal, U32Val, fromU32, storage
 import * as ledger from "as-soroban-sdk/lib/ledger";
 
 export function init(admin: AddressObject): VoidVal {
-    ledger.putDataFor("admin", admin, storageTypeInstance, fromVoid());
+    ledger.putDataFor("admin", admin, storageTypeInstance);
     return fromVoid();
 }
 

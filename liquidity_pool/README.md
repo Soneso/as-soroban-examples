@@ -7,7 +7,7 @@ The [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/
 First, install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, navigate it's directory and install the sdk.

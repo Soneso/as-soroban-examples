@@ -4,13 +4,13 @@ import * as ledger from "as-soroban-sdk/lib/ledger";
 export function increment(): U32Val {
 
   let key = "COUNTER";
-  var counter = 0;
+  let counter = 0;
   if (ledger.hasDataFor(key, storageTypePersistent)) {
     let dataObj = ledger.getDataFor(key, storageTypePersistent);
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.putDataFor(key, fromU32(counter), storageTypePersistent, fromVoid());
+  ledger.putDataFor(key, fromU32(counter), storageTypePersistent);
   return ledger.getDataFor(key, storageTypePersistent);
 
 }

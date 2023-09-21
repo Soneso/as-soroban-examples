@@ -8,7 +8,7 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
 
 ```sh
-cargo install --locked --version 0.9.4 soroban-cli
+cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -37,7 +37,7 @@ GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR
 Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
 
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --source acc1 \
     --id 1 \
     --wasm build/release.wasm \
@@ -49,7 +49,7 @@ soroban contract invoke \
 Run a few more increments for both accounts.
 
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --source acc2 \
     --id 1 \
     --wasm build/release.wasm \
@@ -59,7 +59,7 @@ soroban contract invoke \
 ```
 
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --source acc1 \
     --id 1 \
     --wasm build/release.wasm \
@@ -69,24 +69,13 @@ soroban contract invoke \
 ```
 
 ```sh
-soroban contract invoke \
+soroban -q contract invoke \
     --source acc2 \
     --id 1 \
     --wasm build/release.wasm \
     -- auth \
     --user GBI5PLC6I7VUW47RIHIRHX3FHWXSBRBNO4ZO5UJRJEPDGHIPZHVUH7GC \
     --value 5
-```
-
-View the data that has been stored against each user with ```soroban read```.
-
-```sh
-soroban contract read --id 1
-```
-
-```sh
-"""GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO""",17
-"""GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR""",7
 ```
 
 ## Code
