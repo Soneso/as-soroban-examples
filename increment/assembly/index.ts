@@ -1,4 +1,4 @@
-import { toU32, fromU32, U32Val, storageTypePersistent, fromVoid } from "as-soroban-sdk/lib/value";
+import { toU32, fromU32, U32Val, storageTypePersistent} from "as-soroban-sdk/lib/value";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 
 export function increment(): U32Val {

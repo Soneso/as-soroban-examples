@@ -88,33 +88,34 @@ auth/assembly/index.ts
 It contains the function `auth()`, which stores a per-Address counter that can only be incremented by the owner of that Address:
 
 ```typescript
-import {AddressObject, MapObject, RawVal, fromU32, 
-fromVoid, storageTypePersistent, toU32} from 'as-soroban-sdk/lib/value';
+import {AddressObject, MapObject, U32Val, fromU32, storageTypePersistent, toU32} from 'as-soroban-sdk/lib/value';
 import {Map} from 'as-soroban-sdk/lib/map';
 import * as ledger from 'as-soroban-sdk/lib/ledger';
 import * as address from 'as-soroban-sdk/lib/address';
 
-export function auth(user: AddressObject, value: RawVal): MapObject {
+export function auth(user: AddressObject, value: U32Val): MapObject {
 
   address.requireAuth(user);
 
-  // let argsVec = new Vec();
-  // argsVec.pushFront(value);
-  // address.requireAuthForArgs(user, argsVec);
-
-  var counter = 0;
+  let counter:u32 = 0;
   
   if (ledger.hasData(user, storageTypePersistent)) {
     let dataValue = ledger.getData(user, storageTypePersistent);
+    // decode host value to u32 primitive
     counter = toU32(dataValue);
   }
 
+  // add value given by parameter to counter
   counter += toU32(value);
-  let counterVal = fromU32(counter);
-  ledger.putData(user, counterVal, storageTypePersistent, fromVoid());
+  
+  // encode counter to host value
+  let counterHostVal = fromU32(counter);
+
+  // store
+  ledger.putData(user, counterHostVal, storageTypePersistent);
 
   let map = new Map();
-  map.put(user, counterVal);
+  map.put(user, counterHostVal);
 
   return map.getHostObject();
 }

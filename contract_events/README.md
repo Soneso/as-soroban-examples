@@ -93,8 +93,6 @@ You should be able to find this event:
 }
 ```
 
-
-
 ## Code
 
 You can find the code in:
@@ -105,28 +103,31 @@ contract_events/assembly/index.ts
 
 ```typescript
 import {U32Val, fromU32, fromSmallSymbolStr, toU32, storageTypePersistent} from 'as-soroban-sdk/lib/value';
-import * as ledger from "as-soroban-sdk/lib/ledger";
+import * as env from "as-soroban-sdk/lib/env";
 import {Vec} from 'as-soroban-sdk/lib/vec';
 import {publishEvent} from 'as-soroban-sdk/lib/context';
 
 export function events(): U32Val {
 
-  let key = "COUNTER";
-  let counter = 0;
-  if (ledger.hasDataFor(key, storageTypePersistent)) {
-    let dataObj = ledger.getDataFor(key, storageTypePersistent);
+  let key = fromSmallSymbolStr("COUNTER");
+  let counter:u32 = 0;
+  if (env.has_contract_data(key, storageTypePersistent)) {
+    let dataObj = env.get_contract_data(key, storageTypePersistent)
     counter = toU32(dataObj);
   }
   counter += 1;
-  ledger.putDataFor(key, fromU32(counter), storageTypePersistent);
+  
+  let counterHostValue = fromU32(counter);
+
+  env.put_contract_data(key, counterHostValue, storageTypePersistent)
   
   // prepare and publish event
   let topics = new Vec();
-  topics.pushBack(fromSmallSymbolStr(key));
+  topics.pushBack(key);
   topics.pushBack(fromSmallSymbolStr("increment"));
-  publishEvent(topics, fromU32(counter));
+  publishEvent(topics, counterHostValue);
 
-  return ledger.getDataFor(key, storageTypePersistent);
+  return counterHostValue;
 }
 ```
 
@@ -150,7 +151,7 @@ Topics are defined using a vector. In the sample code two topics of type symbol 
 
 ```typescript
   let topics = new Vec();
-  topics.pushBack(fromSmallSymbolStr(key)); // "COUNTER"
+  topics.pushBack(key); // "COUNTER"
   topics.pushBack(fromSmallSymbolStr("increment"));
 
   publishEvent(topics, ...);
@@ -160,10 +161,10 @@ Tip: The topics don't have to be made of the same type. You can mix different ty
 
 ### Event Data
 
-An event also contains a data object of any value or type including types defined by contracts. In the example the data is the `u32` count.
+An event also contains a host value representing the data to be published.
 
 ```typescript
-  publishEvent(..., fromU32(counter));
+  publishEvent(..., counterHostValue);
 ```
 
 ### Publishing
