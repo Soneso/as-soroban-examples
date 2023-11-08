@@ -1,12 +1,10 @@
 import {BytesObject, I32Val, SmallSymbolVal, VecObject} from 'as-soroban-sdk/lib/value';
-import * as ledger from "as-soroban-sdk/lib/ledger";
-import * as contract from "as-soroban-sdk/lib/contract";
-import * as context from "as-soroban-sdk/lib/context";
+import * as env from "as-soroban-sdk/lib/env";
 
 export function deploy(wasm_hash: BytesObject, salt: BytesObject, 
                       fn_name: SmallSymbolVal, args:VecObject): I32Val {
 
-  let currentContractAddress = context.getCurrentContractAddress();
-  let id = ledger.deployContract(currentContractAddress, wasm_hash, salt);
-  return contract.callContract(id, fn_name, args);
+  let currentContractAddress = env.get_current_contract_address();
+  let id = env.create_contract(currentContractAddress, wasm_hash, salt);
+  return env.call(id, fn_name, args);
 }

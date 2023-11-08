@@ -1,7 +1,7 @@
 {
     "functions": [
         {
-            "name" : "events",
+            "name" : "increment",
             "arguments": [],
             "returns" : "u32"
         }
@@ -13,7 +13,7 @@
         },
         {
             "key" : "version",
-            "value" : "0.2.5"
+            "value" : "0.3.0"
         },
         {
             "key" : "description",

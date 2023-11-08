@@ -1,25 +1,22 @@
-import {fromSmallSymbolStr, RawVal, toI32} from 'as-soroban-sdk/lib/value';
+import {fromSmallSymbolStr, Val, U32Val, toU32} from 'as-soroban-sdk/lib/value';
 import * as context from "as-soroban-sdk/lib/context";
-
-enum ALLOWED_AGE_RANGE {
-  MIN = 18,
-  MAX = 99
-}
 
 enum AGE_ERR_CODES {
   TOO_YOUNG = 1,
   TOO_OLD = 2
 }
 
-export function checkAge(age: RawVal): RawVal {
+export function checkAge(age: U32Val): Val {
 
-  let age2check = toI32(age);
+  let age2check = toU32(age);
 
-  if (age2check < ALLOWED_AGE_RANGE.MIN) {
+  context.logMgsAndValue("Age", age);
+
+  if (age2check < 18) {
     context.failWithErrorCode(AGE_ERR_CODES.TOO_YOUNG);
   }
 
-  if (age2check > ALLOWED_AGE_RANGE.MAX) {
+  if (age2check > 99) {
     context.failWithErrorCode(AGE_ERR_CODES.TOO_OLD);
   }
 

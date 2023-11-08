@@ -1,6 +1,5 @@
 import {AddressObject, BytesObject, I128Val, fromSmallSymbolStr, fromVoid, VecObject, fromU32, toU32, VoidVal, fromI128Pieces, fromI128Small, U32Val, storageTypeInstance} from "as-soroban-sdk/lib/value";
 import * as context from "as-soroban-sdk/lib/context";
-import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as address from "as-soroban-sdk/lib/address";
 import * as crypto from "as-soroban-sdk/lib/crypto";
@@ -9,7 +8,7 @@ import { Bytes} from "as-soroban-sdk/lib/bytes";
 import { Sym } from "as-soroban-sdk/lib/sym";
 import { __deposit_b, get_deposit_amounts } from "./deposit";
 import { i128add, i128div, i128gt, i128le, i128lt, i128mul, i128muldiv, i128sqrt, i128sub } from "as-soroban-sdk/lib/val128";
-import { serialize_to_bytes } from "as-soroban-sdk/lib/env";
+import { call, create_contract, serialize_to_bytes } from "as-soroban-sdk/lib/env";
 
 
 enum DATA_KEY {
@@ -40,7 +39,7 @@ export function initialize(token_wasm_hash: BytesObject, token_a: AddressObject,
     context.failWithErrorCode(ERR_CODES.TOKEN_A_MUST_BE_LESS_TOKEN_B);
   }
 
-  let share_contract = create_contract(token_wasm_hash, token_a, token_b);
+  let share_contract = create_ctr(token_wasm_hash, token_a, token_b);
 
   let args = new Vec();
   args.pushBack(context.getCurrentContractAddress());
@@ -50,7 +49,7 @@ export function initialize(token_wasm_hash: BytesObject, token_a: AddressObject,
   let symbol = Bytes.fromString("POOL");
   args.pushBack(symbol.getHostObject());
 
-  contract.callContract(share_contract, Sym.fromSymbolString("initialize").getHostObject(), args.getHostObject());
+  call(share_contract, Sym.fromSymbolString("initialize").getHostObject(), args.getHostObject());
 
   put_token_a(token_a);
   put_token_b(token_b);
@@ -84,12 +83,12 @@ export function deposit(to: AddressObject, desired_a: I128Val, min_a: I128Val, d
   transferArgs.pushBack(current_contract_address);
   transferArgs.pushBack(amount_a);
   let token_a = get_token_a();
-  contract.callContract(token_a, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+  call(token_a, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
   transferArgs.popBack();
   transferArgs.pushBack(amount_b);
   let token_b = get_token_b();
-  contract.callContract(token_b, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());  
+  call(token_b, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());  
 
   // Now calculate how many new pool shares to mint
   let balance_a = get_balance_a();
@@ -157,7 +156,7 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
   transferArgs.pushBack(to);
   transferArgs.pushBack(current_contract_address);
   transferArgs.pushBack(sell_amount);
-  contract.callContract(sell_token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+  call(sell_token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
   let balance_a = get_balance_a();
   let balance_b = get_balance_b();
@@ -210,7 +209,7 @@ export function withdraw(to: AddressObject, share_amount: I128Val, min_a: I128Va
   transferArgs.pushBack(to);
   transferArgs.pushBack(current_contract_address);
   transferArgs.pushBack(share_amount);
-  contract.callContract(share_token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+  call(share_token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
   let balance_a = get_balance_a();
   let balance_b = get_balance_b();
@@ -301,7 +300,7 @@ function get_balance(contract_id: BytesObject) : I128Val {
   let current_contract_address = context.getCurrentContractAddress();
   let args = new Vec();
   args.pushBack(current_contract_address);
-  return contract.callContract(contract_id, fromSmallSymbolStr("balance"), args.getHostObject());
+  return call(contract_id, fromSmallSymbolStr("balance"), args.getHostObject());
 
 }
 
@@ -324,7 +323,7 @@ function mint_shares(to: AddressObject, amount: I128Val) : void {
    let mintArgs = new Vec();
    mintArgs.pushBack(to);
    mintArgs.pushBack(amount);
-   contract.callContract(share_contract, fromSmallSymbolStr("mint"), mintArgs.getHostObject());
+   call(share_contract, fromSmallSymbolStr("mint"), mintArgs.getHostObject());
 
    put_total_shares(i128add(total, amount));
 
@@ -338,7 +337,7 @@ function burn_shares(amount: I128Val) : void {
   let burnArgs = new Vec();
   burnArgs.pushBack(current_contract_address);
   burnArgs.pushBack(amount);
-  contract.callContract(share_contract, fromSmallSymbolStr("burn"), burnArgs.getHostObject());
+  call(share_contract, fromSmallSymbolStr("burn"), burnArgs.getHostObject());
 
   put_total_shares(i128sub(total, amount));
 
@@ -368,7 +367,7 @@ function transfer(contract_id: BytesObject, to: AddressObject, amount: I128Val) 
   transferArgs.pushBack(current_contract_address);
   transferArgs.pushBack(to);
   transferArgs.pushBack(amount);
-  contract.callContract(contract_id, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+  call(contract_id, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
 
 }
 
@@ -380,13 +379,13 @@ function transfer_b(to: AddressObject, amount: I128Val) : void {
   transfer(get_token_b(), to, amount);
 }
 
-function create_contract(token_wasm_hash: BytesObject, token_a: AddressObject, token_b: AddressObject): AddressObject {
+function create_ctr(token_wasm_hash: BytesObject, token_a: AddressObject, token_b: AddressObject): AddressObject {
 
   let salt = new Bytes();
   salt.append(new Bytes(serialize_to_bytes(token_a)));
   salt.append(new Bytes(serialize_to_bytes(token_b)));
 
   let cSalt = crypto.computeHashSha256(salt);
-  return ledger.deployContract(context.getCurrentContractAddress(), token_wasm_hash, cSalt.getHostObject());
+  return create_contract(context.getCurrentContractAddress(), token_wasm_hash, cSalt.getHostObject());
 
 }

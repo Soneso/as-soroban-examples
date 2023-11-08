@@ -3,7 +3,7 @@
         {
             "name" : "checkAge",
             "arguments": [
-                {"name": "age", "type": "i32"}
+                {"name": "age", "type": "u32"}
             ],
             "returns" : "symbol"
         }
@@ -15,7 +15,7 @@
         },
         {
             "key" : "version",
-            "value" : "0.2.5"
+            "value" : "0.3.0"
         },
         {
             "key" : "description",

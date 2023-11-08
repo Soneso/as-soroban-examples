@@ -146,7 +146,7 @@ async function deployMultiSwapContract() {
 }
 
 async function buildTokenContract() {
-    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/index.ts --target release && cd ../multi_swap');
+    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/contract.ts --target release && cd ../multi_swap');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

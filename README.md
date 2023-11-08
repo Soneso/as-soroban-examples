@@ -1,6 +1,6 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
-![v0.2.5](https://img.shields.io/badge/v0.2.5-green.svg)
+![v0.3.0](https://img.shields.io/badge/v0.3.0-green.svg)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
@@ -47,18 +47,20 @@ soroban -q contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to f
 
 ### 4. Available examples
 
+Instead of a tutorial, we have created a series of contract examples with many explanations. It is recommended that you work through the examples in the order shown here. 
+
 | Example | Description |
 | :--- | :--- |
 | [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add)| Demonstrates how to write a simple contract, with a single function that takes two i32 inputs and returns their sum as an output. |
-| [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main/hello_word)| Demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output. |
-| [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment)| Demonstrates how to write a simple contract that stores data, with a single function that increments an internal counter and returns the value.| 
+| [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main/hello_word)| demonstrates how to write a simple contract, with a single function that takes an input and returns a vector containing multiple host values. |
+| [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment)| Demonstrates how to write a simple contract that stores data, with a single function that increments an internal counter and returns the value. It also shows how to manage contract data lifetimes and how to optimize contracts.|
+| [events example](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events)| Demonstrates how to publish events from a contract.|
+| [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/errors)| Demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.|
 | [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/logging)| Demonstrates how to log for the purpose of debugging.|
-| [cross contract call example](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract)| Demonstrates how to call a contract from another contract.|
 | [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)| Demonstrates how to implement authentication and authorization using the [Soroban Host-managed auth framework](https://soroban.stellar.org/docs/learn/authorization).|
+| [cross contract call example](https://github.com/Soneso/as-soroban-examples/tree/main/cross_contract)| Demonstrates how to call a contract's function from another contract.|
 | [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/deployer)| Demonstrates how to deploy contracts using a contract.|
 | [upgrading contracts example](https://github.com/Soneso/as-soroban-examples/tree/main/upgradeable_contract)| Demonstrates how to upgrade a wasm contract.|
-| [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/errors)| Demonstrates how to define and generate errors in a contract that invokers of the contract can understand and handle.|
-| [events example](https://github.com/Soneso/as-soroban-examples/tree/main/contract_events)| Demonstrates how to publish events from a contract.|
 | [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/testing)| Shows a simple way to test your contract.|
 | [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token)| Demonstrates how to write a token contract that implements the Stellar [token interface](https://soroban.stellar.org/docs/reference/interfaces/token-interface).|
 | [atomic swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap)| Swaps two tokens between two authorized parties atomically while following the limits they set. This example demonstrates advanced usage of Soroban auth framework and assumes the reader is familiar with the auth example and with Soroban token usage.|

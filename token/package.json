@@ -1,12 +1,12 @@
 {
   "name": "token",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Token example",
   "main": "index.js",
   "scripts": {
     "test": "node tests",
-    "asbuild:debug": "asc assembly/index.ts --target debug",
-    "asbuild:release": "asc assembly/index.ts --target release",
+    "asbuild:debug": "asc assembly/contract.ts --target debug",
+    "asbuild:release": "asc assembly/contract.ts --target release",
     "asbuild": "npm run asbuild:debug && npm run asbuild:release",
     "start": "npx serve ."
   },
@@ -27,6 +27,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.5"
+    "as-soroban-sdk": "^0.3.0"
   }
 }

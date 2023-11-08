@@ -11,5 +11,7 @@ export function logging(): VoidVal {
   values.pushBack(fromSmallSymbolStr("celsius"));
   context.log("Temperature today:", values);
 
+  context.logMgsAndValue("Test", fromI32(-12))
+  
   return fromVoid();
 }

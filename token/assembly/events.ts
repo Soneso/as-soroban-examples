@@ -1,7 +1,6 @@
-import { AddressObject, fromSmallSymbolStr, RawVal, I128Val, U32Val } from "as-soroban-sdk/lib/value";
+import { AddressObject, fromSmallSymbolStr, I128Val, U32Val } from "as-soroban-sdk/lib/value";
 import * as context from "as-soroban-sdk/lib/context";
 import { Vec } from "as-soroban-sdk/lib/vec";
-import { Sym } from "as-soroban-sdk/lib/sym";
 
 export function ev_approve(from: AddressObject, to:AddressObject, amount: I128Val, expirationLedger: U32Val): void {
     let topics = new Vec();
@@ -28,22 +27,6 @@ export function ev_mint(admin: AddressObject, to:AddressObject, amount: I128Val)
     topics.pushBack(admin);
     topics.pushBack(to);
     context.publishEvent(topics, amount);
-}
-
-export function ev_claw(admin: AddressObject, to:AddressObject, amount: I128Val): void {
-    let topics = new Vec();
-    topics.pushFront(fromSmallSymbolStr("clawback"));
-    topics.pushBack(admin);
-    topics.pushBack(to);
-    context.publishEvent(topics, amount);
-}
-
-export function ev_s_auth(admin: AddressObject, id:AddressObject, authorize: RawVal): void {
-    let topics = new Vec();
-    topics.pushFront(Sym.fromSymbolString("set_authorized").getHostObject());
-    topics.pushBack(admin);
-    topics.pushBack(id);
-    context.publishEvent(topics, authorize);
 }
 
 export function ev_s_admin(admin: AddressObject, new_admin:AddressObject): void {

@@ -2,20 +2,21 @@ import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as context from "as-soroban-sdk/lib/context";
 import {Map} from "as-soroban-sdk/lib/map";
 import { AddressObject, fromI128Small, fromSmallSymbolStr, fromU32, I128Val, storageTypeTemporary, toU32, U32Val } from "as-soroban-sdk/lib/value";
-import { isNegative, i128lt, i128sub, i128gt } from "as-soroban-sdk/lib/val128";
+import { i128lt, i128sub, i128gt } from "as-soroban-sdk/lib/val128";
 import { ERR_CODE, S_ALLOWANCE } from "./util";
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { bump_contract_data } from "as-soroban-sdk/lib/env";
 
 export function read_allowance(from: AddressObject, spender:AddressObject): Vec {
 
-    // S_ALLOWANCE : map[from, map[sender, vec[amount, expiration_ledger]]]
-    if (ledger.hasDataFor(S_ALLOWANCE, storageTypeTemporary)) {
-        let dataMap = new Map(ledger.getDataFor(S_ALLOWANCE, storageTypeTemporary));
+    let allowanceKey = fromSmallSymbolStr(S_ALLOWANCE);
+    // S_ALLOWANCE : map[from, map[sender, vec[(0):amount, (1):expiration_ledger]]]
+    if (ledger.hasData(allowanceKey, storageTypeTemporary)) {
+        let dataMap = new Map(ledger.getData(allowanceKey, storageTypeTemporary));
         if (dataMap.has(from)) {
-            let spenderMap = new Map(dataMap.get(from));
+            let spenderMap = new Map(dataMap.get(from)); // map[sender, vec[(0):amount, (1):expiration_ledger]
             if (spenderMap.has(spender)) {
-                let allowanceVec = new Vec(spenderMap.get(spender));
+                let allowanceVec = new Vec(spenderMap.get(spender)); // vec[(0):amount, (1):expiration_ledger]
                 let expirationLedger = toU32(allowanceVec.get(1));
                 let currentSequence = context.getLedgerSequence();
                 if (expirationLedger < currentSequence) {
@@ -36,10 +37,6 @@ export function read_allowance(from: AddressObject, spender:AddressObject): Vec 
 
 export function write_allowance(from: AddressObject, spender:AddressObject, amount: I128Val, expirationLedger: U32Val): void {
 
-    if(isNegative(amount)) {
-        context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
-    }
-
     let amountGtZero = i128gt(amount, fromI128Small(0));
     let currentLedgerSequence = context.getLedgerSequence();
 
@@ -51,17 +48,18 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
     allowanceVec.pushBack(amount);
     allowanceVec.pushBack(expirationLedger);
 
-    // S_ALLOWANCE : map[from, map[sender, vec[amount, expiration_ledger]]]
-    if (!ledger.hasDataFor(S_ALLOWANCE, storageTypeTemporary)) {
+    let allowanceKey = fromSmallSymbolStr(S_ALLOWANCE);
+    // S_ALLOWANCE : map[from, map[sender, vec[(0):amount, (1):expiration_ledger]]]
+    if (!ledger.hasData(allowanceKey, storageTypeTemporary)) {
         let dataMap = new Map();
         let spenderMap = new Map();
         spenderMap.put(spender, allowanceVec.getHostObject());
         dataMap.put(from, spenderMap.getHostObject());
-        ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject(), storageTypeTemporary);
+        ledger.putData(allowanceKey, dataMap.getHostObject(), storageTypeTemporary);
         return;
     }
 
-    let dataMap = new Map(ledger.getDataFor(S_ALLOWANCE, storageTypeTemporary));
+    let dataMap = new Map(ledger.getData(allowanceKey, storageTypeTemporary));
     
     if (dataMap.has(from)) {
         let spenderMap = new Map(dataMap.get(from));
@@ -73,11 +71,15 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
         dataMap.put(from, spenderMap.getHostObject());
     }
 
-    ledger.putDataFor(S_ALLOWANCE, dataMap.getHostObject(), storageTypeTemporary);
+    ledger.putData(allowanceKey, dataMap.getHostObject(), storageTypeTemporary);
 
     if (amountGtZero) {
-        //let sub = toU32(expirationLedger) - currentLedgerSequence;
-        bump_contract_data(fromSmallSymbolStr(S_ALLOWANCE), storageTypeTemporary, expirationLedger, expirationLedger);
+        let liveFor:u32 = toU32(expirationLedger) - currentLedgerSequence;
+        if (liveFor < 0) {
+            liveFor = 0
+        }
+        let liveForHostValue = fromU32(liveFor);
+        bump_contract_data(allowanceKey, storageTypeTemporary, liveForHostValue, liveForHostValue);
     }
 }
 

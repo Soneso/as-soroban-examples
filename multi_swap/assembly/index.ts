@@ -1,4 +1,4 @@
-import { AddressObject, VecObject, VoidVal, fromSmallSymbolStr, fromVoid} from "as-soroban-sdk/lib/value";
+import { AddressObject, VecObject, VoidVal, fromVoid} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { i128ge, i128le} from "as-soroban-sdk/lib/val128";
 import * as contract from "as-soroban-sdk/lib/contract";
@@ -78,7 +78,7 @@ export function multi_swap(swap_contract: AddressObject, token_a: AddressObject,
         args.pushBack(amountB);
         args.pushBack(minRecvB);
 
-        contract.callContract(swap_contract, fromSmallSymbolStr("swap"), args.getHostObject());
+        contract.callContract(swap_contract, "swap", args);
 
         swapsB.del(j);
         break;

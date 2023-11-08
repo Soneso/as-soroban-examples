@@ -67,21 +67,21 @@ function move_token(token: AddressObject, from: AddressObject, to:AddressObject,
   t1Args.pushBack(from);
   t1Args.pushBack(contract_address);
   t1Args.pushBack(max_spend_amount);
-  contract.callContract(token, func, t1Args.getHostObject());
+  env.call(token, func, t1Args.getHostObject());
 
   // Transfer the necessary amount to `to`.
   let t2Args = new Vec();
   t2Args.pushBack(contract_address);
   t2Args.pushBack(to);
   t2Args.pushBack(transfer_amount);
-  contract.callContract(token, func, t2Args.getHostObject());
+  env.call(token, func, t2Args.getHostObject());
 
   // Refund the remaining balance to `from`.
   let t3Args = new Vec();
   t3Args.pushBack(contract_address);
   t3Args.pushBack(from);
   t3Args.pushBack(i128sub(max_spend_amount,transfer_amount));
-  contract.callContract(token, func, t3Args.getHostObject());
+  env.call(token, func, t3Args.getHostObject());
 }
 ```
 

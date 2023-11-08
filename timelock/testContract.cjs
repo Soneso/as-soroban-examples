@@ -40,19 +40,19 @@ async function startTest() {
     await testDepositAndClaim(timelock_contract_id, token_contract_id, token_contract_address);
     
     timelock_contract_id = await deployTimelockContract();
-    await testDoubleDepositNotPossible(timelock_contract_id, token_contract_id, token_contract_address);
+    await testDoubleDepositNotPossible(timelock_contract_id, token_contract_address);
     
     timelock_contract_id = await deployTimelockContract();
-    await testUnauthorizedClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address);
+    await testUnauthorizedClaimNotPossible(timelock_contract_id, token_contract_address);
 
     timelock_contract_id = await deployTimelockContract();
-    await testDoubleClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address);
+    await testDoubleClaimNotPossible(timelock_contract_id, token_contract_address);
 
     timelock_contract_id = await deployTimelockContract();
-    await testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address);
+    await testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_contract_address);
     
     timelock_contract_id = await deployTimelockContract();
-    await testDepositAfterClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address);
+    await testDepositAfterClaimNotPossible(timelock_contract_id, token_contract_address);
 } 
 
 async function fundAccounts() {
@@ -108,7 +108,7 @@ async function deployTimelockContract() {
 }
 
 async function buildTokenContract() {
-    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/index.ts --target release && cd ../timelock');
+    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/contract.ts --target release && cd ../timelock');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -155,7 +155,7 @@ async function testDepositAndClaim(timelock_contract_id, token_contract_id, toke
     console.log(`test deposit & claim -> OK`);
 }
 
-async function testDoubleDepositNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
+async function testDoubleDepositNotPossible(timelock_contract_id, token_contract_address) {
     console.log(`test double deposit not possible ...`);
     
     let now = Math.floor(Date.now() / 1000);
@@ -172,7 +172,7 @@ async function testDoubleDepositNotPossible(timelock_contract_id, token_contract
     console.log(`test double deposit not possible -> OK`);
 }
 
-async function testUnauthorizedClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
+async function testUnauthorizedClaimNotPossible(timelock_contract_id, token_contract_address) {
     console.log(`test unauthorized claim not possible ...`);
     
     let now = Math.floor(Date.now() / 1000);
@@ -187,7 +187,7 @@ async function testUnauthorizedClaimNotPossible(timelock_contract_id, token_cont
     console.log(`test unauthorized claim not possible -> OK`);
 }
 
-async function testDoubleClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
+async function testDoubleClaimNotPossible(timelock_contract_id, token_contract_address) {
     console.log(`test double claim not possible ...`);
     
     let now = Math.floor(Date.now() / 1000);
@@ -204,7 +204,7 @@ async function testDoubleClaimNotPossible(timelock_contract_id, token_contract_i
     console.log(`test double claim not possible -> OK`);
 }
 
-async function testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
+async function testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_contract_address) {
     console.log(`test claim out of timebound not possible ...`);
     
     let now = Math.floor(Date.now() / 1000);
@@ -221,7 +221,7 @@ async function testOutOfTimeBoundClaimNotPossible(timelock_contract_id, token_co
     console.log(`test claim out of timebound not possible -> OK`);
 }
 
-async function testDepositAfterClaimNotPossible(timelock_contract_id, token_contract_id, token_contract_address) {
+async function testDepositAfterClaimNotPossible(timelock_contract_id, token_contract_address) {
     console.log(`test deposit after claim not possible ...`);
     
     let now = Math.floor(Date.now() / 1000);

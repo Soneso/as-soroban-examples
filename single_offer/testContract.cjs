@@ -101,7 +101,7 @@ async function startTest() {
 } 
 
 async function build_token_contract() {
-    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/index.ts --target release && cd ../single_offer');
+    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/contract.ts --target release && cd ../single_offer');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

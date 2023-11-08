@@ -4,7 +4,7 @@ The [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/
 
 ## Run the example
 
-First, install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+First, install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli).
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli

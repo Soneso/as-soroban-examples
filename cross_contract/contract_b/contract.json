@@ -2,7 +2,9 @@
     "functions": [
         {
             "name" : "callc",
-            "arguments": [],
+            "arguments": [
+                {"name": "addr", "type": "address"}
+            ],
             "returns" : "i32"
         }
     ],
@@ -13,7 +15,7 @@
         },
         {
             "key" : "version",
-            "value" : "0.2.5"
+            "value" : "0.3.0"
         },
         {
             "key" : "description",

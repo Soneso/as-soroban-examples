@@ -5,7 +5,7 @@ The [errors example](https://github.com/Soneso/as-soroban-examples/tree/main/err
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -52,28 +52,25 @@ add/assembly/index.ts
 ```
 
 ```typescript
-import {fromSmallSymbolStr, RawVal, toI32} from 'as-soroban-sdk/lib/value';
+import {fromSmallSymbolStr, Val, U32Val, toU32} from 'as-soroban-sdk/lib/value';
 import * as context from "as-soroban-sdk/lib/context";
-
-enum ALLOWED_AGE_RANGE {
-  MIN = 18,
-  MAX = 99
-}
 
 enum AGE_ERR_CODES {
   TOO_YOUNG = 1,
   TOO_OLD = 2
 }
 
-export function checkAge(age: RawVal): RawVal {
+export function checkAge(age: U32Val): Val {
 
-  let age2check = toI32(age);
+  let age2check = toU32(age);
 
-  if (age2check < ALLOWED_AGE_RANGE.MIN) {
+  context.logMgsAndValue("Age", age);
+
+  if (age2check < 18) {
     context.failWithErrorCode(AGE_ERR_CODES.TOO_YOUNG);
   }
 
-  if (age2check > ALLOWED_AGE_RANGE.MAX) {
+  if (age2check > 99) {
     context.failWithErrorCode(AGE_ERR_CODES.TOO_OLD);
   }
 
@@ -81,12 +78,17 @@ export function checkAge(age: RawVal): RawVal {
 }
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/errors
-
 ## How it works
 
-The enum `ALLOWED_AGE_RANGE` defines the allowed age range. The enum `AGE_ERR_CODES` defines the error codes. 
+The enum `AGE_ERR_CODES` defines the error codes. 
 
-Errors can be returned from contract functions by `context.failWithErrorCode(code)`. 
+Contracts can fail with u32 error codes by using: `context.failWithErrorCode(code)`. 
 
-One can also use `context.fail()`. It automatically inserts the error code `0`.
+One can also use `context.fail()`. It automatically uses the error code `0`.
+
+The directly exposed host function via [env.js](https://github.com/Soneso/as-soroban-sdk/blob/main/lib/env.ts) is:
+
+```typescript
+export declare function fail_with_error(error: ErrorVal): VoidVal;
+```
+

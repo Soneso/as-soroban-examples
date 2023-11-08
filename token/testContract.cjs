@@ -2,6 +2,11 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 var assert = require('assert');
 
+const ALREADY_INITIALIZED_ERR_CODE = 1;
+const DECIMAL_MUST_FIT_IN_U8_ERR_CODE = 2;
+const INSUFFICIENT_ALLOWANCE_ERR_CODE = 3;
+const INSUFFICIENT_BALANCE_ERR_CODE = 5;
+
 async function startTest() {
 
     await clean();
@@ -11,10 +16,6 @@ async function startTest() {
     await testBurn();
     await clean();
     await testInsufficientBalance();
-    await clean();
-    await testReceiveDeauthorized();
-    await clean();
-    await testSpendDeauthorized();
     await clean();
     await testInsufficientAllowance();
     await clean();
@@ -29,7 +30,7 @@ async function clean() {
 }
 
 async function buildContract() {
-    const { error, stdout, stderr } = await exec('asc assembly/index.ts --target release');
+    const { error, stdout, stderr } = await exec('asc assembly/contract.ts --target release');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -91,20 +92,15 @@ async function testContract() {
     // set admin
     await set_admin(admin1_name, admin2_id);
     
-    // set auth
-    await set_authorized(admin2_name, user2_id, 0); // TODO fix to work with bool also
-    let authorized = await getAuthorized(user2_id);
-    assert.equal(authorized, 'false');
-    
-    // clawback
-    await clawback(admin2_name, user3_id, 100);
-    balance = await getBalance(user3_id);
-    assert.equal(balance, '"200"');
-    
     // increase allowance to 500
     await approve(user2_name, user2_id, user3_id, 500, 200);
     allowance = await getAllowance(user2_id, user3_id);
     assert.equal(allowance, '"500"');
+
+    await approve(user2_name, user2_id, user3_id, 0, 200);
+    allowance = await getAllowance(user2_id, user3_id);
+    assert.equal(allowance, '"0"');
+
     console.log(`test contract -> OK`);
 }
 
@@ -170,73 +166,13 @@ async function testInsufficientBalance() {
     assert.equal(balance, '"1000"');
 
     // transfer
-    await transfer_err(user1_name, user1_id, user2_id, 1001, 8);
+    await transfer_err(user1_name, user1_id, user2_id, 1001, INSUFFICIENT_BALANCE_ERR_CODE);
     balance = await getBalance(user1_id);
     assert.equal(balance, '"1000"');
     balance = await getBalance(user2_id);
     assert.equal(balance, '"0"');
 
     console.log(`test insufficient balance -> OK`);
-}
-
-async function testReceiveDeauthorized() {
-    console.log(`test receive deauthorized ...`);
-
-    let admin_name = "admin";;
-    let user1_name = "user1";
-    let user2_name = "user2";
-
-    let admin_id = await generateIdentity(admin_name);
-    let user1_id = await generateIdentity(user1_name);
-    let user2_id = await generateIdentity(user2_name);
-
-    // create token
-    await create_token(admin_id);
-    
-    // mint
-    await mint(admin_name, user1_id, 1000);
-    let balance = await getBalance(user1_id);
-    assert.equal(balance, '"1000"');
-
-    await set_authorized(admin_name, user2_id, 0);
-
-    // transfer
-    await transfer_err(user1_name, user1_id, user2_id, 1000, 6);
-    balance = await getBalance(user1_id);
-    assert.equal(balance, '"1000"');
-    balance = await getBalance(user2_id);
-    assert.equal(balance, '"0"');
-    console.log(`test receive deauthorized -> OK`);
-}
-
-async function testSpendDeauthorized() {
-    console.log(`test spend deauthorized ...`);
-
-    let admin_name = "admin";;
-    let user1_name = "user1";
-    let user2_name = "user2";
-
-    let admin_id = await generateIdentity(admin_name);
-    let user1_id = await generateIdentity(user1_name);
-    let user2_id = await generateIdentity(user2_name);
-
-    // create token
-    await create_token(admin_id);
-    
-    // mint
-    await mint(admin_name, user1_id, 1000);
-    let balance = await getBalance(user1_id);
-    assert.equal(balance, '"1000"');
-
-    await set_authorized(admin_name, user1_id, 0);
-
-    // transfer
-    await transfer_err(user1_name, user1_id, user2_id, 1000, 7);
-    balance = await getBalance(user1_id);
-    assert.equal(balance, '"1000"');
-    balance = await getBalance(user2_id);
-    assert.equal(balance, '"0"');
-    console.log(`test spend deauthorized -> OK`);
 }
 
 async function testInsufficientAllowance() {
@@ -265,7 +201,7 @@ async function testInsufficientAllowance() {
     assert.equal(allowance, '"100"');
 
     // transfer
-    await transfer_from_err(user3_name, user3_id, user1_id, user2_id, 101, 4);
+    await transfer_from_err(user3_name, user3_id, user1_id, user2_id, 101, INSUFFICIENT_ALLOWANCE_ERR_CODE);
     balance = await getBalance(user1_id);
     assert.equal(balance, '"1000"');
     balance = await getBalance(user2_id);
@@ -281,7 +217,7 @@ async function testAlreadyInitialized() {
     // create token
     await create_token(admin);
     // create again and check err
-    await create_token_err(admin, 8, 2);
+    await create_token_err(admin, 8, ALREADY_INITIALIZED_ERR_CODE);
     
     console.log(`test already initialized -> OK`);
 }
@@ -292,7 +228,7 @@ async function testDecimalOverMax() {
     let admin = await generateIdentity("admin");
 
     // create token and check err
-    await create_token_err(admin, 277, 3);
+    await create_token_err(admin, 277, DECIMAL_MUST_FIT_IN_U8_ERR_CODE);
     
     console.log(`test decimal over max -> OK`);
 }
@@ -476,53 +412,6 @@ async function set_admin(admin_name, newAdmin) {
     }
     if (stdout) {
         console.log("SET_ADMIN -stdout: " + stdout);
-    }
-}
-
-async function set_authorized(admin_name, id, authorize) {
-    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + admin_name +
-    ' --id 1 --wasm build/release.wasm -- set_authorized ' +
-    '--id ' + id + ' --authorize ' + authorize);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
-    }
-    if (stderr) {
-        console.log("SET_AUTH -stderr: " + stderr);
-    }
-    if (stdout) {
-        console.log("SET_AUTH -stdout: " + stdout);
-    }
-}
-
-async function getAuthorized(user) {
-    const { error, stdout, stderr } = await exec('soroban -q contract invoke ' +
-    ' --id 1 --wasm build/release.wasm -- authorized ' +
-    '--id ' + user);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
-    }
-    if (stderr) {
-        console.log("GET_AUTH -stderr: " + stderr);
-    }
-    if (stdout) {
-        console.log("GET_AUTH -stdout: " + stdout);
-    }
-
-    return stdout.trim();
-}
-
-async function clawback(admin_name, from, amount) {
-    const { error, stdout, stderr } = await exec('soroban -q contract invoke --source ' + admin_name +
-    ' --id 1 --wasm build/release.wasm -- clawback ' +
-    '--from ' + from + ' --amount ' + amount);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
-    }
-    if (stderr) {
-        console.log("CLAWBACK -stderr: " + stderr);
-    }
-    if (stdout) {
-        console.log("CLAWBACK -stdout: " + stdout);
     }
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "error",
-  "version": "0.2.5",
-  "description": "example of soroban client error",
+  "version": "0.3.0",
+  "description": "example of soroban client errors",
   "main": "index.js",
   "scripts": {
     "test": "node tests",
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.5"
+    "as-soroban-sdk": "^0.3.0"
   }
 }

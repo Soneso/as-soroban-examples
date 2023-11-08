@@ -13,7 +13,7 @@ How this contract should be used:
 4. Seller may call `withdraw` to claim any remaining `sell_token` balance.
 */
 
-import { AddressObject, U32Val, VoidVal, toU32, fromVoid, I128Val, fromI128Small, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
+import { AddressObject, U32Val, VoidVal, toU32, fromVoid, I128Val, fromI128Small } from "as-soroban-sdk/lib/value";
 import * as context from "as-soroban-sdk/lib/context";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as address from "as-soroban-sdk/lib/address";
@@ -97,21 +97,21 @@ export function trade(buyer: AddressObject, buy_token_amount: I128Val, min_sell_
   transferArgs1.pushBack(buyer);
   transferArgs1.pushBack(contract_address);
   transferArgs1.pushBack(buy_token_amount);
-  contract.callContract(__buy_token, fromSmallSymbolStr("transfer"), transferArgs1.getHostObject());
+  contract.callContract(__buy_token, "transfer", transferArgs1);
 
   // Transfer the `sell_token` from contract to buyer.
   let transferArgs2 = new Vec();
   transferArgs2.pushBack(contract_address);
   transferArgs2.pushBack(buyer);
   transferArgs2.pushBack(sell_token_amount);
-  contract.callContract(__sell_token, fromSmallSymbolStr("transfer"), transferArgs2.getHostObject());
+  contract.callContract(__sell_token, "transfer", transferArgs2);
 
   // Transfer the `buy_token` to the seller immediately.
   let transferArgs3 = new Vec();
   transferArgs3.pushBack(contract_address);
   transferArgs3.pushBack(__seller);
   transferArgs3.pushBack(buy_token_amount);
-  contract.callContract(__buy_token, fromSmallSymbolStr("transfer"), transferArgs3.getHostObject());
+  contract.callContract(__buy_token, "transfer", transferArgs3);
 
   return fromVoid();
 
@@ -137,7 +137,7 @@ export function withdraw(token: AddressObject, amount: I128Val) : VoidVal {
     transferArgs.pushBack(contract_address);
     transferArgs.pushBack(__seller);
     transferArgs.pushBack(amount);
-    contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+    contract.callContract(token, "transfer", transferArgs);
 
   return fromVoid();
 }

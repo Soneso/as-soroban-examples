@@ -1,6 +1,6 @@
 {
   "name": "auth",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "demonstrates how to implement authentication and authorization using the Soroban Host-managed auth framework",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.2.5"
+    "as-soroban-sdk": "^0.3.0"
   }
 }

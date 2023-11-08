@@ -19,7 +19,7 @@ To initialize the contract the function `deposit` has to be invoked. Here, an ac
 
 ### Transfer the tokens to the contract address
 
-To deposit the tokens, they are transfered to the contract's address.
+To deposit the tokens, they are transferred to the contract's address.
 
 ```typescript
 let contract_address = context.getCurrentContractAddress()
@@ -27,7 +27,7 @@ let transferArgs = new Vec();
 transferArgs.pushBack(from);
 transferArgs.pushBack(contract_address);
 transferArgs.pushBack(amount);
-contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+contract.callContract(token, "transfer", transferArgs);
 ```
 
 ### Store claimable balance
@@ -55,7 +55,7 @@ To validate if the claimant has authorized the call, the contract uses the Sorob
 address.requireAuth(claimant);
 ```
 
-To validate the request, the contract loads the needed info about the claimable balance from storage and and from the current ledger first:
+To validate the request, the contract loads the needed info about the claimable balance from storage and from the current ledger first:
 
 ```typescript
 // Load the data from storage.
@@ -109,13 +109,13 @@ let transferArgs = new Vec();
 transferArgs.pushBack(contract_address);
 transferArgs.pushBack(claimant);
 transferArgs.pushBack(amount);
-contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+contract.callContract(token, "transfer", transferArgs);
 ```
 
 
 ## Build the contract
 
-To run a contract in the sandbox, you must first install the official soroban cli as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -135,7 +135,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 
 To run the contract, you need to prepare the needed accounts and token first. You can find an example in [testContract.cjs](https://github.com/Soneso/as-soroban-examples/tree/main/timelock/testContract.cjs).
 
-To run the test you can execute it as follows:
+To run the test, you can execute it as follows:
 
 ```sh
 node testContract.cjs

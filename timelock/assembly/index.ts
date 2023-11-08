@@ -3,7 +3,7 @@ import * as address from "as-soroban-sdk/lib/address";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as ledger from "as-soroban-sdk/lib/ledger";
 import {AddressObject, I128Val, fromSmallSymbolStr, 
-  RawVal, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, 
+  Val, fromVoid, VecObject, U64Object, fromU32, toU32, isVoid, 
   isU64Small, toU64Small, toU64, storageTypeInstance} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
 
@@ -32,14 +32,15 @@ enum ERR_CODES {
  * @param {BytesObject} token The token to be deposited.
  * @param {I128Val} amount The amount of the token to be deposited.
  * @param {VecObject} claimants The list of claimants (AddressObject's) that are allowed to claim the deposit. Maximum number of claimants is 10.
- * @param {RawVal} lock_kind The timelock kind (u32). If the provided value is 0 the lock_kind is "before" otherwise "after".
+ * @param {Val} lock_kind The timelock kind (u32). If the provided value is 0 the lock_kind is "before" otherwise "after".
  * @param {U64Object} timestamp The time point (u64) to apply the timelock for.
  * @returns {RawVal} void
  */
 export function deposit(from: AddressObject, token: AddressObject, amount: I128Val, claimants: VecObject, 
-  lock_kind: RawVal, timestamp: U64Object): RawVal {
+  lock_kind: Val, timestamp: U64Object): Val {
     
-    if (ledger.hasDataFor(S_INIT, storageTypeInstance)) {
+    let initKey = fromSmallSymbolStr(S_INIT);
+    if (ledger.hasData(initKey, storageTypeInstance)) {
       context.failWithErrorCode(ERR_CODES.ALREADY_INITIALIZED);
     }
 
@@ -57,7 +58,7 @@ export function deposit(from: AddressObject, token: AddressObject, amount: I128V
     transferArgs.pushBack(from);
     transferArgs.pushBack(contract_address);
     transferArgs.pushBack(amount);
-    contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+    contract.callContract(token, "transfer", transferArgs);
     
     // Store all the necessary info to allow one of the claimants to claim it.
     let claimableBlance = new Vec();
@@ -71,7 +72,7 @@ export function deposit(from: AddressObject, token: AddressObject, amount: I128V
     // Mark contract as initialized to prevent double-usage.
     // Note, that this is just one way to approach initialization - it may
     // be viable to allow one contract to manage several claimable balances.
-    ledger.putDataFor(S_INIT, fromU32(1), storageTypeInstance);
+    ledger.putData(initKey, fromU32(1), storageTypeInstance);
     
     return fromVoid()
 }
@@ -82,19 +83,20 @@ export function deposit(from: AddressObject, token: AddressObject, amount: I128V
  * @param {AddressObject} claimant The claimant that claims the deposit. 
  * @returns {RawVal} void 
  */
-export function claim(claimant: AddressObject): RawVal {
+export function claim(claimant: AddressObject): Val {
  
   // Make sure claimant has authorized this call, which ensures their identity.
   address.requireAuth(claimant);
 
- 
+  let balanceKey = fromSmallSymbolStr(S_BALANCE);
+
   // Make sure the contract has already been initialized and not already claimed.
-  if (!ledger.hasDataFor(S_BALANCE, storageTypeInstance)) {
+  if (!ledger.hasData(balanceKey, storageTypeInstance)) {
     context.failWithErrorCode(ERR_CODES.NO_BALANCE);
   }
  
   // Load the data from storage.
-  let claimableBalance = new Vec(ledger.getDataFor(S_BALANCE, storageTypeInstance));
+  let claimableBalance = new Vec(ledger.getData(balanceKey, storageTypeInstance));
   let lock_kind = claimableBalance.get(2);
   let timestamp = claimableBalance.get(3);
   
@@ -137,10 +139,10 @@ export function claim(claimant: AddressObject): RawVal {
   transferArgs.pushBack(contract_address);
   transferArgs.pushBack(claimant);
   transferArgs.pushBack(amount);
-  contract.callContract(token, fromSmallSymbolStr("transfer"), transferArgs.getHostObject());
+  contract.callContract(token, "transfer", transferArgs);
   
   // Remove the balance entry to prevent any further claims.
-  ledger.delDataFor(S_BALANCE, storageTypeInstance);
+  ledger.delData(balanceKey, storageTypeInstance);
 
   return fromVoid()
   

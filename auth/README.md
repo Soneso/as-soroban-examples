@@ -5,7 +5,7 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -88,32 +88,70 @@ auth/assembly/index.ts
 It contains the function `auth()`, which stores a per-Address counter that can only be incremented by the owner of that Address:
 
 ```typescript
+//! This contract demonstrates how to implement authorization using
+//! Soroban-managed auth framework for a simple case (a single user that needs
+//! to authorize a single contract invocation).
+//!
+//! See `timelock` and `single_offer` examples for demonstration of performing
+//! authorized token operations on behalf of the user.
+//!
+//! See `atomic_swap` and `multi_swap` examples for demonstration of
+//! multi-party authorizaton.
+//!
+//! See `custom_account` example for demonstration of an acount contract with
+//! a custom authentication scheme and a custom authorization policy.
+
 import {AddressObject, MapObject, U32Val, fromU32, storageTypePersistent, toU32} from 'as-soroban-sdk/lib/value';
 import {Map} from 'as-soroban-sdk/lib/map';
 import * as ledger from 'as-soroban-sdk/lib/ledger';
 import * as address from 'as-soroban-sdk/lib/address';
 
+/// Adds a value to the a counter for the user, and returns a map containing the user and current counter value.
 export function auth(user: AddressObject, value: U32Val): MapObject {
 
+  // Requires `user` to have authorized call of the `increment` of this
+  // contract with all the arguments passed to `increment`, i.e. `user`
+  // and `value`. This will panic if auth fails for any reason.
+  // When this is called, Soroban host performs the necessary
+  // authentication, manages replay prevention and enforces the user's
+  // authorization policies.
+  // The contracts normally shouldn't worry about these details and just
+  // write code in generic fashion using `AddressObject` and `address.requireAuth` (or
+  // `address.requireAuthForArgs`).
   address.requireAuth(user);
+
+  // This call is equilvalent to the above:
+  // let args = new Vec();
+  // args.pushBack(user);
+  // agrs.pushBack(value);
+  // address.requireAuthForArgs(user, args);
+
+  // The following has less arguments but is equivalent in authorization
+  // scope to the above calls (the user address doesn't have to be
+  // included in args as it's guaranteed to be authenticated).
+  // let args = new Vec();
+  // agrs.pushBack(value);
+  // address.requireAuthForArgs(user, args);
 
   let counter:u32 = 0;
   
+  // Get the current count for the invoker.
   if (ledger.hasData(user, storageTypePersistent)) {
     let dataValue = ledger.getData(user, storageTypePersistent);
-    // decode host value to u32 primitive
+    // decode to u32 primitive
     counter = toU32(dataValue);
   }
 
-  // add value given by parameter to counter
+  // Add value given by parameter to counter.
   counter += toU32(value);
   
-  // encode counter to host value
+  // Encode counter to host value.
   let counterHostVal = fromU32(counter);
 
-  // store
+  // Save the count.
   ledger.putData(user, counterHostVal, storageTypePersistent);
 
+  // Return the user and current counter value to the caller.
   let map = new Map();
   map.put(user, counterHostVal);
 
@@ -121,15 +159,15 @@ export function auth(user: AddressObject, value: U32Val): MapObject {
 }
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/auth
-
 ## How it works
+
+`AddressObject` is a universal Soroban identifier that may represent a Stellar account, a contract or an 'account contract' (a contract that defines a custom authentication scheme and authorization policies). Contracts don't need to distinguish between these internal representations though. `AddressObject` can be used any time some network identity needs to be represented, like to distinguish between counters for different users in this example.
 
 The `auth` function first checks the invoker type using the `address.requireAuth(user)` which can be called for any Address. Semantically `address.requireAuth(user)` here means 'require user to have authorized calling increment function of the current contract instance with the current call arguments, i.e. the current user and value argument values'. In simpler terms, this ensures that the user has allowed incrementing their counter value and nobody else can increment it.
 
-When using `requireAuth` the contract implementation doesn't need to worry about the signatures, authentication, and replay prevention. All these features are implemented by the Soroban host and happen automatically as long as Address type is used.
+When using `address.requireAuth` the contract implementation doesn't need to worry about the signatures, authentication, and replay prevention. All these features are implemented by the Soroban host and happen automatically as long as Address type is used.
 
-Address has another, more extensible version of this method called `requireAuthForArgs`. It works in the same fashion as `requireAuth`, but allows customizing the arguments that need to be authorized. Note though, this should be used with care to ensure that there is a deterministic mapping between the contract invocation arguments and the `requireAuthForArgs` arguments.
+Address has another, more extensible version of this method called `address.requireAuthForArgs`. It works in the same fashion as `address.requireAuth`, but allows customizing the arguments that need to be authorized. Note though, this should be used with care to ensure that there is a deterministic mapping between the contract invocation arguments and the `address.requireAuthForArgs` arguments.
 
 ## Further reading
 

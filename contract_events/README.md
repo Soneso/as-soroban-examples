@@ -5,7 +5,7 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -24,14 +24,14 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Run the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 9 -- events
+soroban contract invoke --wasm build/release.wasm --id 9 -- increment
 ```
 
 You should see the output:
 ```sh
 // ...
 
-2023-09-21T09:37:35.301585Z  INFO soroban_cli::log::host_event: 1: HostEvent {
+2023-11-08T14:02:22.179585Z  INFO soroban_cli::log::host_event: 1: HostEvent {
     event: ContractEvent {
         ext: V0,
         contract_id: Some(
@@ -55,7 +55,7 @@ You should see the output:
                     ],
                 ),
                 data: U32(
-                    1,
+                    3,
                 ),
             },
         ),
@@ -74,6 +74,7 @@ more .soroban/events.json
 ```
 
 You should be able to find this event:
+
 ```json
 
 {
@@ -103,45 +104,57 @@ contract_events/assembly/index.ts
 
 ```typescript
 import {U32Val, fromU32, fromSmallSymbolStr, toU32, storageTypePersistent} from 'as-soroban-sdk/lib/value';
-import * as env from "as-soroban-sdk/lib/env";
+import * as ledger from "as-soroban-sdk/lib/ledger";
 import {Vec} from 'as-soroban-sdk/lib/vec';
-import {publishEvent} from 'as-soroban-sdk/lib/context';
+import * as context from "as-soroban-sdk/lib/context";
 
-export function events(): U32Val {
+/// Increment increments an internal counter, and returns the value.
+export function increment(): U32Val {
 
   let key = fromSmallSymbolStr("COUNTER");
   let counter:u32 = 0;
-  if (env.has_contract_data(key, storageTypePersistent)) {
-    let dataObj = env.get_contract_data(key, storageTypePersistent)
+
+  // Get the current count.
+  if (ledger.hasData(key, storageTypePersistent)) {
+    let dataObj = ledger.getData(key, storageTypePersistent);
     counter = toU32(dataObj);
   }
+
+  // Increment the count.
   counter += 1;
   
+  // Save the count.
   let counterHostValue = fromU32(counter);
+  ledger.putData(key, counterHostValue, storageTypePersistent);
 
-  env.put_contract_data(key, counterHostValue, storageTypePersistent)
-  
-  // prepare and publish event
+  // Publish an event about the increment occuring.
+  // The event has two topics:
+  //   - The "COUNTER" symbol.
+  //   - The "increment" symbol.
+  // The event data is the count.
   let topics = new Vec();
   topics.pushBack(key);
   topics.pushBack(fromSmallSymbolStr("increment"));
-  publishEvent(topics, counterHostValue);
+  context.publishEvent(topics, counterHostValue);
 
+  // Return the count to the caller.
   return counterHostValue;
 }
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/contract_events
-
 ## How it works
 
-This example contract extends the increment example by publishing an event each time the counter is incremented.
+This example contract extends the [increment example](https://github.com/Soneso/as-soroban-examples/tree/main/increment) by publishing an event each time the counter is incremented.
 
-Contract events let contracts emit information about what their contract is doing.
+Contract events let contracts emit information about what the contract is doing.
 
-Contracts can publish events using the context ```publishEvent``` or ```publishSimpleEvent```  function.
+Contracts can publish events using the SDK's ```context.publishEvent``` or ```context.publishSimpleEvent``` wrapped function.
 
-```publishEvent(topics, data)``` 
+```typescript
+context.publishEvent(topics, data)
+``` 
+
+Alternatively the direct host function ```env.contract_event``` exposed by the SDK via [env.ts](https://github.com/Soneso/as-soroban-sdk/blob/main/lib/env.ts) can be used.
 
 ### Event Topics
 
@@ -150,11 +163,15 @@ An event may contain up to four topics.
 Topics are defined using a vector. In the sample code two topics of type symbol are used.
 
 ```typescript
+  // Publish an event about the increment occuring.
+  // The event has two topics:
+  //   - The "COUNTER" symbol.
+  //   - The "increment" symbol.
+  // The event data is the count.
   let topics = new Vec();
-  topics.pushBack(key); // "COUNTER"
+  topics.pushBack(key);
   topics.pushBack(fromSmallSymbolStr("increment"));
-
-  publishEvent(topics, ...);
+  context.publishEvent(topics, ...);
 ```
 
 Tip: The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit.
@@ -164,15 +181,15 @@ Tip: The topics don't have to be made of the same type. You can mix different ty
 An event also contains a host value representing the data to be published.
 
 ```typescript
-  publishEvent(..., counterHostValue);
+context.publishEvent(..., counterHostValue);
 ```
 
 ### Publishing
 
-Publishing an event is done by calling the ```publishEvent``` and giving it the topics and data. The function returns nothing on success, and panics on failure. Possible failure reasons can include malformed inputs (e.g. topic count exceeds limit) and running over the resource budget. Once successfully published, the new event will be available to applications consuming the events.
+Publishing an event is done by calling the ```context.publishEvent``` and giving it the topics and data. The function returns nothing on success, and panics on failure. Possible failure reasons can include malformed inputs (e.g. topic count exceeds limit) and running over the resource budget. Once successfully published, the new event will be available to applications consuming the events.
 
-Contracts can also use the ```publishSimpleEvent``` function wich publishes an event with one symbol topic without the need to create the vector.
+Contracts can also use the ```context.publishSimpleEvent``` function which publishes an event with one symbol topic without the need to create the vector.
 
-```publishSimpleEvent("Hey", fromU32(counter))```
+```context.publishSimpleEvent("Hey", fromU32(counter))```
 
 Caution: Published events are discarded if a contract invocation fails due to a panic, budget exhaustion, or when the contract returns an error.

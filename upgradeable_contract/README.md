@@ -1,6 +1,6 @@
 # Upgrading Contracts
 
-The [upgradeable contract example](https://github.com/Soneso/as-soroban-examples/tree/main/upgradable_contract) demonstrates demonstrates how to upgrade a Wasm contract.
+The [upgradeable contract example](https://github.com/Soneso/as-soroban-examples/tree/main/upgradable_contract) demonstrates how to upgrade a Wasm contract.
 
 
 ## Code
@@ -50,7 +50,7 @@ The `update_current_contract_wasm` host function will also emit a `SYSTEM` contr
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -78,7 +78,7 @@ soroban config identity address admin
 
 Example output with the account id of the admin:
 ```sh
-GCJSVXJV6RR67KTEUA2HWW25OSCV6PCJQWYELHGEQ4SMAJARXYXXGIWE
+GAKXXMK6B7FVNJYVUYIM5XKTQVDKMXK2R736QWRENAAJRVTYZ6FO6SZS
 ```
 
 Now lets deploy the "old" contract first:
@@ -88,28 +88,28 @@ soroban contract deploy --wasm old_contract/build/release.wasm
 
 Example output with the address of the deployed contract:
 ```sh
-CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG
+CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ
 ```
 
 Next initialize the old contract:
 ```sh
 soroban -q contract invoke \
-    --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
+    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
     -- init \
-    --admin GCJSVXJV6RR67KTEUA2HWW25OSCV6PCJQWYELHGEQ4SMAJARXYXXGIWE
+    --admin GAKXXMK6B7FVNJYVUYIM5XKTQVDKMXK2R736QWRENAAJRVTYZ6FO6SZS
 ```
 
 Let's invoke the `version` function:
 ```sh
 soroban -q contract invoke \
-    --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
+    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
     -- version
 ```
 
 The output should be:
 `1`
 
-Next we install the `new`contract:
+Next we install the `new` contract:
 
 ```sh
 soroban contract install --wasm new_contract/build/release.wasm
@@ -117,7 +117,7 @@ soroban contract install --wasm new_contract/build/release.wasm
 
 Example output with the wasm hash of the new wasm executable:
 ```sh
-002f11a3d5c39fc4c156d611556af081938f7bc509060561ca8eae4ef29f9e43
+6e0afcbff81680b786d5a93bab6ac09e7c61acdfe272d8dbf5f228796b09ec38
 ```
 
 Now we can upgrade our old contract. Notice the `--source` must be the identity name matching the address passed to the `init` function (admin).
@@ -125,15 +125,15 @@ Now we can upgrade our old contract. Notice the `--source` must be the identity 
 ```sh
 soroban -q contract invoke \
 	--source admin \
-    --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
+    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
     -- upgrade \
-    --new_wasm_hash 002f11a3d5c39fc4c156d611556af081938f7bc509060561ca8eae4ef29f9e43 
+    --new_wasm_hash 6e0afcbff81680b786d5a93bab6ac09e7c61acdfe272d8dbf5f228796b09ec38 
 ```
 
 Let's invoke the `version` function again:
 ```sh
 soroban -q contract invoke \
-    --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
+    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
     -- version
 ```
 
@@ -143,7 +143,7 @@ Now that the contract was upgraded, you'll see a new version:
 We can also invoke the new function added by the new contract:
 ```sh
 soroban -q contract invoke \
-    --id CCDAEHOSW3BMVX52ASDXJAI6NMRT4OEZTJWIDJ5NYG3YM75VVQJHMVFG \
+    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
     -- new_v2_fn
 ```
 

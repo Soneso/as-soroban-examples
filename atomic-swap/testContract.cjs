@@ -4,7 +4,7 @@ let assert = require('assert');
 
 const rpcUrl = 'https://soroban-testnet.stellar.org';
 const networkPassphrase = "'Test SDF Network ; September 2015'";
-const submitterSeed = "SDXD5UCF3QVFQCN6KOZL52IUYDQXCD7NQRQ7QBHRPOAHCDTIAJNUQDFF"; // GBSYL2UNRDE523CJB5BL3GBTXZR2U3E5AXRD5GJXT5UKGAYRIIEQDWPC
+const submitterSeed = "SDO7H2BPXKB6JHCT7ZFVM7MJWHS6FC7KIX5RO37J65UAVMOEK37TS4RR"; // GBXNHLEJEZSQEQSTJRLZ4F5JFJOC7VAS3AM72SIQUXLGYL6DFACZZKI5
 
 async function startTest() {
     console.log(`test atomic swap ...`);

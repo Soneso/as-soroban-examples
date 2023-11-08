@@ -5,13 +5,13 @@ The [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/te
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
 ```
 
-Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
+Then, to run the example, navigate to its directory and install the sdk. Then build the contract:
 
 ```sh
 cd testing
@@ -51,7 +51,6 @@ exec("soroban contract invoke --id 1 --wasm build/release.wasm -- add --a 1 --b 
 });
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/testing/testContract.cjs
 
 ## Run
 
@@ -66,9 +65,14 @@ OK
 
 ## How it works
 
-The script exectues the soroban comand and then checks the result.
+The script exectutes the soroban command and then checks the result.
 
 
 ## Further example
 
-A more comprehensive example can be found in the [as-soroban-sdk Tests](https://github.com/Soneso/as-soroban-sdk/blob/main/test.cjs).
+A more comprehensive example can be found:
+- in the [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token)
+- in the [single offer example](https://github.com/Soneso/as-soroban-examples/tree/main/single_offer)
+- in the [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/main/liquidity_pool)
+- in the [timelock example](https://github.com/Soneso/as-soroban-examples/tree/main/timelock)
+- in the [as-soroban-sdk Tests](https://github.com/Soneso/as-soroban-sdk/blob/main/test.cjs).
