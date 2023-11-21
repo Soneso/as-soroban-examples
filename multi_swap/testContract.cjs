@@ -118,7 +118,7 @@ async function pyMultiSwap(multi_swap_addr, atomic_swap_addr, token_a_addr, toke
 }
 
 async function buildMultiSwapContract() {
-    const { error, stdout, stderr } = await exec('asc assembly/index.ts --target release');
+    const { error, stdout, stderr } = await exec('npm run asbuild:release');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -146,7 +146,7 @@ async function deployMultiSwapContract() {
 }
 
 async function buildTokenContract() {
-    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/contract.ts --target release && cd ../multi_swap');
+    const { error, stdout, stderr } = await exec('cd ../token && npm run asbuild:release && cd ../multi_swap');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -172,7 +172,7 @@ async function deployTokenContract() {
 }
 
 async function buildAtomicSwapContract() {
-    const { error, stdout, stderr } = await exec('cd ../atomic-swap && asc assembly/index.ts --target release && cd ../multi_swap');
+    const { error, stdout, stderr } = await exec('cd ../atomic-swap && npm run asbuild:release && cd ../multi_swap');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

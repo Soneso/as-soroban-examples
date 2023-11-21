@@ -5,7 +5,7 @@ The [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/te
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -16,7 +16,7 @@ Then, to run the example, navigate to its directory and install the sdk. Then bu
 ```sh
 cd testing
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 You can find the generated `.wasm` (WebAssembly) file in the ```build``` folder. You can also find the `.wat` file there (text format of the `.wasm`).

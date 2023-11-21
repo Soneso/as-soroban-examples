@@ -5,7 +5,7 @@ This tutorial assumes that you've already completed the [hello word example](htt
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -16,7 +16,7 @@ Then, to run the example, navigate it's directory and install the sdk. Then buil
 ```sh
 cd increment
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
@@ -185,7 +185,7 @@ Next, lets deploy and run the contract on testnet:
 1. Build the contract:
 
 ```sh
-asc assembly/index2.ts --target release
+npm run asbuild2:release
 ```
 
 2. Configure the CLI for testnet (see also [doc](https://soroban.stellar.org/docs/getting-started/setup#configuring-the-cli-for-testnet)):
@@ -326,7 +326,7 @@ Now let's have a look to the size difference of the compiled contract.
 First build the contract from `index.ts` that uses the wrapped functions of the SDK and check its size:
 
 ```sh
-asc assembly/index.ts --target release
+npm run asbuild:release
 ls -la build/
 ```
 
@@ -339,7 +339,7 @@ The size of the compiled .wasm file is 781 bytes:
 Next let's build the contract from `index3.ts` that uses the direct host functions of the SDK and check its size:
 
 ```sh
-asc assembly/index3.ts --target release
+npm run asbuild3:release
 ls -la build/
 ```
 

@@ -77,7 +77,7 @@ async function prepareTokenContract() {
 }
 
 async function buildTimelockContract() {
-    const { error, stdout, stderr } = await exec('asc assembly/index.ts --target release');
+    const { error, stdout, stderr } = await exec('npm run asbuild:release');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -108,7 +108,7 @@ async function deployTimelockContract() {
 }
 
 async function buildTokenContract() {
-    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/contract.ts --target release && cd ../timelock');
+    const { error, stdout, stderr } = await exec('cd ../token && npm run asbuild:release release && cd ../timelock');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

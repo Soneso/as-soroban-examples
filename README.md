@@ -11,7 +11,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 ### 1. Clone this repo
 ### 2. Install the soroban cli
 
-To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -34,7 +34,7 @@ npm install as-soroban-sdk
 
 Build the contract:
 ```sh
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (Text format of the ```.wasm```).

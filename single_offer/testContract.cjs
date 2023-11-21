@@ -101,7 +101,7 @@ async function startTest() {
 } 
 
 async function build_token_contract() {
-    const { error, stdout, stderr } = await exec('cd ../token && asc assembly/contract.ts --target release && cd ../single_offer');
+    const { error, stdout, stderr } = await exec('cd ../token && npm run asbuild:release && cd ../single_offer');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
@@ -128,7 +128,7 @@ async function deploy_token_contract(name) {
 }
 
 async function build_offer_contract() {
-    const { error, stdout, stderr } = await exec('asc assembly/index.ts --target release');
+    const { error, stdout, stderr } = await exec('npm run asbuild:release');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

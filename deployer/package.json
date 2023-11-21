@@ -8,6 +8,9 @@
     "asbuild:debug": "asc assembly/index.ts --target debug",
     "asbuild:release": "asc assembly/index.ts --target release",
     "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "asbuild2:debug": "asc assembly/index2.ts --target debug",
+    "asbuild2:release": "asc assembly/index2.ts --target release",
+    "asbuild2": "npm run asbuild:debug && npm run asbuild:release",
     "start": "npx serve ."
   },
   "keywords": [

@@ -41,7 +41,7 @@ async function pySwap(swap_contract_id) {
 }
 
 async function buildSwapContract() {
-    const { error, stdout, stderr } = await exec('asc assembly/index.ts --target release');
+    const { error, stdout, stderr } = await exec('npm run asbuild:release');
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

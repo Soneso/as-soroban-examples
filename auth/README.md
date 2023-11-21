@@ -5,7 +5,7 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -16,7 +16,7 @@ Then, to run the example, navigate it's directory and install the sdk. Then buil
 ```sh
 cd auth
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 Since we are dealing with authorization and signatures, we need to set up some identities to use for testing and get their public keys:

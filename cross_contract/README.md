@@ -5,7 +5,7 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://github.com/stellar/soroban-cli).
+To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -17,7 +17,7 @@ The example contains two contracts. To run them, first navigate in the directory
 cd cross_contract
 cd contract_a
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
@@ -43,7 +43,7 @@ Next navigate to the directory of the second contract (`contract_b`), install th
 ```sh
 cd contract_b
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 Now navigate back to the example directory and invoke `contract_b` in the soroban cli:

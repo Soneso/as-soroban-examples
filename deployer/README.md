@@ -5,7 +5,7 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
+To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -23,7 +23,7 @@ First navigate to its directory and build it:
 ```sh
 cd add
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 Next, navigate to the deployer example directory:
@@ -59,7 +59,7 @@ First navigate to the deployer directory, install the SDK and build the deployer
 
 ```sh
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 Next invoke the deployer contract (change the wash_hash in the command first):
@@ -242,8 +242,9 @@ As an output you will get the wasm hash of the installed `add` contract, similar
 Build the new contract:
 
 ```sh
-asc assembly/index2.ts --target release
+npm run asbuild2:release
 ```
+This builds the contract from ```deployer/assembly/index2.ts```. see ```deployer/package.json```
 
 Invoke:
 
@@ -251,7 +252,7 @@ Invoke:
 soroban -q contract invoke \
     --wasm build/release.wasm \
     --id 0 \
-    -- deploy \
+    -- deploy2 \
     --wasm_hash 0f3d90bc518e8589231fdf374cd860c621fa6a740e1099821413057ebcb847d0
 ```
 
