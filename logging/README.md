@@ -5,10 +5,10 @@ The [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/lo
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory install the sdk. Then build the contract:
@@ -21,21 +21,43 @@ npm run asbuild:release
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
-Now you can run the example contract:
+Deploy the example contract:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 10 -- logging
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
+```
+
+This returns the ID of the contract, starting with a C. Similar to this:
+
+```sh
+CCJCS2FZ4PTE4BBJ3Q4KUY27WUOMMK7EYSESYP2OLWW5XYMI653YDWFH
+```
+
+Next let's invoke using --very-verbose:
+
+```sh
+soroban --very-verbose contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract is here> \
+  -- logging
 ```
 
 You should see the output:
 ```sh
 //...
 
-2023-11-08T14:17:34.064988Z  INFO soroban_cli::log::host_event: 1: HostEvent {
+DiagnosticEvent {
+    in_successful_contract_call: true,
     event: ContractEvent {
         ext: V0,
         contract_id: Some(
-            Hash(0000000000000000000000000000000000000000000000000000000000000010),
+            Hash(922968b9e3e64e0429dc38aa635fb51cc62be4c4892c3f4e5daddbe188f77781),
         ),
         type_: Diagnostic,
         body: V0(
@@ -57,8 +79,7 @@ You should see the output:
             },
         ),
     },
-    failed_call: false,
-}
+},
 
 //...
 ```

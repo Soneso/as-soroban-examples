@@ -5,7 +5,7 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
+To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
 cargo install --locked --version 20.0.0-rc2 soroban-cli
@@ -22,39 +22,59 @@ npm run asbuild:release
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
-Now navigate back to the example directory and deploy the `contract_a` in the soroban cli:
-
-Hint: it is important to use the soroban cli in the main directory of the example because when executed, it adds a `.soroban` folder to store its data (e.g. deployed contracts).
+Now deploy the `contract_a` in the soroban cli:
 
 ```sh
-cd ..
-soroban contract deploy --wasm contract_a/build/release.wasm
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
 ```
 
 You should see an output similar to this:
 
 ```sh
-CCD5EFESWBWE2T4KTUAEACNRGIUR57AXPSJPHZCGK2KLADBZYD2IFMUP
+CCWFKKRU6YU3SJPXK5OC2C7ABOJVW33H3AWYMHDWBI6RV3T6KENG3WAB
 ```
-representing the address of the contract that has been deployed as a strkey.
+representing the contract id of the `contract_a`.
 
 Next navigate to the directory of the second contract (`contract_b`), install the sdk and build the contract.
 
 ```sh
+cd ..
 cd contract_b
 npm install as-soroban-sdk
 npm run asbuild:release
 ```
 
-Now navigate back to the example directory and invoke `contract_b` in the soroban cli:
+Now deploy the `contract_b` in the soroban cli:
 
 ```sh
-cd ..
-soroban -q contract invoke \
-    --id 19 \
-    --wasm contract_b/build/release.wasm \
-    -- callc \
-    --addr CCD5EFESWBWE2T4KTUAEACNRGIUR57AXPSJPHZCGK2KLADBZYD2IFMUP
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
+```
+
+You should see an output similar to this:
+```sh
+CADH3DGSGCBZTWOAMVSF3NKZ4S6AD5YWZCV6NDU4V5T3DYUBOEUUAWTQ
+```
+representing the contract id of the `contract_b`.
+
+
+Now invoke `contract_b` in the soroban cli:
+
+```sh
+soroban contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract_b id here> \
+  -- callc \
+  --addr <your contract_a id here>
 ```
 
 You should see following output:
@@ -107,10 +127,6 @@ It needs the address of the contract to be called, the name of the function to b
 The SDK also offers following other methods to call contract functions from within other contracts:
 
 - `contract.tryCallContract(contract: AddressObject, func: SmallSymbolVal, args: Vec): Val` - If the call is successful, forwards the result of the called function. Otherwise, returns an `ErrorVal` containing the error type and code.
-
-- `contract.callContractById(hexId: string, func: string, args: Vec): Val` - Calls another contract's function by using the contract id (hex representation), function name and arguments contained in vector `args`.
-
-- `contract.tryCallContractById(hexId: string, func: string, args: Vec): Val` - If the call is successful, forwards the result of the called function. Otherwise, returns an `ErrorVal` containing the error type and code.
 
 To get the error type and code from the `ErrorVal` one can use following code:
 

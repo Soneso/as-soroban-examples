@@ -5,10 +5,10 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 ### Install the `add` contract
@@ -32,21 +32,19 @@ cd ..
 cd deployer
 ```
 
-If you have already have executed this example in the past, remove the `.soroban` folder first, because it is not possible to re-deploy an already existing contract. 
-
-```sh
-rm -rf .soroban/
-```
-
 Next install the `add` contract's  WASM code:
 
 ```sh
-soroban contract install --wasm ../add/build/release.wasm
+soroban contract install \
+  --wasm ../add/build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
 ```
 
 As an output you will get the WASM hash of the installed `add` contract, like this:
 ```sh
-0f3d90bc518e8589231fdf374cd860c621fa6a740e1099821413057ebcb847d0
+7190f21ad35980e2905ff60925b237807580878a946bfe928970691041286689
 ```
 
 ### Deploy
@@ -61,16 +59,35 @@ First navigate to the deployer directory, install the SDK and build the deployer
 npm install as-soroban-sdk
 npm run asbuild:release
 ```
-
-Next invoke the deployer contract (change the wash_hash in the command first):
+Next deploy the `deployer` contract:
 
 ```sh
-soroban -q contract invoke \
-    --wasm build/release.wasm \
-    --id 0 \
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
+```
+
+You should see an output similar to this:
+
+```sh
+CCVZWKM6NY37UA4FO5KMM7Y4JFXMK4IVWXKKZSIBT4CECY6LBQ2PNQW5
+```
+representing the contract id of the `deployer` contract.
+
+
+Next let's invoke (insert the contract id and wasm hash in the command first):
+
+```sh
+soroban contract invoke  \
+    --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+    --rpc-url https://rpc-futurenet.stellar.org \
+    --network-passphrase "Test SDF Future Network ; October 2022" \
+    --id <your deployer contract id here> \
     -- deploy \
     --salt 0000000000000000000000000000000000000000000000000000000000000000 \
-    --wasm_hash 0f3d90bc518e8589231fdf374cd860c621fa6a740e1099821413057ebcb847d0 \
+    --wasm_hash <your add contract wasm hash here> \
     --fn_name add \
     --args '[3, 5]'
 ```
@@ -230,34 +247,56 @@ export function callContract(contract: AddressObject, func: string, args: Vec): 
 Next, let's run this contract:
 
 ```sh
-rm -rf .soroban/
-soroban contract install --wasm ../add/build/release.wasm
+soroban contract install \
+  --wasm ../add/build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
 ```
 
 As an output you will get the wasm hash of the installed `add` contract, similar to this:
 ```sh
-0f3d90bc518e8589231fdf374cd860c621fa6a740e1099821413057ebcb847d0
+7190f21ad35980e2905ff60925b237807580878a946bfe928970691041286689
 ```
 
-Build the new contract:
+**Build** the new contract:
 
 ```sh
 npm run asbuild2:release
 ```
 This builds the contract from ```deployer/assembly/index2.ts```. see ```deployer/package.json```
 
-Invoke:
+**Deploy**:
 
 ```sh
-soroban -q contract invoke \
-    --wasm build/release.wasm \
-    --id 0 \
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
+```
+
+You should see an output similar to this:
+
+```sh
+CC7MJAHDSKOLVYJONM7ZFMKPVEMUS4I4PGODHVSRUSQ7RQXR45P63ONI
+```
+representing the contract id of the `deployer` contract.
+
+
+**Invoke**:
+
+```sh
+soroban contract invoke  \
+    --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+    --rpc-url https://rpc-futurenet.stellar.org \
+    --network-passphrase "Test SDF Future Network ; October 2022" \
+    --id <your deployer contract id here> \
     -- deploy2 \
-    --wasm_hash 0f3d90bc518e8589231fdf374cd860c621fa6a740e1099821413057ebcb847d0
+    --wasm_hash <your add contract wasm hash here>
 ```
 
 You should see the output:
 ```sh
 10
 ```
-

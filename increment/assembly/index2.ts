@@ -23,7 +23,7 @@ export function increment(): U32Val {
   // If the lifetime is already more than 100 ledgers, this is a no-op. Otherwise,
   // the lifetime is extended to 100 ledgers. This lifetime bump includes the contract
   // instance itself and all entries of storageTypeInstance, i.e, COUNTER.
-  ledger.bumpCurrentContractInstanceAndCode(50, 100);
+  ledger.extendCurrentContractInstanceAndCodeTtl(50, 100);
 
   // Return the count to the caller.
   return ledger.getDataFor(key, storageTypeInstance);

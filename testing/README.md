@@ -5,10 +5,10 @@ The [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/te
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, to run the example, navigate to its directory and install the sdk. Then build the contract:
@@ -21,10 +21,31 @@ npm run asbuild:release
 
 You can find the generated `.wasm` (WebAssembly) file in the ```build``` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
-Run the example contract:
+Deploy the example contract:
 
 ```sh
-soroban -q contract invoke --wasm build/release.wasm --id 1 -- add --a 1 --b 5
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
+```
+
+This returns the ID of the contract, starting with a C. Similar to this:
+
+```sh
+CDTAYDJ7E7A2NFVDJHD2DSWVN732WJIJ4ZOY3243ERIVH3KAWNKG5T43
+```
+
+Next let's invoke:
+
+```sh
+soroban -q contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract id here> \
+  -- add --a 1 --b 5
 ```
 
 You should see the output:
