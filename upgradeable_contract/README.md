@@ -50,10 +50,10 @@ The `update_current_contract_wasm` host function will also emit a `SYSTEM` contr
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory, install the sdk in both folders (old and new) and build the contracts:
@@ -66,6 +66,11 @@ npm run asbuild:release
 cd ../new_contract
 npm install as-soroban-sdk
 npm run asbuild:release
+```
+
+Navigate back to the main folder:
+
+```sh
 cd ..
 ```
 
@@ -78,32 +83,47 @@ soroban config identity address admin
 
 Example output with the account id of the admin:
 ```sh
-GAKXXMK6B7FVNJYVUYIM5XKTQVDKMXK2R736QWRENAAJRVTYZ6FO6SZS
+GB4MIMLQLJAGMNB27AF57PYICGW3GVUYLON6SCTPU5AVWXUJXQH576BD
+```
+
+The admin account needs to be funded:
+```sh
+curl https://friendbot-futurenet.stellar.org?addr=<your admin account id here>
 ```
 
 Now lets deploy the "old" contract first:
 ```sh
-soroban contract deploy --wasm old_contract/build/release.wasm
+soroban contract deploy \
+  --wasm old_contract/build/release.wasm \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
 ```
 
 Example output with the address of the deployed contract:
 ```sh
-CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ
+CBFXONN6XYZXKV6NSYFZXL4FNWJR2WQRPWF3NIWKLNY5FMO546OAXNHL
 ```
 
 Next initialize the old contract:
 ```sh
-soroban -q contract invoke \
-    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
-    -- init \
-    --admin GAKXXMK6B7FVNJYVUYIM5XKTQVDKMXK2R736QWRENAAJRVTYZ6FO6SZS
+soroban -q contract invoke  \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract id here> \
+  -- init \
+  --admin <your admin account id here>
 ```
 
 Let's invoke the `version` function:
 ```sh
-soroban -q contract invoke \
-    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
-    -- version
+soroban -q contract invoke  \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract id here> \
+  -- version
 ```
 
 The output should be:
@@ -112,22 +132,36 @@ The output should be:
 Next we install the `new` contract:
 
 ```sh
-soroban contract install --wasm new_contract/build/release.wasm
+soroban contract install \
+  --wasm new_contract/build/release.wasm \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
 ```
 
 Example output with the wasm hash of the new wasm executable:
 ```sh
-6e0afcbff81680b786d5a93bab6ac09e7c61acdfe272d8dbf5f228796b09ec38
+8046195a05a169481188be51e14f0356d996e2814722d45663b1a2d4e27eb10d
 ```
 
 Now we can upgrade our old contract. Notice the `--source` must be the identity name matching the address passed to the `init` function (admin).
 
 ```sh
+soroban -q contract invoke  \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <id of the old contract here> \
+  -- upgrade \
+  --new_wasm_hash <wasm hash of the new contract here>
+```
+
+```sh
 soroban -q contract invoke \
 	--source admin \
-    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
+    --id <id of the old contract here> \
     -- upgrade \
-    --new_wasm_hash 6e0afcbff81680b786d5a93bab6ac09e7c61acdfe272d8dbf5f228796b09ec38 
+    --new_wasm_hash <wasm hash of the new contract here>
 ```
 
 Let's invoke the `version` function again:

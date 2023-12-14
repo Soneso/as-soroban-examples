@@ -5,7 +5,7 @@ import { AddressObject, fromI128Small, fromSmallSymbolStr, fromU32, I128Val, sto
 import { i128lt, i128sub, i128gt } from "as-soroban-sdk/lib/val128";
 import { ERR_CODE, S_ALLOWANCE } from "./util";
 import { Vec } from "as-soroban-sdk/lib/vec";
-import { bump_contract_data } from "as-soroban-sdk/lib/env";
+import { extend_contract_data_ttl } from "as-soroban-sdk/lib/env";
 
 export function read_allowance(from: AddressObject, spender:AddressObject): Vec {
 
@@ -79,7 +79,7 @@ export function write_allowance(from: AddressObject, spender:AddressObject, amou
             liveFor = 0
         }
         let liveForHostValue = fromU32(liveFor);
-        bump_contract_data(allowanceKey, storageTypeTemporary, liveForHostValue, liveForHostValue);
+        extend_contract_data_ttl(allowanceKey, storageTypeTemporary, liveForHostValue, liveForHostValue);
     }
 }
 
