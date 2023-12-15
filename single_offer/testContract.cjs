@@ -14,6 +14,7 @@ const sellerId = "GC66BENPKDEEV32FXOFSFP3GJTGPZLI6N3A67CY3IBEABBKBGZENRODJ";
 const buyerSeed = "SD273YPYQB3VKH6TYCWBK5NQVCA6UYBK7WLCG7FXB6JJUCEBPNL6BAFE";
 const buyerId = "GBBCN7YRBOOWWDCHY6MCK4Y2VQSFMFDTGTXFJ4Z7BLJ7LC5RRI42XHE3";
 const sleepCmd = 5000;
+const jsonrpcErr = 'error: jsonrpc error:';
 
 async function startTest() {
     console.log(`test single offer sale ...`);

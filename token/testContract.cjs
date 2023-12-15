@@ -90,7 +90,7 @@ async function fundAccount(account_id) {
             console.log(`Catched err ` + error);
             console.log("retrying after 5 seconds")
             await sleep(5000); 
-            return await deployContract(cmd);
+            return await fundAccount(account_id);
         } else {
             assert.fail(`error: ${error.message}`);
         }
