@@ -89,11 +89,6 @@ except PrepareTransactionException as e:
     print(f"Got exception: {e.simulate_transaction_response}")
     raise e
 
-tx.transaction.soroban_data.resources.instructions = stellar_xdr.Uint32(
-     tx.transaction.soroban_data.resources.instructions.uint32 + 
-     round(tx.transaction.soroban_data.resources.instructions.uint32 / 4)
-)
-tx.transaction.fee += 1005000
 tx.sign(submitter_kp)
 # print(f"Signed XDR:\n{tx.to_xdr()}")
 
