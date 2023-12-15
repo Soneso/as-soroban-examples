@@ -2,6 +2,7 @@ import { AddressObject, VecObject, VoidVal, fromVoid} from "as-soroban-sdk/lib/v
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { i128ge, i128le} from "as-soroban-sdk/lib/val128";
 import * as contract from "as-soroban-sdk/lib/contract";
+import * as address from "as-soroban-sdk/lib/address";
 
 //! This contract performs a batch of atomic token swaps between multiple
 //! parties and does a simple price matching.
@@ -77,6 +78,22 @@ export function multi_swap(swap_contract: AddressObject, token_a: AddressObject,
         args.pushBack(minRecvA);
         args.pushBack(amountB);
         args.pushBack(minRecvB);
+
+        let argsA = new Vec();
+        argsA.pushBack(token_a);
+        argsA.pushBack(token_b);
+        argsA.pushBack(amountA);
+        argsA.pushBack(minRecvA);
+      
+        address.requireAuthForArgs(addressA, argsA);
+      
+        let argsB = new Vec();
+        argsB.pushBack(token_b);
+        argsB.pushBack(token_a);
+        argsB.pushBack(amountB);
+        argsB.pushBack(minRecvB);
+      
+        address.requireAuthForArgs(addressB, argsB);
 
         contract.callContract(swap_contract, "swap", args);
 

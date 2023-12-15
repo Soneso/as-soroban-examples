@@ -14,7 +14,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 ### 3. Run an example contract
@@ -64,6 +64,7 @@ Instead of a tutorial, we have created a series of contract examples with many e
 | [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/testing)| Shows a simple way to test your contract.|
 | [token example](https://github.com/Soneso/as-soroban-examples/tree/main/token)| Demonstrates how to write a token contract that implements the Stellar [token interface](https://soroban.stellar.org/docs/reference/interfaces/token-interface).|
 | [atomic swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap)| Swaps two tokens between two authorized parties atomically while following the limits they set. This example demonstrates advanced usage of Soroban auth framework and assumes the reader is familiar with the auth example and with Soroban token usage.|
+| [atomic swap batched example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap)| Swaps a pair of tokens between the two groups of users that authorized the swap operation from the [atomic swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap).|
 | [timelock example](https://github.com/Soneso/as-soroban-examples/tree/main/timelock)| Demonstrates how to write a timelock and implements a greatly simplified claimable balance similar to the claimable balance feature available on Stellar.|
 | [single offer sale example](https://github.com/Soneso/as-soroban-examples/tree/main/single_offer)| The single offer sale example demonstrates how to write a contract that allows a seller to set up an offer to sell token A for token B to multiple buyers.|
 | [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/main/liquidity_pool)| Demonstrates how to write a constant product liquidity pool contract.|

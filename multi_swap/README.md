@@ -1,19 +1,17 @@
 # Batched atomic swap
 
-The [multi swap example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap) demonstrates how authorized calls can be batched together. It swaps a pair of tokens between the two groups of users that authorized the swap operation from the atomic swap example.
+The [multi swap example](https://github.com/Soneso/as-soroban-examples/tree/main/multi_swap) swaps a pair of tokens between the two groups of users that authorized the swap operation from the [atomic swap example](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap).
 
-## On hold
+This contract basically batches the multiple swaps while following some simple rules to match the swap participants.
 
-This example is currently not working due to this issue:
-
-https://discord.com/channels/897514728459468821/1149701029387055166
+Follow the comments in the code for more information.
 
 ## Run the example
 
 First, install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, navigate it's directory and install the sdk.
