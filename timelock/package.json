@@ -1,6 +1,6 @@
 {
   "name": "timelock",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "timelock contract example",
   "main": "index.js",
   "scripts": {
