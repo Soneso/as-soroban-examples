@@ -5,10 +5,10 @@ This tutorial assumes that you've already completed the [hello word example](htt
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -21,10 +21,31 @@ npm run asbuild:release
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
-Run the example contract:
+Deploy the example contract:
 
 ```sh
-soroban -q contract invoke --wasm build/release.wasm --id 1 -- increment
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
+```
+
+This returns the ID of the contract, starting with a C. Similar to this:
+
+```sh
+CAOINA7M7367SZY3PS3ENINYI4RMUYM2E47CNLUOEVSWOVTU6U2YA5NG
+```
+
+Next let's invoke:
+
+```sh
+soroban -q contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --id <your contract id here> \
+  -- increment
 ```
 
 You should see the output:
@@ -97,7 +118,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
         },
         {
             "key" : "version",
-            "value" : "0.3.0"
+            "value" : "0.4.0"
         },
         {
             "key" : "description",
@@ -142,7 +163,7 @@ All contract data has a `lifetime` that must be periodically bumped. If an entry
 
 ## Managing Contract Data Lifetimes
 
-The contract in the file `index2.ts` uses `Instance` storage: ```ledger.putDataFor(key, fromU32(counter), storageTypeInstance);```. Every time the counter is incremented, this storage gets bumped by 100 ledgers, or about 500 seconds: ```ledger.bumpCurrentContractInstanceAndCode(50, 100);```.
+The contract in the file `index2.ts` uses `Instance` storage: ```ledger.putDataFor(key, fromU32(counter), storageTypeInstance);```. Every time the counter is incremented, this storage gets bumped by 100 ledgers, or about 500 seconds: ```ledger.extendCurrentContractInstanceAndCodeTtl(50, 100);```.
 
 Let's have a look to the contract code:
 
@@ -172,7 +193,7 @@ export function increment(): U32Val {
   // If the lifetime is already more than 100 ledgers, this is a no-op. Otherwise,
   // the lifetime is extended to 100 ledgers. This lifetime bump includes the contract
   // instance itself and all entries of storageTypeInstance, i.e, COUNTER.
-  ledger.bumpCurrentContractInstanceAndCode(50, 100);
+  ledger.extendCurrentContractInstanceAndCodeTtl(50, 100);
 
   // Return the count to the caller.
   return ledger.getDataFor(key, storageTypeInstance);
@@ -182,68 +203,34 @@ export function increment(): U32Val {
 
 Next, lets deploy and run the contract on testnet:
 
-1. Build the contract:
+Build the contract:
 
 ```sh
 npm run asbuild2:release
 ```
-
-2. Configure the CLI for testnet (see also [doc](https://soroban.stellar.org/docs/getting-started/setup#configuring-the-cli-for-testnet)):
-
-```sh
-soroban config network add --global testnet \
-  --rpc-url https://soroban-testnet.stellar.org:443 \
-  --network-passphrase "Test SDF Network ; September 2015"
-```
-
-3. Configure an identity:
-
-```sh
-soroban config identity generate --global bob
-```
-
-You can see the public key of bob with:
-
-```sh
-soroban config identity address bob
-```
-
-4. Get test tokens:
-
-```sh
-curl "https://friendbot.stellar.org/?addr=$(soroban config identity address bob)"
-```
-
-5. Deploy the contract:
-
 ```sh
 soroban contract deploy \
   --wasm build/release.wasm \
-  --source bob \
-  --network testnet
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
-You should get the contract id (as Strkey) as a result. E.g.
+This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CCBNAJBYW7HHHLLFV5WB2WVUQ3FC6TCXAXZ7HK3HBSKOSZ6RNP32H3DA
+CCYC3FE7RX4OPUAOZO5C7CYSWH7T6NXR6KC3GD7NNPGHOCGXQMTI4PHS
 ```
 
-Copy that value and put it into a file in the ```.soroban``` directory called ```contract-id```. You may need to create the ```.soroban``` folder first with ```mkdir .soroban```.
+Next let's invoke:
 
 ```sh
-echo "C...[your contract id here]" > .soroban/contract-id
-```
-
-6. Invoke the increment function:
-
-```sh
-  soroban contract invoke \
-  --id $(cat .soroban/contract-id) \
-  --source bob \
-  --network testnet \
-  -- \
-  increment
+soroban -q contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --id <your contract id here> \
+  -- increment
 ```
 
 The following output should appear:
@@ -332,8 +319,8 @@ ls -la build/
 
 The size of the compiled .wasm file is 781 bytes:
 ```
--rw-r--r--   1 chris  staff   781 Nov  7 12:14 release.wasm
--rw-r--r--   1 chris  staff  4882 Nov  7 12:14 release.wat
+-rw-r--r--   1 chris  staff   785 Dec 13 22:29 release.wasm
+-rw-r--r--   1 chris  staff  4930 Dec 13 22:29 release.wat
 ```
 
 Next let's build the contract from `index3.ts` that uses the direct host functions of the SDK and check its size:
@@ -346,8 +333,8 @@ ls -la build/
 The size of the compiled .wasm file is 773 bytes:
 
 ```
--rw-r--r--   1 chris  staff   773 Nov  7 12:14 release.wasm
--rw-r--r--   1 chris  staff  4665 Nov  7 12:14 release.wat
+-rw-r--r--   1 chris  staff   773 Dec 13 22:29 release.wasm
+-rw-r--r--   1 chris  staff  4627 Dec 13 22:29 release.wat
 ```
 
 Of course, this is only a small improvement, but it shows how one can optimize contracts by using the correct functions of the SDK, depending on the use case.

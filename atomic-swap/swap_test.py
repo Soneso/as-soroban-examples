@@ -25,17 +25,17 @@ soroban_server = SorobanServer(rpc_server_url)
 network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE
 
 submitter_kp = Keypair.from_secret(
-    "SDO7H2BPXKB6JHCT7ZFVM7MJWHS6FC7KIX5RO37J65UAVMOEK37TS4RR"
+    "SA2EAJDXWUPGMSZLWN3XV2RUFN2BY4RFVG2Z2EK32GF2Z4T2MTGA75IL"
 )
 alice_kp = Keypair.from_secret(
-    "SCA3CMTPTOOWMRYT3I626W53QFI5OWHEZJELRMA3HMZZBJLKLFPHJGLY"
+    "SASU324JBGQ6TEQQWVYQPHKUY7K23US6IMTJL7FHUXL2XTRMF7RTO66T"
 )
 bob_kp = Keypair.from_secret(
-    "SAJ5IY663ZNGXSX6NVP7SEZMEQLUSISNMBYXKLIDQ2TRGPUSGNFCGTEQ"
+    "SCJQ455QZC6RMDCRK62EGXIRT3L36ZMJNLI24ESBH4UTE736J4FMKODQ"
 )
 atomic_swap_contract_id = (sys.argv[1])
-token_a_contract_id = "CC6HEDM5IZSPOZ7R57LMUBNUGZGTRI2QTJEDHII6KZKZFDF7U3GG2WB2"
-token_b_contract_id = "CBGT22P4NQZJ6FLINL6RZLAG6CHTH745V2AE5GF5KXQ7E2TSZGVJEBHK"
+token_a_contract_id = "CDEXJAMSALQVE7SJEX5M36S5JMPBPBV3SCAOJFYX6UYZVF5LB4DZPCOT"
+token_b_contract_id = "CCWDMAJTKNRRYAKJZRA56TGR7Y24WLHDOX7DHY4B443LGHHZPQPN3757"
 
 
 source = soroban_server.load_account(submitter_kp.public_key)
@@ -89,11 +89,6 @@ except PrepareTransactionException as e:
     print(f"Got exception: {e.simulate_transaction_response}")
     raise e
 
-tx.transaction.soroban_data.resources.instructions = stellar_xdr.Uint32(
-     tx.transaction.soroban_data.resources.instructions.uint32 + 
-     round(tx.transaction.soroban_data.resources.instructions.uint32 / 4)
-)
-tx.transaction.fee += 1005000
 tx.sign(submitter_kp)
 # print(f"Signed XDR:\n{tx.to_xdr()}")
 

@@ -5,10 +5,10 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -17,6 +17,21 @@ Then, to run the example, navigate it's directory and install the sdk. Then buil
 cd auth
 npm install as-soroban-sdk
 npm run asbuild:release
+```
+
+Next, we have to deploy the contract:
+
+```sh
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
+```
+
+This returns the ID of the contract, starting with a C. For example:
+```sh
+CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ
 ```
 
 Since we are dealing with authorization and signatures, we need to set up some identities to use for testing and get their public keys:
@@ -30,8 +45,16 @@ soroban config identity address acc2
 
 Example output with the public key of the identity:
 ```sh
-GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO
-GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR
+GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
+GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
+```
+
+Next, let's fund the accounts (replace the account ids):
+
+```sh
+curl https://friendbot.stellar.org?addr=GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
+
+curl https://friendbot.stellar.org?addr=GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
 ```
 
 Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
@@ -39,10 +62,11 @@ Now the contract itself can be invoked. Notice the --source has to match --user 
 ```sh
 soroban -q contract invoke \
     --source acc1 \
-    --id 1 \
-    --wasm build/release.wasm \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --user GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB \
     --value 3
 ```
 
@@ -51,30 +75,33 @@ Run a few more increments for both accounts.
 ```sh
 soroban -q contract invoke \
     --source acc2 \
-    --id 1 \
-    --wasm build/release.wasm \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GBI5PLC6I7VUW47RIHIRHX3FHWXSBRBNO4ZO5UJRJEPDGHIPZHVUH7GC \
+    --user GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F \
     --value 2
 ```
 
 ```sh
 soroban -q contract invoke \
     --source acc1 \
-    --id 1 \
-    --wasm build/release.wasm \
-    -- auth 
-    --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
+    -- auth \
+    --user GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB \
     --value 14
 ```
 
 ```sh
 soroban -q contract invoke \
     --source acc2 \
-    --id 1 \
-    --wasm build/release.wasm \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GBI5PLC6I7VUW47RIHIRHX3FHWXSBRBNO4ZO5UJRJEPDGHIPZHVUH7GC \
+    --user GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F \
     --value 5
 ```
 

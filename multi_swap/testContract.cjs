@@ -4,6 +4,10 @@ let assert = require('assert');
 
 const rpcUrl = 'https://soroban-testnet.stellar.org';
 const networkPassphrase = "'Test SDF Network ; September 2015'";
+
+//const rpcUrl = 'https://rpc-futurenet.stellar.org';
+//const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+
 const adminSeed = "SA4VZPUHRLEOPEPH5EDFHELYRUNRVHITYMX7MB5WFDCAEOPPCQVOEKYV";
 const adminId = "GDNGXPMCVH5ZQUBWINCFFP4F2SEV3NFNFYCUZBZPIQA5QQPV2CJWUP7G";
 
@@ -30,31 +34,23 @@ async function startTest() {
     console.log(`test multi swap ...`);
     await pipInstallPythonSDK();
     await buildMultiSwapContract();
-    let multi_swap_addr = await deployMultiSwapContract();
-    let multi_swap_cid = await idForContractAddress(multi_swap_addr);
-    console.log("multi addr: " + multi_swap_addr);
+    let multi_swap_cid = await deployMultiSwapContract();
     console.log("multi cid: " + multi_swap_cid);
 
     await buildAtomicSwapContract();
-    let atomic_swap_addr = await deployAtomicSwapContract();
-    let atomic_swap_cid = await idForContractAddress(atomic_swap_addr);
-    console.log("atomic addr: " + atomic_swap_addr);
+    let atomic_swap_cid = await deployAtomicSwapContract();
     console.log("atomic cid: " + atomic_swap_cid);
 
     await buildTokenContract();
-    let token_a_addr = await deployTokenContract();
-    let token_a_cid = await idForContractAddress(token_a_addr);
-    console.log("token a addr: " + token_a_addr);
+    let token_a_cid = await deployTokenContract();
     console.log("token a cid: " + token_a_cid);
 
-    let token_b_addr = await deployTokenContract();
-    let token_b_cid = await idForContractAddress(token_b_addr);
-    console.log("token b addr: " + token_b_addr);
+    let token_b_cid = await deployTokenContract();
     console.log("token b cid: " + token_b_cid);
 
     // create tokens
-    await createToken(token_a_cid, "544f4b454e41", "544f4b454e41"); // "TOKENA"
-    await createToken(token_b_cid, "544f4b454e42", "544f4b454e42"); // "TOKENB"
+    await createToken(token_a_cid, "'Token A'", "TOKENA");
+    await createToken(token_b_cid, "'Token B'", "TOKENB");
 
 
     await mint(a1Id, a1Amount, token_a_cid);
@@ -87,7 +83,7 @@ async function startTest() {
     assert.equal(balance, '"' + b3Amount + '"');
     console.log("minted : " + b3Amount + " TOKENB to b3");
 
-    let result = await pyMultiSwap(multi_swap_addr, atomic_swap_addr, token_a_addr, token_b_addr);
+    let result = await pyMultiSwap(multi_swap_cid, atomic_swap_cid, token_a_cid, token_b_cid);
     
     assert.equal('swap success', result);
     console.log(`test atomic swap -> OK`);
@@ -105,8 +101,8 @@ async function pipInstallPythonSDK() {
     console.log(stdout);
 }
 
-async function pyMultiSwap(multi_swap_addr, atomic_swap_addr, token_a_addr, token_b_addr) {
-    let cmd = 'python3 multi_swap_test.py '  + multi_swap_addr + ' ' + atomic_swap_addr + ' ' + token_a_addr + ' ' + token_b_addr;
+async function pyMultiSwap(multi_swap_cid, atomic_swap_cid, token_a_cid, token_b_cid) {
+    let cmd = 'python3 multi_swap_test.py '  + multi_swap_cid + ' ' + atomic_swap_cid + ' ' + token_a_cid + ' ' + token_b_cid;
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
@@ -242,18 +238,6 @@ async function getBalance(user, token_contract_id) {
         console.log("getBalance - stderr: " + stderr);
     }
     return stdout.trim(); // balance
-}
-
-async function idForContractAddress(contract_address) {
-    let cmd = 'python3 contract_id.py '  + contract_address;
-    const { error, stdout, stderr } = await exec(cmd);
-    if (error) {
-        assert.fail(`error: ${error.message}`);
-    }
-    if (stderr) {
-        console.log("ID to ADD -stderr: " + stderr);
-    }
-    return stdout.trim();
 }
 
 startTest()

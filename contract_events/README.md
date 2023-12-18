@@ -5,10 +5,10 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 
 ## Run the example
 
-To run a contract in the sandbox, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.0-rc2 soroban-cli
+cargo install --locked --version 20.0.2 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -21,21 +21,35 @@ npm run asbuild:release
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
 
-Run the example contract:
+Deploy:
 
 ```sh
-soroban contract invoke --wasm build/release.wasm --id 9 -- increment
+soroban contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
+```
+
+This returns the ID of the contract, starting with a C. Next let's invoke:
+
+```sh
+soroban contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --id CAIJF5TVBGXMNWZPPVQEOFY2GK67M6RR3XXBHW4BFGMJDLIEPPIVMGG3 \
+  -- increment
 ```
 
 You should see the output:
 ```sh
-// ...
-
-2023-11-08T14:02:22.179585Z  INFO soroban_cli::log::host_event: 1: HostEvent {
+2023-12-13T18:47:17.587107Z  INFO soroban_cli::log::diagnostic_event: 0: DiagnosticEvent {
+    in_successful_contract_call: true,
     event: ContractEvent {
         ext: V0,
         contract_id: Some(
-            Hash(0000000000000000000000000000000000000000000000000000000000000009),
+            Hash(17a1166743b43e4cd08b21a710467978162f0e117c690f7b0de1cb8743d645f2),
         ),
         type_: Contract,
         body: V0(
@@ -55,43 +69,13 @@ You should see the output:
                     ],
                 ),
                 data: U32(
-                    3,
+                    1,
                 ),
             },
         ),
     },
-    failed_call: false,
 }
-
-// ...
 1
-```
-
-The `soroban cli` also logs events locally in the file .soroban/events.json. Look into that file to see the published event:
-
-```sh
-more .soroban/events.json 
-```
-
-You should be able to find this event:
-
-```json
-
-{
-  "type": "contract",
-  "ledger": "1",
-  "ledgerClosedAt": "1970-01-01T00:00:05Z",
-  "id": "0000000004294971393-0000000002",
-  "pagingToken": "0000000004294971393-0000000002",
-  "contractId": "0000000000000000000000000000000000000000000000000000000000000009",
-  "topic": [
-    "AAAADwAAAAdDT1VOVEVSAA==",
-    "AAAADwAAAAlpbmNyZW1lbnQAAAA="
-  ],
-  "value": {
-    "xdr": "AAAAAwAAAAE="
-  }
-}
 ```
 
 ## Code

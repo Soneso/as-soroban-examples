@@ -1,6 +1,6 @@
 {
   "name": "hello_word",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "hello word example for the as soroban sdk",
   "scripts": {
     "asbuild:debug": "asc assembly/index.ts --target debug",
@@ -24,6 +24,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.3.0"
+    "as-soroban-sdk": "^0.4.0"
   }
 }

@@ -1,19 +1,19 @@
 import * as context from "as-soroban-sdk/lib/context";
 import * as address from "as-soroban-sdk/lib/address";
 import { ERR_CODE } from "./util";
-import { AddressObject, BytesObject, fromVoid, toU32, I128Val, VoidVal, U32Val, fromU32} from "as-soroban-sdk/lib/value";
+import { AddressObject, fromVoid, toU32, I128Val, VoidVal, U32Val, fromU32, StringObject} from "as-soroban-sdk/lib/value";
 import { has_administrator, read_administrator, write_administrator } from "./admin";
 import { read_decimal, read_name, read_symbol, write_metadata } from "./metadata";
 import { read_allowance, spend_allowance, write_allowance } from "./allowance";
 import { ev_burn, ev_approve, ev_mint, ev_s_admin, ev_trans } from "./events";
 import { read_balance, receive_balance, spend_balance } from "./balance";
 import { isNegative } from "as-soroban-sdk/lib/val128";
-import { bump_current_contract_instance_and_code } from "as-soroban-sdk/lib/env";
+import { extend_current_contract_instance_and_code_ttl } from "as-soroban-sdk/lib/env";
 
 const INSTANCE_BUMP_AMOUNT = 120960; // 7 days
 const INSTANCE_LIFETIME_THRESHOLD = 103680 // 6 days
 
-export function initialize(admin: AddressObject, decimal: U32Val, name:BytesObject, symbol:BytesObject): VoidVal {
+export function initialize(admin: AddressObject, decimal: U32Val, name:StringObject, symbol:StringObject): VoidVal {
     if (has_administrator()) {
       context.failWithErrorCode(ERR_CODE.ALREADY_INITIALIZED);
     }
@@ -53,7 +53,7 @@ export function set_admin(new_admin: AddressObject) : VoidVal {
 }
 
 function bumpInstanceAndCode(): void {
-  bump_current_contract_instance_and_code(fromU32(INSTANCE_LIFETIME_THRESHOLD), fromU32(INSTANCE_BUMP_AMOUNT));
+  extend_current_contract_instance_and_code_ttl(fromU32(INSTANCE_LIFETIME_THRESHOLD), fromU32(INSTANCE_BUMP_AMOUNT));
 }
 
 function checkNonNegative(amount:I128Val): void {
@@ -149,10 +149,10 @@ export function decimals() : U32Val {
   return read_decimal();
 }
 
-export function name() : BytesObject {
+export function name() : StringObject {
   return read_name();
 }
 
-export function symbol() : BytesObject {
+export function symbol() : StringObject {
   return read_symbol();
 }

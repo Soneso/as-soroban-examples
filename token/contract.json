@@ -5,8 +5,8 @@
             "arguments": [
                 {"name": "admin", "type": "address"},
                 {"name": "decimal", "type": "u32"},
-                {"name": "name", "type": "bytes"},
-                {"name": "symbol", "type": "bytes"}
+                {"name": "name", "type": "string"},
+                {"name": "symbol", "type": "string"}
             ]
         },
         {
@@ -100,12 +100,12 @@
         {
             "name" : "name",
             "arguments": [],
-            "returns" : "bytes"
+            "returns" : "string"
         },
         {
             "name" : "symbol",
             "arguments": [],
-            "returns" : "bytes"
+            "returns" : "string"
         }
     ],
     "meta": [
@@ -115,7 +115,7 @@
         },
         {
             "key" : "version",
-            "value" : "0.3.0"
+            "value" : "0.4.0"
         },
         {
             "key" : "description",

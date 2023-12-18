@@ -92,7 +92,7 @@ To build the example, navigate it's directory install the sdk. Then build the co
 ```sh
 cd atomic-swap
 npm install as-soroban-sdk
-asc assembly/index.ts --target release
+npm run asbuild:release
 ```
 
 You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You can also find the `.wat` file there (text format of the `.wasm`).
