@@ -3,8 +3,8 @@ const exec = util.promisify(require('child_process').exec);
 let assert = require('assert');
 
 const adminSeed = 'SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM';
-const rpcUrl = ' --rpc-url https://rpc-futurenet.stellar.org';
-const networkPassphrase = ' --network-passphrase "Test SDF Future Network ; October 2022"';
+const rpcUrl = ' --rpc-url https://soroban-testnet.stellar.org';
+const networkPassphrase = ' --network-passphrase "Test SDF Network ; September 2015"';
 
 
 async function startTest() {

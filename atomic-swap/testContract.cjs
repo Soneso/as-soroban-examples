@@ -2,8 +2,8 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 let assert = require('assert');
 
-const rpcUrl = 'https://rpc-futurenet.stellar.org';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
 const submitterSeed = "SDO7H2BPXKB6JHCT7ZFVM7MJWHS6FC7KIX5RO37J65UAVMOEK37TS4RR"; // GBXNHLEJEZSQEQSTJRLZ4F5JFJOC7VAS3AM72SIQUXLGYL6DFACZZKI5
 
 async function startTest() {

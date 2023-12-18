@@ -27,14 +27,14 @@ Deploy the example contract:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CDTAYDJ7E7A2NFVDJHD2DSWVN732WJIJ4ZOY3243ERIVH3KAWNKG5T43
+CBTANHY2MOMQRV7HBGAZMCWHFS7R2ZQMCLZRE7JETIL3M6LSDTM2EVU5
 ```
 
 Next let's invoke:
@@ -42,8 +42,8 @@ Next let's invoke:
 ```sh
 soroban -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- add --a 1 --b 5
 ```
@@ -65,8 +65,8 @@ const exec = util.promisify(require('child_process').exec);
 let assert = require('assert');
 
 const adminSeed = 'SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM';
-const rpcUrl = ' --rpc-url https://rpc-futurenet.stellar.org';
-const networkPassphrase = ' --network-passphrase "Test SDF Future Network ; October 2022"';
+const rpcUrl = ' --rpc-url https://soroban-testnet.stellar.org';
+const networkPassphrase = ' --network-passphrase "Test SDF Network ; September 2015"';
 
 
 async function startTest() {

@@ -20,13 +20,13 @@ from stellar_sdk.auth import authorize_entry
 from stellar_sdk.exceptions import PrepareTransactionException
 from stellar_sdk.soroban_rpc import GetTransactionStatus, SendTransactionStatus
 
-#rpc_server_url = "https://soroban-testnet.stellar.org"
-#soroban_server = SorobanServer(rpc_server_url)
-#network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE
-
-rpc_server_url = "https://rpc-futurenet.stellar.org"
+rpc_server_url = "https://soroban-testnet.stellar.org"
 soroban_server = SorobanServer(rpc_server_url)
-network_passphrase = 'Test SDF Future Network ; October 2022'
+network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE
+
+#rpc_server_url = "https://rpc-futurenet.stellar.org"
+#soroban_server = SorobanServer(rpc_server_url)
+#network_passphrase = 'Test SDF Future Network ; October 2022'
 
 submitter_kp = Keypair.from_secret(
     "SA4VZPUHRLEOPEPH5EDFHELYRUNRVHITYMX7MB5WFDCAEOPPCQVOEKYV"

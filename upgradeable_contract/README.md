@@ -83,12 +83,12 @@ soroban config identity address admin
 
 Example output with the account id of the admin:
 ```sh
-GB4MIMLQLJAGMNB27AF57PYICGW3GVUYLON6SCTPU5AVWXUJXQH576BD
+GDFIC2T2RS3ZVR2NYA4HNGVESCGZFLM6ZJXZPF7N5NECR2DAKYYGEMNE
 ```
 
 The admin account needs to be funded:
 ```sh
-curl https://friendbot-futurenet.stellar.org?addr=<your admin account id here>
+curl https://friendbot.stellar.org?addr=GDFIC2T2RS3ZVR2NYA4HNGVESCGZFLM6ZJXZPF7N5NECR2DAKYYGEMNE
 ```
 
 Now lets deploy the "old" contract first:
@@ -96,21 +96,21 @@ Now lets deploy the "old" contract first:
 soroban contract deploy \
   --wasm old_contract/build/release.wasm \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 Example output with the address of the deployed contract:
 ```sh
-CBFXONN6XYZXKV6NSYFZXL4FNWJR2WQRPWF3NIWKLNY5FMO546OAXNHL
+CCCWA6R6A7Z6KH6BOIYYVIEM3J36VPJFYSKKCS4XN5SVKFCWFR7MK3ST
 ```
 
 Next initialize the old contract:
 ```sh
 soroban -q contract invoke  \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- init \
   --admin <your admin account id here>
@@ -120,8 +120,8 @@ Let's invoke the `version` function:
 ```sh
 soroban -q contract invoke  \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- version
 ```
@@ -135,13 +135,13 @@ Next we install the `new` contract:
 soroban contract install \
   --wasm new_contract/build/release.wasm \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 Example output with the wasm hash of the new wasm executable:
 ```sh
-8046195a05a169481188be51e14f0356d996e2814722d45663b1a2d4e27eb10d
+cc3f7e1562de79a84da24c67bb51cee97cbd4173b8271373db9b0ed622d9dcfa
 ```
 
 Now we can upgrade our old contract. Notice the `--source` must be the identity name matching the address passed to the `init` function (admin).
@@ -149,8 +149,8 @@ Now we can upgrade our old contract. Notice the `--source` must be the identity 
 ```sh
 soroban -q contract invoke  \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <id of the old contract here> \
   -- upgrade \
   --new_wasm_hash <wasm hash of the new contract here>
@@ -161,8 +161,8 @@ Let's invoke the `version` function again:
 ```sh
 soroban -q contract invoke  \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- version
 ```
@@ -175,16 +175,10 @@ We can also invoke the new function added by the new contract:
 ```sh
 soroban -q contract invoke  \
   --source admin \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- new_v2_fn
-```
-
-```sh
-soroban -q contract invoke \
-    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
-    -- new_v2_fn
 ```
 
 The output should be:

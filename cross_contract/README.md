@@ -28,14 +28,14 @@ Now deploy the `contract_a` in the soroban cli:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 You should see an output similar to this:
 
 ```sh
-CCWFKKRU6YU3SJPXK5OC2C7ABOJVW33H3AWYMHDWBI6RV3T6KENG3WAB
+CBLGDO6DQJLFQYNA4ZGCD2DAGSAALBNFUTFICENHJNXRP6PD62Q3ZRMI
 ```
 representing the contract id of the `contract_a`.
 
@@ -54,13 +54,13 @@ Now deploy the `contract_b` in the soroban cli:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 You should see an output similar to this:
 ```sh
-CADH3DGSGCBZTWOAMVSF3NKZ4S6AD5YWZCV6NDU4V5T3DYUBOEUUAWTQ
+CCKC2IEKI7VPVGNQA6HK4IWKPWCO6HDSVBH73A2Y3SAGULWK72RHQMZM
 ```
 representing the contract id of the `contract_b`.
 
@@ -70,8 +70,8 @@ Now invoke `contract_b` in the soroban cli:
 ```sh
 soroban contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract_b id here> \
   -- callc \
   --addr <your contract_a id here>

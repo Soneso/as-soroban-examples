@@ -27,14 +27,14 @@ Deploy the example contract:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CCJCS2FZ4PTE4BBJ3Q4KUY27WUOMMK7EYSESYP2OLWW5XYMI653YDWFH
+CB2MB6RW5SZGBOWSKUCLHWQXYB4KLHCI4Y5JBCKRXIZWNOFY2S6HAXCE
 ```
 
 Next let's invoke using --very-verbose:
@@ -42,8 +42,8 @@ Next let's invoke using --very-verbose:
 ```sh
 soroban --very-verbose contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract is here> \
   -- logging
 ```

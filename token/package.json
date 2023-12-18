@@ -27,6 +27,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "file:../../as-soroban-sdk"
+    "as-soroban-sdk": "^0.4.0"
   }
 }

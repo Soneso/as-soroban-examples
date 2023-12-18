@@ -20,22 +20,22 @@ from stellar_sdk.auth import authorize_entry
 from stellar_sdk.exceptions import PrepareTransactionException
 from stellar_sdk.soroban_rpc import GetTransactionStatus, SendTransactionStatus
 
-rpc_server_url = "https://rpc-futurenet.stellar.org"
+rpc_server_url = "https://soroban-testnet.stellar.org"
 soroban_server = SorobanServer(rpc_server_url)
-network_passphrase = 'Test SDF Future Network ; October 2022' #Network.TESTNET_NETWORK_PASSPHRASE
+network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE
 
 submitter_kp = Keypair.from_secret(
-    "SB2BVJUHA2QG7LQ54X7GM7PZ66PX42724D6RZVB4O7Z5GLDXPFW4YQVI"
+    "SA2EAJDXWUPGMSZLWN3XV2RUFN2BY4RFVG2Z2EK32GF2Z4T2MTGA75IL"
 )
 alice_kp = Keypair.from_secret(
-    "SBUONLERLU7EUZ766C2TIZRV74GWQ7TFBTD4PGV5MUDOH4IAR6KYPLGL"
+    "SASU324JBGQ6TEQQWVYQPHKUY7K23US6IMTJL7FHUXL2XTRMF7RTO66T"
 )
 bob_kp = Keypair.from_secret(
-    "SBITTWWHAHETJYPGO4ZBI7EB424VJ3TMZ5EZHRAW7ZNTBVYDR3LGVQ3H"
+    "SCJQ455QZC6RMDCRK62EGXIRT3L36ZMJNLI24ESBH4UTE736J4FMKODQ"
 )
 atomic_swap_contract_id = (sys.argv[1])
-token_a_contract_id = "CD6PYDESHAHJHAWYZFTLL7EDBIQH7NEJWO32UMNQELWL2CG3VRFSAPU2"
-token_b_contract_id = "CBPAP2Z2E3NA543K4ZGR4NMDBV65W6A5C5CAAW2FGGKZADZS7LGG5I7O"
+token_a_contract_id = "CDEXJAMSALQVE7SJEX5M36S5JMPBPBV3SCAOJFYX6UYZVF5LB4DZPCOT"
+token_b_contract_id = "CCWDMAJTKNRRYAKJZRA56TGR7Y24WLHDOX7DHY4B443LGHHZPQPN3757"
 
 
 source = soroban_server.load_account(submitter_kp.public_key)

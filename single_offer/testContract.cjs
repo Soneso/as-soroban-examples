@@ -2,10 +2,10 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 let assert = require('assert');
 
-//const rpcUrl = 'https://soroban-testnet.stellar.org';
-//const networkPassphrase = "'Test SDF Network ; September 2015'";
-const rpcUrl = 'https://rpc-futurenet.stellar.org';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
+//const rpcUrl = 'https://rpc-futurenet.stellar.org';
+//const networkPassphrase = "'Test SDF Future Network ; October 2022'";
 
 const adminSeed = "SANB7KW6E65BEP6WKTELQ7FMDZTN7HRDMXERYQVLYYO32RK2FOHWBK57";
 const adminId = "GCWXCVSG7R45HWGOXUJPSEQ5TOOMTMF4OKTDKNCT5AAVKDZTFLO3JR2T";

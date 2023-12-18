@@ -38,13 +38,13 @@ Next install the `add` contract's  WASM code:
 soroban contract install \
   --wasm ../add/build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 As an output you will get the WASM hash of the installed `add` contract, like this:
 ```sh
-7190f21ad35980e2905ff60925b237807580878a946bfe928970691041286689
+1bbc1b84a8f2ac2a012d94265082757c98b9e74528a3f18313994b227c4eb417
 ```
 
 ### Deploy
@@ -65,14 +65,14 @@ Next deploy the `deployer` contract:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 You should see an output similar to this:
 
 ```sh
-CCVZWKM6NY37UA4FO5KMM7Y4JFXMK4IVWXKKZSIBT4CECY6LBQ2PNQW5
+CDW22YADHLARLTD6S7QRCJTQCVU3GONJMTKG3WUZCNJMFLQCUL2H2IW2
 ```
 representing the contract id of the `deployer` contract.
 
@@ -82,8 +82,8 @@ Next let's invoke (insert the contract id and wasm hash in the command first):
 ```sh
 soroban contract invoke  \
     --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-    --rpc-url https://rpc-futurenet.stellar.org \
-    --network-passphrase "Test SDF Future Network ; October 2022" \
+    --rpc-url https://soroban-testnet.stellar.org \
+    --network-passphrase "Test SDF Network ; September 2015" \
     --id <your deployer contract id here> \
     -- deploy \
     --salt 0000000000000000000000000000000000000000000000000000000000000000 \
@@ -160,7 +160,7 @@ The concrete argument and return types of this example deployer contract are def
         },
         {
             "key" : "version",
-            "value" : "0.3.0"
+            "value" : "0.4.0"
         },
         {
             "key" : "description",
@@ -250,13 +250,13 @@ Next, let's run this contract:
 soroban contract install \
   --wasm ../add/build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 As an output you will get the wasm hash of the installed `add` contract, similar to this:
 ```sh
-7190f21ad35980e2905ff60925b237807580878a946bfe928970691041286689
+1bbc1b84a8f2ac2a012d94265082757c98b9e74528a3f18313994b227c4eb417
 ```
 
 **Build** the new contract:
@@ -272,14 +272,14 @@ This builds the contract from ```deployer/assembly/index2.ts```. see ```deployer
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 You should see an output similar to this:
 
 ```sh
-CC7MJAHDSKOLVYJONM7ZFMKPVEMUS4I4PGODHVSRUSQ7RQXR45P63ONI
+CCJANEODWOMRSYDTTZZUE4RQDPBTNSBEBKZH22IXRXPW3ESEUQIMUNJZ
 ```
 representing the contract id of the `deployer` contract.
 
@@ -289,8 +289,8 @@ representing the contract id of the `deployer` contract.
 ```sh
 soroban contract invoke  \
     --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-    --rpc-url https://rpc-futurenet.stellar.org \
-    --network-passphrase "Test SDF Future Network ; October 2022" \
+    --rpc-url https://soroban-testnet.stellar.org \
+    --network-passphrase "Test SDF Network ; September 2015" \
     --id <your deployer contract id here> \
     -- deploy2 \
     --wasm_hash <your add contract wasm hash here>

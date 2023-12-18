@@ -25,13 +25,13 @@ Next, we have to deploy the contract:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. For example:
 ```sh
-CDVVAUIZLWXO7FFH2QITM5B6G4TDXGLV42LDTXGWN6SLFBRCV5TT4JP5
+CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ
 ```
 
 Since we are dealing with authorization and signatures, we need to set up some identities to use for testing and get their public keys:
@@ -45,16 +45,16 @@ soroban config identity address acc2
 
 Example output with the public key of the identity:
 ```sh
-GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO
-GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR
+GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
+GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
 ```
 
 Next, let's fund the accounts (replace the account ids):
 
 ```sh
-curl https://friendbot-futurenet.stellar.org?addr=GDNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO
+curl https://friendbot.stellar.org?addr=GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
 
-curl https://friendbot-futurenet.stellar.org?addr=GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR
+curl https://friendbot.stellar.org?addr=GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
 ```
 
 Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
@@ -62,11 +62,11 @@ Now the contract itself can be invoked. Notice the --source has to match --user 
 ```sh
 soroban -q contract invoke \
     --source acc1 \
-    --id CDVVAUIZLWXO7FFH2QITM5B6G4TDXGLV42LDTXGWN6SLFBRCV5TT4JP5 \
-    --rpc-url https://rpc-futurenet.stellar.org \
-  	--network-passphrase "Test SDF Future Network ; October 2022" \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --user GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB \
     --value 3
 ```
 
@@ -75,33 +75,33 @@ Run a few more increments for both accounts.
 ```sh
 soroban -q contract invoke \
     --source acc2 \
-    --id CDVVAUIZLWXO7FFH2QITM5B6G4TDXGLV42LDTXGWN6SLFBRCV5TT4JP5 \
-    --rpc-url https://rpc-futurenet.stellar.org \
-  	--network-passphrase "Test SDF Future Network ; October 2022" \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --user GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F \
     --value 2
 ```
 
 ```sh
 soroban -q contract invoke \
     --source acc1 \
-    --id CDVVAUIZLWXO7FFH2QITM5B6G4TDXGLV42LDTXGWN6SLFBRCV5TT4JP5 \
-    --rpc-url https://rpc-futurenet.stellar.org \
-  	--network-passphrase "Test SDF Future Network ; October 2022" \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GDNNLVOEOAQADO5UKZ5PI3WETSAHKGZWLOTKFNOADXAKK76DWHXK47KO \
+    --user GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB \
     --value 14
 ```
 
 ```sh
 soroban -q contract invoke \
     --source acc2 \
-    --id CDVVAUIZLWXO7FFH2QITM5B6G4TDXGLV42LDTXGWN6SLFBRCV5TT4JP5 \
-    --rpc-url https://rpc-futurenet.stellar.org \
-  	--network-passphrase "Test SDF Future Network ; October 2022" \
+    --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
+    --rpc-url https://soroban-testnet.stellar.org \
+  	--network-passphrase "Test SDF Network ; September 2015" \
     -- auth \
-    --user GD5R3D5WMZWWMIEMJXFAQWN4OS5MTMBKCU4XI2OLS56J7OWPBGJP3DLR \
+    --user GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F \
     --value 5
 ```
 

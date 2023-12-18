@@ -27,14 +27,14 @@ Deploy the example contract:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CCIXBRHP3OLWUM2ORMEAJ4YH3OVSM46IABTKJBGN2GXR5EIUREXOMABO
+CC4DZNN2TPLUOAIRBI3CY7TGRFFCCW6GNVVRRQ3QIIBY6TM6M2RVMBMC
 ```
 
 Next let's invoke:
@@ -42,8 +42,8 @@ Next let's invoke:
 ```sh
 soroban -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- hello --to friend
 ```
@@ -104,7 +104,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
         },
         {
             "key" : "version",
-            "value" : "0.3.0"
+            "value" : "0.4.0"
         },
         {
             "key" : "description",

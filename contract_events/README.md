@@ -27,8 +27,8 @@ Deploy:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. Next let's invoke:
@@ -36,9 +36,9 @@ This returns the ID of the contract, starting with a C. Next let's invoke:
 ```sh
 soroban contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
-  --id <your contract id here> \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --id CAIJF5TVBGXMNWZPPVQEOFY2GK67M6RR3XXBHW4BFGMJDLIEPPIVMGG3 \
   -- increment
 ```
 

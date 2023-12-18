@@ -2,9 +2,9 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 var assert = require('assert');
 
-const rpcUrl = ' --rpc-url https://rpc-futurenet.stellar.org';
-const networkPassphrase = ' --network-passphrase "Test SDF Future Network ; October 2022"';
-const friendbotUrl = 'https://friendbot-futurenet.stellar.org?addr=';
+const rpcUrl = ' --rpc-url https://soroban-testnet.stellar.org';
+const networkPassphrase = ' --network-passphrase "Test SDF Network ; September 2015"';
+const friendbotUrl = 'https://friendbot.stellar.org?addr=';
 const cmdDeploy = 'soroban contract deploy' + rpcUrl + networkPassphrase + ' --wasm build/release.wasm';
 const cmdInvoke = 'soroban contract invoke' + rpcUrl + networkPassphrase + ' --id ';
 const jsonrpcErr = 'error: jsonrpc error:';

@@ -27,14 +27,14 @@ Deploy the example contract:
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CBLI6BUKI5GBV7M63FYCKSI4BJN652T353AYP4MUIEAY2HV6JMN2VUPV
+CAOINA7M7367SZY3PS3ENINYI4RMUYM2E47CNLUOEVSWOVTU6U2YA5NG
 ```
 
 Next let's invoke:
@@ -42,8 +42,8 @@ Next let's invoke:
 ```sh
 soroban -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
   --id <your contract id here> \
   -- increment
 ```
@@ -212,14 +212,14 @@ npm run asbuild2:release
 soroban contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022"
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CD2XMPPEFU4BCW6TPH3MPQ7FRH22UQHMSATOSEWJBF5L2MBLJXIMFTO3
+CCYC3FE7RX4OPUAOZO5C7CYSWH7T6NXR6KC3GD7NNPGHOCGXQMTI4PHS
 ```
 
 Next let's invoke:
@@ -227,9 +227,9 @@ Next let's invoke:
 ```sh
 soroban -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
-  --rpc-url https://rpc-futurenet.stellar.org \
-  --network-passphrase "Test SDF Future Network ; October 2022" \
-  --id CD2XMPPEFU4BCW6TPH3MPQ7FRH22UQHMSATOSEWJBF5L2MBLJXIMFTO3 \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --id <your contract id here> \
   -- increment
 ```
 

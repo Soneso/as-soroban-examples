@@ -2,13 +2,13 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 let assert = require('assert');
 
-//const rpcUrl = 'https://soroban-testnet.stellar.org';
-//const networkPassphrase = "'Test SDF Network ; September 2015'";
-//const friendbotUrl = 'https://friendbot.stellar.org?addr=';
+const rpcUrl = 'https://soroban-testnet.stellar.org';
+const networkPassphrase = "'Test SDF Network ; September 2015'";
+const friendbotUrl = 'https://friendbot.stellar.org?addr=';
 
-const rpcUrl = 'https://rpc-futurenet.stellar.org';
-const networkPassphrase = "'Test SDF Future Network ; October 2022'";
-const friendbotUrl = 'https://friendbot-futurenet.stellar.org?addr=';
+//const rpcUrl = 'https://rpc-futurenet.stellar.org';
+//const networkPassphrase = "'Test SDF Future Network ; October 2022'";
+//const friendbotUrl = 'https://friendbot-futurenet.stellar.org?addr=';
 
 const jsonrpcErr = 'error: jsonrpc error:';
 const sleepCmd = 5000;
