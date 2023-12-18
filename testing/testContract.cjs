@@ -4,8 +4,7 @@ let assert = require('assert');
 
 const adminSeed = 'SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM';
 const rpcUrl = ' --rpc-url https://rpc-futurenet.stellar.org';
-const networkPassphrase =
-    ' --network-passphrase "Test SDF Future Network ; October 2022"';
+const networkPassphrase = ' --network-passphrase "Test SDF Future Network ; October 2022"';
 
 
 async function startTest() {

@@ -76,8 +76,6 @@ export function add(a: I32Val, b: I32Val): I32Val {
 }
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/add
-
 ## How it works
 
 When calling a contract function the host will only pass so called host values. The SDK can encode and decode host values. A host value is a 64-bit integer carrying a bit-packed disjoint union of several cases, each identified by a different tag value (e.g. `i32`, `u32`, `symbol`, `timestamp`, `bool` etc. or ```object handles``` such as references to vectors, maps, bytes, strings that live in the host).

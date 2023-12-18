@@ -156,25 +156,31 @@ soroban -q contract invoke  \
   --new_wasm_hash <wasm hash of the new contract here>
 ```
 
-```sh
-soroban -q contract invoke \
-	--source admin \
-    --id <id of the old contract here> \
-    -- upgrade \
-    --new_wasm_hash <wasm hash of the new contract here>
-```
 
 Let's invoke the `version` function again:
 ```sh
-soroban -q contract invoke \
-    --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \
-    -- version
+soroban -q contract invoke  \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract id here> \
+  -- version
 ```
 
 Now that the contract was upgraded, you'll see a new version:
 `2`
 
 We can also invoke the new function added by the new contract:
+
+```sh
+soroban -q contract invoke  \
+  --source admin \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id <your contract id here> \
+  -- new_v2_fn
+```
+
 ```sh
 soroban -q contract invoke \
     --id CCVHPJIOXDVM7AJZNVQUTSIS3L465XV26INTENPE22R273PIKN6MANDZ \

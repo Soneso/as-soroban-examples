@@ -44,7 +44,7 @@ soroban -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://rpc-futurenet.stellar.org \
   --network-passphrase "Test SDF Future Network ; October 2022" \
-  --id CBLI6BUKI5GBV7M63FYCKSI4BJN652T353AYP4MUIEAY2HV6JMN2VUPV \
+  --id <your contract id here> \
   -- increment
 ```
 
@@ -203,68 +203,34 @@ export function increment(): U32Val {
 
 Next, lets deploy and run the contract on testnet:
 
-1. Build the contract:
+Build the contract:
 
 ```sh
 npm run asbuild2:release
 ```
-
-2. Configure the CLI for testnet (see also [doc](https://soroban.stellar.org/docs/getting-started/setup#configuring-the-cli-for-testnet)):
-
-```sh
-soroban config network add --global testnet \
-  --rpc-url https://soroban-testnet.stellar.org:443 \
-  --network-passphrase "Test SDF Network ; September 2015"
-```
-
-3. Configure an identity:
-
-```sh
-soroban config identity generate --global bob
-```
-
-You can see the public key of bob with:
-
-```sh
-soroban config identity address bob
-```
-
-4. Get test tokens:
-
-```sh
-curl "https://friendbot.stellar.org/?addr=$(soroban config identity address bob)"
-```
-
-5. Deploy the contract:
-
 ```sh
 soroban contract deploy \
   --wasm build/release.wasm \
-  --source bob \
-  --network testnet
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
 ```
 
-You should get the contract id (as Strkey) as a result. E.g.
+This returns the ID of the contract, starting with a C. Similar to this:
 
 ```sh
-CCBNAJBYW7HHHLLFV5WB2WVUQ3FC6TCXAXZ7HK3HBSKOSZ6RNP32H3DA
+CD2XMPPEFU4BCW6TPH3MPQ7FRH22UQHMSATOSEWJBF5L2MBLJXIMFTO3
 ```
 
-Copy that value and put it into a file in the ```.soroban``` directory called ```contract-id```. You may need to create the ```.soroban``` folder first with ```mkdir .soroban```.
+Next let's invoke:
 
 ```sh
-echo "C...[your contract id here]" > .soroban/contract-id
-```
-
-6. Invoke the increment function:
-
-```sh
-  soroban contract invoke \
-  --id $(cat .soroban/contract-id) \
-  --source bob \
-  --network testnet \
-  -- \
-  increment
+soroban -q contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022" \
+  --id CD2XMPPEFU4BCW6TPH3MPQ7FRH22UQHMSATOSEWJBF5L2MBLJXIMFTO3 \
+  -- increment
 ```
 
 The following output should appear:
@@ -353,8 +319,8 @@ ls -la build/
 
 The size of the compiled .wasm file is 781 bytes:
 ```
--rw-r--r--   1 chris  staff   781 Nov  7 12:14 release.wasm
--rw-r--r--   1 chris  staff  4882 Nov  7 12:14 release.wat
+-rw-r--r--   1 chris  staff   785 Dec 13 22:29 release.wasm
+-rw-r--r--   1 chris  staff  4930 Dec 13 22:29 release.wat
 ```
 
 Next let's build the contract from `index3.ts` that uses the direct host functions of the SDK and check its size:
@@ -367,8 +333,8 @@ ls -la build/
 The size of the compiled .wasm file is 773 bytes:
 
 ```
--rw-r--r--   1 chris  staff   773 Nov  7 12:14 release.wasm
--rw-r--r--   1 chris  staff  4665 Nov  7 12:14 release.wat
+-rw-r--r--   1 chris  staff   773 Dec 13 22:29 release.wasm
+-rw-r--r--   1 chris  staff  4627 Dec 13 22:29 release.wat
 ```
 
 Of course, this is only a small improvement, but it shows how one can optimize contracts by using the correct functions of the SDK, depending on the use case.
