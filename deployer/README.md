@@ -8,7 +8,7 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.2 soroban-cli
+cargo install --locked --version 20.1.1 soroban-cli
 ```
 
 ### Install the `add` contract

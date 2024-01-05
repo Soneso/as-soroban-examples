@@ -53,7 +53,7 @@ The `update_current_contract_wasm` host function will also emit a `SYSTEM` contr
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.2 soroban-cli
+cargo install --locked --version 20.1.1 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory, install the sdk in both folders (old and new) and build the contracts:

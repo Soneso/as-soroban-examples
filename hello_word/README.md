@@ -8,7 +8,7 @@ The [hello word example](https://github.com/Soneso/as-soroban-examples/tree/main
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.0.2 soroban-cli
+cargo install --locked --version 20.1.1 soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the assembly script soroban sdk. Then build the contract:
