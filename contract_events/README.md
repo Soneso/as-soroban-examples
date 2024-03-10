@@ -8,14 +8,14 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
 ```sh
 cd contract_events
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 
@@ -44,12 +44,12 @@ soroban contract invoke  \
 
 You should see the output:
 ```sh
-2023-12-13T18:47:17.587107Z  INFO soroban_cli::log::diagnostic_event: 0: DiagnosticEvent {
+2024-03-10T10:30:40.494253Z  INFO soroban_cli::log::diagnostic_event: 0: DiagnosticEvent {
     in_successful_contract_call: true,
     event: ContractEvent {
         ext: V0,
         contract_id: Some(
-            Hash(17a1166743b43e4cd08b21a710467978162f0e117c690f7b0de1cb8743d645f2),
+            Hash(e55a8cf0fdbbb50fe464bb942bc800dfe46f7e54f948b0df474fd8cdfe9bd2a8),
         ),
         type_: Contract,
         body: V0(

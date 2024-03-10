@@ -2,13 +2,15 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 var assert = require('assert');
 
+const adminSeed = 'SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM'; 
 const rpcUrl = ' --rpc-url https://soroban-testnet.stellar.org';
 const networkPassphrase = ' --network-passphrase "Test SDF Network ; September 2015"';
 const friendbotUrl = 'https://friendbot.stellar.org?addr=';
-const cmdDeploy = 'soroban contract deploy' + rpcUrl + networkPassphrase + ' --wasm build/release.wasm';
+const network = ' --network testnet';
+const cmdDeploy = 'soroban contract deploy' + rpcUrl + networkPassphrase + ' --source-account ' + adminSeed + ' --wasm build/release.wasm'  ;
 const cmdInvoke = 'soroban contract invoke' + rpcUrl + networkPassphrase + ' --id ';
 const jsonrpcErr = 'error: jsonrpc error:';
-const approveLedger = 209832;
+const approveLedger = 1505996;
 const sleepCmd = 5000;
 
 const ALREADY_INITIALIZED_ERR_CODE = 1;
@@ -293,7 +295,7 @@ async function testInsufficientAllowance(contract_id) {
     let balance = await getBalance(contract_id, admin_name, user1_id);
     assert.equal(balance, '"1000"');
 
-    await approve(contract_id, user1_name, user1_id, user3_id, 100, 209832);
+    await approve(contract_id, user1_name, user1_id, user3_id, 100, approveLedger);
     let allowance = await getAllowance(contract_id, admin_name, user1_id, user3_id);
     assert.equal(allowance, '"100"');
 
@@ -335,8 +337,13 @@ async function testDecimalOverMax(contract_id) {
 }
 
 async function generateIdentity(name) {
-    const { error, stdout, stderr } = await exec('soroban config identity generate ' 
-    + name + ' && soroban config identity address ' + name);
+    let cmd = 'soroban config identity generate' 
+    + network + ' '  + name 
+    + ' && soroban config identity address ' + name;
+
+    console.log(cmd);
+
+    const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }

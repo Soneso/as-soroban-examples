@@ -28,6 +28,7 @@ async function deployContract() {
     console.log(`deploying contract ...`);
 
     let cmdDeploy = 'soroban contract deploy' + rpcUrl + networkPassphrase +
+        ' --source-account ' + adminSeed +
         ' --wasm build/release.wasm';
 
     const {error, stdout, stderr} = await exec(cmdDeploy);

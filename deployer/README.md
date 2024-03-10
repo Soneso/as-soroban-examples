@@ -8,7 +8,7 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 ### Install the `add` contract
@@ -22,7 +22,7 @@ First navigate to its directory and build it:
 
 ```sh
 cd add
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 
@@ -56,7 +56,7 @@ Let's deploy the `add` contract and invoke its `add(...)` function after deploy.
 First navigate to the deployer directory, install the SDK and build the deployer contract:
 
 ```sh
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 Next deploy the `deployer` contract:
@@ -160,7 +160,7 @@ The concrete argument and return types of this example deployer contract are def
         },
         {
             "key" : "version",
-            "value" : "0.4.0"
+            "value" : "1.0.0"
         },
         {
             "key" : "description",

@@ -7,14 +7,14 @@ The [liquidity pool example](https://github.com/Soneso/as-soroban-examples/tree/
 First, install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 Then, navigate it's directory and install the sdk.
 
 ```sh
 cd liquidity_pool
-npm install as-soroban-sdk
+npm install
 ```
 
 You can now run the test:

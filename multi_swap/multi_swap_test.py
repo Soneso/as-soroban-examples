@@ -170,11 +170,11 @@ tx.sign(submitter_kp)
 send_transaction_data = soroban_server.send_transaction(tx)
 
 if send_transaction_data.status != SendTransactionStatus.PENDING:
-    print(f"sent transaction: {send_transaction_data}")
+    #print(f"sent transaction: {send_transaction_data}")
     raise Exception("send transaction failed")
 
 while True:
-    print("waiting for transaction to be confirmed...")
+    #print("waiting for transaction to be confirmed...")
     get_transaction_data = soroban_server.get_transaction(send_transaction_data.hash)
     if get_transaction_data.status != GetTransactionStatus.NOT_FOUND:
         break

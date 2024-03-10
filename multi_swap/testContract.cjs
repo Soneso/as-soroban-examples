@@ -83,10 +83,11 @@ async function startTest() {
     assert.equal(balance, '"' + b3Amount + '"');
     console.log("minted : " + b3Amount + " TOKENB to b3");
 
+
     let result = await pyMultiSwap(multi_swap_cid, atomic_swap_cid, token_a_cid, token_b_cid);
     
-    assert.equal('swap success', result);
-    console.log(`test atomic swap -> OK`);
+    assert.equal('multi swap success', result);
+    console.log(`test multi swap -> OK`);
 } 
 
 async function pipInstallPythonSDK() {

@@ -5,6 +5,7 @@ let assert = require('assert');
 const rpcUrl = 'https://soroban-testnet.stellar.org';
 const networkPassphrase = "'Test SDF Network ; September 2015'";
 const friendbotUrl = 'https://friendbot.stellar.org?addr=';
+const network = '--network testnet ';
 
 //const rpcUrl = 'https://rpc-futurenet.stellar.org';
 //const networkPassphrase = "'Test SDF Future Network ; October 2022'";
@@ -21,11 +22,11 @@ async function startTest() {
 
     let admin = "admin";
     let admin_id = await generateIdentity(admin);
-    await fundAccount(admin_id);
+    //await fundAccount(admin_id);
 
     let user = "user";
     let user_id = await generateIdentity(user);
-    await fundAccount(user_id);
+    //await fundAccount(user_id);
 
     let lp_cid = await deployContract(admin, 'build/release.wasm');
     console.log("lp cid: " + lp_cid);
@@ -357,7 +358,7 @@ async function getBalance(invoker, user, token_contract_id) {
 }
 
 async function generateIdentity(name) {
-    const { error, stdout, stderr } = await exec('soroban config identity generate ' 
+    const { error, stdout, stderr } = await exec('soroban config identity generate ' + network
     + name + ' && soroban config identity address ' + name);
     if (error) {
         assert.fail(`error: ${error.message}`);

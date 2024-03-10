@@ -11,8 +11,6 @@ You can find the code in:
 atomic-swap/assembly/index.ts
 ```
 
-Ref: https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/assembly/index.ts
-
 ## How it works
 
 The example contract requires two Address-es to authorize their parts of the swap operation: one Address wants to sell a given amount of token A for token B at a given price and another Address wants to sell token B for token A at a given price. The contract swaps the tokens atomically, but only if the requested minimum price is respected for both parties.
@@ -91,7 +89,7 @@ To build the example, navigate it's directory install the sdk. Then build the co
 
 ```sh
 cd atomic-swap
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 
@@ -105,4 +103,4 @@ To run the contract, you can execute the test provided in [testContract.cjs](htt
 node testContract.cjs
 ```
 
-It will build and deploy the contract to futurenet and then execute the python script [swap_test.py](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/swap_test.py) which prepares the data and then invokes the contract.
+It will build and deploy the contract to testnet and then execute the python script [swap_test.py](https://github.com/Soneso/as-soroban-examples/tree/main/atomic-swap/swap_test.py) which prepares the data and then invokes the contract.

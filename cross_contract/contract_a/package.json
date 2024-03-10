@@ -1,6 +1,6 @@
 {
   "name": "contract_a",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "a soroban contract to be called by another contract",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "c.r.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assemblyscript": "^0.21.6"
+    "assemblyscript": "^0.27.24"
   },
   "type": "module",
   "exports": {
@@ -23,6 +23,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^0.4.0"
+    "as-soroban-sdk": "^1.0.0"
   }
 }

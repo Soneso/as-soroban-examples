@@ -14,7 +14,7 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 ### 3. Run an example contract
@@ -28,7 +28,7 @@ cd hello_word
 Install the AS Soroban SDK:
 
 ```sh
-npm install as-soroban-sdk
+npm install
 
 ```
 

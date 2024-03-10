@@ -8,14 +8,14 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
 
 ```sh
 cd auth
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 
@@ -37,8 +37,8 @@ CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ
 Since we are dealing with authorization and signatures, we need to set up some identities to use for testing and get their public keys:
 
 ```sh
-soroban config identity generate acc1 && \
-soroban config identity generate acc2 && \
+soroban config identity generate acc1 --network testnet && \
+soroban config identity generate acc2 --network testnet && \
 soroban config identity address acc1 && \
 soroban config identity address acc2
 ```
@@ -47,14 +47,6 @@ Example output with the public key of the identity:
 ```sh
 GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
 GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
-```
-
-Next, let's fund the accounts (replace the account ids):
-
-```sh
-curl https://friendbot.stellar.org?addr=GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
-
-curl https://friendbot.stellar.org?addr=GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
 ```
 
 Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.

@@ -8,14 +8,14 @@ The [add example](https://github.com/Soneso/as-soroban-examples/tree/main/add) d
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 Then, to run the example, navigate it's directory and install the SDK. Then build the contract:
 
 ```sh
 cd add
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 
@@ -105,7 +105,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
         },
         {
             "key" : "version",
-            "value" : "0.3.0"
+            "value" : "1.0.0"
         },
         {
             "key" : "description",

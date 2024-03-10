@@ -118,14 +118,14 @@ contract.callContract(token, "transfer", transferArgs);
 To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli):
 
 ```sh
-cargo install --locked --version 20.1.1 soroban-cli
+cargo install --locked soroban-cli
 ```
 
 Then, to build the contract, navigate it's directory install the sdk. Then build the contract:
 
 ```sh
 cd timelock
-npm install as-soroban-sdk
+npm install
 npm run asbuild:release
 ```
 
