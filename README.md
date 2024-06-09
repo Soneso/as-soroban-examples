@@ -17,6 +17,15 @@ To run a contract, you must first install the official `soroban-cli` as describe
 cargo install --locked soroban-cli
 ```
 
+### 2.1 Hint for testing with protocol version 21:
+Currently the `soroban-cli` version that supports protocol v.21 is not yet officially launched. Therefore, if you would like to test your contracts with the protocol 21 update (testnet, futurenet), you need to install a soroban cli preview version:
+
+```sh
+cargo install soroban-cli --version 21.0.0-preview.1
+```
+
+Please also uptdate your `package.json` file to use the AssemblyScript Soroban SDK version `1.0.1`.
+
 ### 3. Run an example contract
 
 Navigate to the directory of the example you would like to run.
