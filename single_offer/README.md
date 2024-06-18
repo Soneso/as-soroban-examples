@@ -5,10 +5,10 @@ The [single offer sale example](https://github.com/Soneso/as-soroban-examples/tr
 
 ## Run the example
 
-First, install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
+First, install the official `stellar-cli` as described here: [stellar cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, navigate it's directory and install the sdk.

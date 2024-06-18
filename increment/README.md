@@ -5,10 +5,10 @@ This tutorial assumes that you've already completed the [hello word example](htt
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Deploy the example contract:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -40,7 +40,7 @@ CAOINA7M7367SZY3PS3ENINYI4RMUYM2E47CNLUOEVSWOVTU6U2YA5NG
 Next let's invoke:
 
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
@@ -209,7 +209,7 @@ Build the contract:
 npm run asbuild2:release
 ```
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -225,7 +225,7 @@ CCYC3FE7RX4OPUAOZO5C7CYSWH7T6NXR6KC3GD7NNPGHOCGXQMTI4PHS
 Next let's invoke:
 
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \

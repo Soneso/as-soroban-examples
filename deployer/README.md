@@ -5,10 +5,10 @@ The [deployer example](https://github.com/Soneso/as-soroban-examples/tree/main/d
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 ### Install the `add` contract
@@ -35,7 +35,7 @@ cd deployer
 Next install the `add` contract's  WASM code:
 
 ```sh
-soroban contract install \
+stellar contract install \
   --wasm ../add/build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -62,7 +62,7 @@ npm run asbuild:release
 Next deploy the `deployer` contract:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -80,7 +80,7 @@ representing the contract id of the `deployer` contract.
 Next let's invoke (insert the contract id and wasm hash in the command first):
 
 ```sh
-soroban contract invoke  \
+stellar contract invoke  \
     --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
     --rpc-url https://soroban-testnet.stellar.org \
     --network-passphrase "Test SDF Network ; September 2015" \
@@ -247,7 +247,7 @@ export function callContract(contract: AddressObject, func: string, args: Vec): 
 Next, let's run this contract:
 
 ```sh
-soroban contract install \
+stellar contract install \
   --wasm ../add/build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -269,7 +269,7 @@ This builds the contract from ```deployer/assembly/index2.ts```. see ```deployer
 **Deploy**:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -287,7 +287,7 @@ representing the contract id of the `deployer` contract.
 **Invoke**:
 
 ```sh
-soroban contract invoke  \
+stellar contract invoke  \
     --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
     --rpc-url https://soroban-testnet.stellar.org \
     --network-passphrase "Test SDF Network ; September 2015" \

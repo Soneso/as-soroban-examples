@@ -27,7 +27,7 @@ async function buildContract() {
 async function deployContract() {
     console.log(`deploying contract ...`);
 
-    let cmdDeploy = 'soroban contract deploy' + rpcUrl + networkPassphrase +
+    let cmdDeploy = 'stellar contract deploy' + rpcUrl + networkPassphrase +
         ' --source-account ' + adminSeed +
         ' --wasm build/release.wasm';
 
@@ -41,7 +41,7 @@ async function deployContract() {
 
 async function invokeContract(contractId) {
     console.log(`invoking contract ...`);
-    let cmdInvoke = 'soroban contract invoke' + rpcUrl + networkPassphrase +
+    let cmdInvoke = 'stellar contract invoke' + rpcUrl + networkPassphrase +
         ' --source-account ' + adminSeed +
         ' --id ' + contractId +
         '  -- add --a 1 --b 5';

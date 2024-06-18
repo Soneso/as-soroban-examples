@@ -152,7 +152,7 @@ async function build_token_contract() {
 
 async function deploy_token_contract(name) {
     try {
-        const { error, stdout, stderr } = await exec('soroban contract deploy --wasm ../token/build/release.wasm ' + 
+        const { error, stdout, stderr } = await exec('stellar contract deploy --wasm ../token/build/release.wasm ' + 
         '--source ' + adminSeed + 
         ' --rpc-url ' + rpcUrl +
         ' --network-passphrase ' + networkPassphrase);
@@ -189,7 +189,7 @@ async function build_offer_contract() {
 }
 
 async function deploy_offer_contract() {
-    let cmd = 'soroban contract deploy'
+    let cmd = 'stellar contract deploy'
     + ' --wasm build/release.wasm' + 
     ' --source ' + adminSeed + 
     ' --rpc-url ' + rpcUrl +
@@ -207,7 +207,7 @@ async function deploy_offer_contract() {
 }
 
 async function create_token(token_contract_id, name , symbol) {
-    let cmd = 'soroban -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + adminId 
     + ' --decimal 8 --name '+ name + ' --symbol ' + symbol;
@@ -223,7 +223,7 @@ async function create_token(token_contract_id, name , symbol) {
 }
 
 async function mint(to, amount, token_contract_id) {
-    const { error, stdout, stderr } = await exec('soroban -q contract invoke' + 
+    const { error, stdout, stderr } = await exec('stellar -q contract invoke' + 
     ' --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -237,7 +237,7 @@ async function mint(to, amount, token_contract_id) {
 }
 
 async function getBalance(user, token_contract_id) {
-    let cmd = 'soroban -q contract invoke ' +
+    let cmd = 'stellar -q contract invoke ' +
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 
@@ -253,7 +253,7 @@ async function getBalance(user, token_contract_id) {
 }
 
 async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_price, buy_price, offer_contract_id) {
-    let cmd = 'soroban -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- create --seller ' + seller_id 
     + ' --sell_token ' + sell_token + ' --buy_token ' + buy_token + ' --sell_price ' + sell_price + ' --buy_price ' + buy_price;
@@ -271,7 +271,7 @@ async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_
 }
 
 async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contract_id) {
-    let cmd = 'soroban -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
@@ -289,7 +289,7 @@ async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contra
 }
 
 async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contract_id) {
-    let cmd = 'soroban -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
@@ -308,7 +308,7 @@ async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_co
 }
 
 async function withdraw(seller_seed, token, amount, offer_contract_id) {
-    let cmd = 'soroban -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- withdraw --token ' + token + ' --amount ' + amount;
 
@@ -325,7 +325,7 @@ async function withdraw(seller_seed, token, amount, offer_contract_id) {
 }
 
 async function updt_price(seller_seed, sell_price, buy_price, offer_contract_id) {
-    let cmd = 'soroban -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- updt_price --sell_price ' + sell_price + ' --buy_price ' + buy_price;
 

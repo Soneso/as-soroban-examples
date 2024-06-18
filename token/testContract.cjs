@@ -3,15 +3,19 @@ const exec = util.promisify(require('child_process').exec);
 var assert = require('assert');
 
 const adminSeed = 'SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM'; 
-const rpcUrl = ' --rpc-url https://soroban-testnet.stellar.org';
+const rpcAddress = 'https://soroban-testnet.stellar.org'
+const rpcUrl = ' --rpc-url ' + rpcAddress;
 const networkPassphrase = ' --network-passphrase "Test SDF Network ; September 2015"';
 const friendbotUrl = 'https://friendbot.stellar.org?addr=';
 const network = ' --network testnet';
-const cmdDeploy = 'soroban contract deploy' + rpcUrl + networkPassphrase + ' --source-account ' + adminSeed + ' --wasm build/release.wasm'  ;
-const cmdInvoke = 'soroban contract invoke' + rpcUrl + networkPassphrase + ' --id ';
+const cmdDeploy = 'stellar contract deploy' + rpcUrl + networkPassphrase + ' --source-account ' + adminSeed + ' --wasm build/release.wasm'  ;
+const cmdInvoke = 'stellar contract invoke' + rpcUrl + networkPassphrase + ' --id ';
 const jsonrpcErr = 'error: jsonrpc error:';
-const approveLedger = 1505996;
 const sleepCmd = 5000;
+const cmdGetLatestLedger = "curl -X POST \
+-H 'Content-Type: application/json' \
+-d '{\"jsonrpc\":\"2.0\",\"id\":\"id\",\"method\":\"getLatestLedger\"}' \
+" +  rpcAddress;
 
 const ALREADY_INITIALIZED_ERR_CODE = 1;
 const DECIMAL_MUST_FIT_IN_U8_ERR_CODE = 2;
@@ -19,17 +23,19 @@ const INSUFFICIENT_ALLOWANCE_ERR_CODE = 3;
 const INSUFFICIENT_BALANCE_ERR_CODE = 5;
 
 async function startTest() {
-
+    
     await buildContract();
     let contractId = await deployContract(cmdDeploy);
     console.log("Token contract id: " + contractId);
-    await testContract(contractId);
+    let approveLedgerStr = await getLatestLedger();
+    let approveLedger = parseInt(approveLedgerStr) + 10000;
+    await testContract(contractId, approveLedger);
     contractId = await deployContract(cmdDeploy);
-    await testBurn(contractId);
+    await testBurn(contractId, approveLedger);
     contractId = await deployContract(cmdDeploy);
     await testInsufficientBalance(contractId);
     contractId = await deployContract(cmdDeploy);
-    await testInsufficientAllowance(contractId);
+    await testInsufficientAllowance(contractId, approveLedger);
     contractId = await deployContract(cmdDeploy);
     await testAlreadyInitialized(contractId);
     contractId = await deployContract(cmdDeploy);
@@ -76,6 +82,20 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+async function getLatestLedger() {
+    const { error, stdout, stderr } = await exec(cmdGetLatestLedger);
+    if (error) {
+        assert.fail(`error: ${error.message}`);
+    }
+
+    let latestLedger = stdout.substring(
+        stdout.indexOf("\"sequence\":") + 11, 
+        stdout.lastIndexOf("}}")
+    );
+    
+    return latestLedger;
+}
+
 async function fundAccount(account_id) {
     console.log('fund account ' + account_id + ' ...');
     try {
@@ -99,7 +119,7 @@ async function fundAccount(account_id) {
     }
 }
 
-async function testContract(contract_id) {
+async function testContract(contract_id, approveLedger) {
     console.log(`test token contract ...`);
     
     let admin1_name = "admin1";
@@ -184,7 +204,7 @@ async function testContract(contract_id) {
     console.log(`test contract -> OK`);
 }
 
-async function testBurn(contract_id) {
+async function testBurn(contract_id, approveLedger) {
     console.log(`test burn ...`);
 
     let admin_name = "admin";;
@@ -270,7 +290,7 @@ async function testInsufficientBalance(contract_id) {
     console.log(`test insufficient balance -> OK`);
 }
 
-async function testInsufficientAllowance(contract_id) {
+async function testInsufficientAllowance(contract_id, approveLedger) {
     console.log(`test insufficient allowance ...`);
 
     let admin_name = "admin";
@@ -337,9 +357,9 @@ async function testDecimalOverMax(contract_id) {
 }
 
 async function generateIdentity(name) {
-    let cmd = 'soroban config identity generate' 
+    let cmd = 'soroban keys generate' 
     + network + ' '  + name 
-    + ' && soroban config identity address ' + name;
+    + ' && soroban keys address ' + name;
 
     console.log(cmd);
 

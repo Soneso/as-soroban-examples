@@ -50,16 +50,16 @@ The `update_current_contract_wasm` host function will also emit a `SYSTEM` contr
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, to run the example, navigate it's directory, install the sdk in both folders (old and new) and build the contracts:
 
 ```sh
-cd upgradable_contract/old_contract
+cd upgradable_contract/old_contract/
 npm install
 npm run asbuild:release
 
@@ -77,8 +77,8 @@ cd ..
 Since we are dealing with authorization, we need to set up an admin identity to use for testing:
 
 ```sh
-soroban config identity generate --network testnet admin && \
-soroban config identity address admin
+stellar keys generate --network testnet admin && \
+stellar keys address admin
 ```
 
 Example output with the account id of the admin:
@@ -93,7 +93,7 @@ curl https://friendbot.stellar.org?addr=GDFIC2T2RS3ZVR2NYA4HNGVESCGZFLM6ZJXZPF7N
 
 Now lets deploy the "old" contract first:
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm old_contract/build/release.wasm \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -107,7 +107,7 @@ CCCWA6R6A7Z6KH6BOIYYVIEM3J36VPJFYSKKCS4XN5SVKFCWFR7MK3ST
 
 Next initialize the old contract:
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
@@ -118,7 +118,7 @@ soroban -q contract invoke  \
 
 Let's invoke the `version` function:
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
@@ -132,7 +132,7 @@ The output should be:
 Next we install the `new` contract:
 
 ```sh
-soroban contract install \
+stellar contract install \
   --wasm new_contract/build/release.wasm \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -147,7 +147,7 @@ cc3f7e1562de79a84da24c67bb51cee97cbd4173b8271373db9b0ed622d9dcfa
 Now we can upgrade our old contract. Notice the `--source` must be the identity name matching the address passed to the `init` function (admin).
 
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
@@ -159,7 +159,7 @@ soroban -q contract invoke  \
 
 Let's invoke the `version` function again:
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
@@ -173,7 +173,7 @@ Now that the contract was upgraded, you'll see a new version:
 We can also invoke the new function added by the new contract:
 
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \

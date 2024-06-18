@@ -5,10 +5,10 @@ The [events example](https://github.com/Soneso/as-soroban-examples/tree/main/con
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -24,58 +24,70 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Deploy:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015"
 ```
 
-This returns the ID of the contract, starting with a C. Next let's invoke:
+This returns the ID of the contract, starting with a C. 
+
+E.g. `CC6CTPUBTGYTZBKDVBQWFQTFNLPVBXXTE2TLK4TGKF6BY3SXZFPIMNMG`
+
+Before we invoke the contract, let's first get the latest ledger sequence number. We will need it to fetch the events after invoking the contract:
 
 ```sh
-soroban contract invoke  \
+curl -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"jsonrpc":"2.0","id":"1234","method":"getLatestLedger"}' \
+    https://soroban-testnet.stellar.org/
+```
+
+The output should be something like this:
+
+```sh
+{"jsonrpc":"2.0","id":"1234","result":{"id":"d0259543bb1d711c3e55f9237b56f4254b70d06117071fc0139aad30acbc95c0","protocolVersion":21,"sequence":116837}}
+```
+In the upper result, the latest ledger sequence number is `116837`.
+
+Next let's invoke:
+
+```sh
+stellar contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
-  --id CAIJF5TVBGXMNWZPPVQEOFY2GK67M6RR3XXBHW4BFGMJDLIEPPIVMGG3 \
+  --id <your contract id here> \
   -- increment
+```
+
+Fetch the events:
+
+```sh
+stellar events --start-ledger <ledger sequence>  \
+    --id <contract id> \
+    --rpc-url https://soroban-testnet.stellar.org \
+    --network-passphrase "Test SDF Network ; September 2015"
 ```
 
 You should see the output:
 ```sh
-2024-03-10T10:30:40.494253Z  INFO soroban_cli::log::diagnostic_event: 0: DiagnosticEvent {
-    in_successful_contract_call: true,
-    event: ContractEvent {
-        ext: V0,
-        contract_id: Some(
-            Hash(e55a8cf0fdbbb50fe464bb942bc800dfe46f7e54f948b0df474fd8cdfe9bd2a8),
-        ),
-        type_: Contract,
-        body: V0(
-            ContractEventV0 {
-                topics: VecM(
-                    [
-                        Symbol(
-                            ScSymbol(
-                                StringM(COUNTER),
-                            ),
-                        ),
-                        Symbol(
-                            ScSymbol(
-                                StringM(increment),
-                            ),
-                        ),
-                    ],
-                ),
-                data: U32(
-                    1,
-                ),
-            },
-        ),
-    },
-}
-1
+Event 0000501871223525376-0000000001 [CONTRACT]:
+  Ledger:   116851 (closed at 2024-06-18T23:28:52Z)
+  Contract: CC2ZULT6IXUWB4JP46GZCOZD32MIGKV5KXS5WQZLC2Y2BP3PIVLB7ABM
+  Topics:
+            Symbol(ScSymbol(StringM(COUNTER)))
+            Symbol(ScSymbol(StringM(increment)))
+  Value: U32(1)
+Event 0000501871223525376-0000000002 [DIAGNOSTIC]:
+  Ledger:   116851 (closed at 2024-06-18T23:28:52Z)
+  Contract: CC2ZULT6IXUWB4JP46GZCOZD32MIGKV5KXS5WQZLC2Y2BP3PIVLB7ABM
+  Topics:
+            Symbol(ScSymbol(StringM(fn_return)))
+            Symbol(ScSymbol(StringM(increment)))
+  Value: U32(1)
+Latest Ledger: 116853
 ```
 
 ## Code

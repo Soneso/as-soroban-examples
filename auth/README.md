@@ -5,10 +5,10 @@ The [auth example](https://github.com/Soneso/as-soroban-examples/tree/main/auth)
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, to run the example, navigate it's directory and install the sdk. Then build the contract:
@@ -22,7 +22,7 @@ npm run asbuild:release
 Next, we have to deploy the contract:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -37,10 +37,10 @@ CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ
 Since we are dealing with authorization and signatures, we need to set up some identities to use for testing and get their public keys:
 
 ```sh
-soroban config identity generate acc1 --network testnet && \
-soroban config identity generate acc2 --network testnet && \
-soroban config identity address acc1 && \
-soroban config identity address acc2
+stellar keys generate acc1 --network testnet && \
+stellar keys generate acc2 --network testnet && \
+stellar keys address acc1 && \
+stellar keys address acc2
 ```
 
 Example output with the public key of the identity:
@@ -52,7 +52,7 @@ GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
 Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
 
 ```sh
-soroban -q contract invoke \
+stellar -q contract invoke \
     --source acc1 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
@@ -65,7 +65,7 @@ soroban -q contract invoke \
 Run a few more increments for both accounts.
 
 ```sh
-soroban -q contract invoke \
+stellar -q contract invoke \
     --source acc2 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
@@ -76,7 +76,7 @@ soroban -q contract invoke \
 ```
 
 ```sh
-soroban -q contract invoke \
+stellar -q contract invoke \
     --source acc1 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
@@ -87,7 +87,7 @@ soroban -q contract invoke \
 ```
 
 ```sh
-soroban -q contract invoke \
+stellar -q contract invoke \
     --source acc2 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \

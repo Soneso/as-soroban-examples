@@ -52,7 +52,7 @@ async function buildSwapContract() {
 }
 
 async function deploy_swap_contract(key) {
-    let cmd = 'soroban contract deploy'
+    let cmd = 'stellar contract deploy'
     + ' --wasm build/release.wasm' + 
     ' --source ' + key + 
     ' --rpc-url ' + rpcUrl +

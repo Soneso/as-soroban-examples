@@ -126,7 +126,7 @@ async function buildMultiSwapContract() {
 }
 
 async function deployMultiSwapContract() {
-    let cmd = 'soroban contract deploy'
+    let cmd = 'stellar contract deploy'
     + ' --wasm build/release.wasm' + 
     ' --source ' + adminSeed + 
     ' --rpc-url ' + rpcUrl +
@@ -154,7 +154,7 @@ async function buildTokenContract() {
 }
 
 async function deployTokenContract() {
-    const { error, stdout, stderr } = await exec('soroban contract deploy --wasm ../token/build/release.wasm ' + 
+    const { error, stdout, stderr } = await exec('stellar contract deploy --wasm ../token/build/release.wasm ' + 
     '--source ' + adminSeed + 
     ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase);
@@ -180,7 +180,7 @@ async function buildAtomicSwapContract() {
 }
 
 async function deployAtomicSwapContract() {
-    const { error, stdout, stderr } = await exec('soroban contract deploy --wasm ../atomic-swap/build/release.wasm ' + 
+    const { error, stdout, stderr } = await exec('stellar contract deploy --wasm ../atomic-swap/build/release.wasm ' + 
     '--source ' + adminSeed + 
     ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase);
@@ -196,7 +196,7 @@ async function deployAtomicSwapContract() {
 }
 
 async function createToken(token_contract_id, name , symbol) {
-    let cmd = 'soroban -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + adminId 
     + ' --decimal 8 --name '+ name + ' --symbol ' + symbol;
@@ -212,7 +212,7 @@ async function createToken(token_contract_id, name , symbol) {
 }
 
 async function mint(to, amount, token_contract_id) {
-    const { error, stdout, stderr } = await exec('soroban -q contract invoke' + 
+    const { error, stdout, stderr } = await exec('stellar -q contract invoke' + 
     ' --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -226,7 +226,7 @@ async function mint(to, amount, token_contract_id) {
 }
 
 async function getBalance(user, token_contract_id) {
-    let cmd = 'soroban -q contract invoke ' +
+    let cmd = 'stellar -q contract invoke ' +
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 

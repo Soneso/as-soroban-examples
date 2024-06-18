@@ -5,10 +5,10 @@ The [testing example](https://github.com/Soneso/as-soroban-examples/tree/main/te
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, to run the example, navigate to its directory and install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated `.wasm` (WebAssembly) file in the ```build``` folder.
 Deploy the example contract:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -40,7 +40,7 @@ CBTANHY2MOMQRV7HBGAZMCWHFS7R2ZQMCLZRE7JETIL3M6LSDTM2EVU5
 Next let's invoke:
 
 ```sh
-soroban -q contract invoke  \
+stellar -q contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \

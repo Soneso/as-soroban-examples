@@ -5,10 +5,10 @@ The [logging example](https://github.com/Soneso/as-soroban-examples/tree/main/lo
 
 ## Run the example
 
-To run a contract, you must first install the official [soroban-cli](https://soroban.stellar.org/docs/getting-started/setup):
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 Then, to run the example, navigate it's directory install the sdk. Then build the contract:
@@ -24,7 +24,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Deploy the example contract:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -36,52 +36,71 @@ This returns the ID of the contract, starting with a C. Similar to this:
 ```sh
 CB2MB6RW5SZGBOWSKUCLHWQXYB4KLHCI4Y5JBCKRXIZWNOFY2S6HAXCE
 ```
-
-Next let's invoke using --very-verbose:
+Logging emits DIAGNOSTIC events. Before we invoke the contract, let's first get the latest ledger sequence number. We will need it to fetch the events after invoking the contract:
 
 ```sh
-soroban --very-verbose contract invoke  \
+curl -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"jsonrpc":"2.0","id":"1234","method":"getLatestLedger"}' \
+    https://soroban-testnet.stellar.org/
+```
+
+The output should be something like this:
+
+```sh
+{"jsonrpc":"2.0","id":"1234","result":{"id":"523a4f3552fe9e1a090860495fbf3a0608e3300f9f6e860c800312c1f44da9a3","protocolVersion":21,"sequence":116751}}
+```
+In the upper result, the latest ledger sequence number is `116751`.
+
+Next let's invoke:
+
+```sh
+stellar contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
-  --id <your contract is here> \
+  --id <your contract id here> \
   -- logging
 ```
 
-You should see the output:
+Fetch the events:
+
 ```sh
-//...
+stellar events --start-ledger <ledger sequence>  \
+    --id <contract id> \
+    --rpc-url https://soroban-testnet.stellar.org \
+    --network-passphrase "Test SDF Network ; September 2015"
+```
 
-DiagnosticEvent {
-    in_successful_contract_call: true,
-    event: ContractEvent {
-        ext: V0,
-        contract_id: Some(
-            Hash(922968b9e3e64e0429dc38aa635fb51cc62be4c4892c3f4e5daddbe188f77781),
-        ),
-        type_: Diagnostic,
-        body: V0(
-            ContractEventV0 {
-                topics: VecM(
-                    [
-                        Symbol(
-                            ScSymbol(
-                                StringM(log),
-                            ),
-                        ),
-                    ],
-                ),
-                data: String(
-                    ScString(
-                        StringM(Hello, today is a sunny day!),
-                    ),
-                ),
-            },
-        ),
-    },
-},
+You should see the output:
 
-//...
+```sh
+Event 0000501471791652864-0000000001 [DIAGNOSTIC]:
+  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
+  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
+  Topics:
+            Symbol(ScSymbol(StringM(log)))
+  Value: String(ScString(StringM(Hello, today is a sunny day!)))
+Event 0000501471791652864-0000000002 [DIAGNOSTIC]:
+  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
+  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
+  Topics:
+            Symbol(ScSymbol(StringM(log)))
+  Value: Vec(Some(ScVec(VecM([String(ScString(StringM(Temperature today:))), I32(30), Symbol(ScSymbol(StringM(celsius)))]))))
+Event 0000501471791652864-0000000003 [DIAGNOSTIC]:
+  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
+  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
+  Topics:
+            Symbol(ScSymbol(StringM(log)))
+  Value: Vec(Some(ScVec(VecM([String(ScString(StringM(Test))), I32(-12)]))))
+Event 0000501471791652864-0000000004 [DIAGNOSTIC]:
+  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
+  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
+  Topics:
+            Symbol(ScSymbol(StringM(fn_return)))
+            Symbol(ScSymbol(StringM(logging)))
+  Value: Void
+Latest Ledger: 116759
 ```
 
 ## Code

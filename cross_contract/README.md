@@ -5,10 +5,10 @@ The [cross contract call example](https://github.com/Soneso/as-soroban-examples/
 
 ## Run the example
 
-To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
+To run a contract, you must first install the official [stellar-cli](https://soroban.stellar.org/docs/getting-started/setup):
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
 
 The example contains two contracts. To run them, first navigate in the directory of the first contract and build the contract (`contract_a`):
@@ -25,7 +25,7 @@ You can find the generated `.wasm` (WebAssembly) file in the `build` folder. You
 Now deploy the `contract_a` in the soroban cli:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -51,7 +51,7 @@ npm run asbuild:release
 Now deploy the `contract_b` in the soroban cli:
 
 ```sh
-soroban contract deploy \
+stellar contract deploy \
   --wasm build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
@@ -68,7 +68,7 @@ representing the contract id of the `contract_b`.
 Now invoke `contract_b` in the soroban cli:
 
 ```sh
-soroban contract invoke  \
+stellar contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \

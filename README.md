@@ -1,6 +1,6 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
-![v0.3.0](https://img.shields.io/badge/v0.3.0-green.svg)
+![v0.4.0](https://img.shields.io/badge/v0.4.0-green.svg)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
@@ -11,20 +11,11 @@ Uses the [AssemblyScript soroban SDK](https://github.com/Soneso/as-soroban-sdk)
 ### 1. Clone this repo
 ### 2. Install the soroban cli
 
-To run a contract, you must first install the official `soroban-cli` as described here: [stellar soroban cli](https://soroban.stellar.org/docs/getting-started/setup).
+To run a contract, you must first install the official `stellar-cli` as described here: [stellar cli](https://soroban.stellar.org/docs/getting-started/setup).
 
 ```sh
-cargo install --locked soroban-cli
+cargo install --locked stellar-cli
 ```
-
-### 2.1 Hint for testing with protocol version 21:
-Currently the `soroban-cli` version that supports protocol v.21 is not yet officially launched. Therefore, if you would like to test your contracts with the protocol 21 update (testnet, futurenet), you need to install a soroban cli preview version:
-
-```sh
-cargo install soroban-cli --version 21.0.0-preview.1
-```
-
-Please also uptdate your `package.json` file to use the AssemblyScript Soroban SDK version `1.0.1`.
 
 ### 3. Run an example contract
 
@@ -48,10 +39,31 @@ npm run asbuild:release
 
 You can find the generated ```.wasm``` (WebAssembly) file in the ```build``` folder. You can also find the ```.wat``` file there (Text format of the ```.wasm```).
 
-Run the example contract:
+Deploy the contract:
 
 ```sh
-soroban -q contract invoke --wasm build/release.wasm --id 1 --fn hello -- --to friend
+stellar contract deploy \
+  --wasm build/release.wasm \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015"
+```
+
+This returns the ID of the contract, starting with a C. Similar to this:
+
+```sh
+CBV5TB5EV5FWB4D66BIJJKYDRXUSD5Q5JPW3G534V5PTACY6536SO5I5
+```
+
+Run the example contract:
+
+  ```sh
+stellar -q contract invoke  \
+  --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --id <your contract id here> \
+  -- hello --to friend
 ```
 
 ### 4. Available examples

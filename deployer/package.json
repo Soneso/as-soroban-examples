@@ -31,6 +31,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^1.0.0"
+    "as-soroban-sdk": "^1.0.1"
   }
 }
