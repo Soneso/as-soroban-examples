@@ -36,21 +36,6 @@ This returns the ID of the contract, starting with a C. Similar to this:
 ```sh
 CB2MB6RW5SZGBOWSKUCLHWQXYB4KLHCI4Y5JBCKRXIZWNOFY2S6HAXCE
 ```
-Logging emits DIAGNOSTIC events. Before we invoke the contract, let's first get the latest ledger sequence number. We will need it to fetch the events after invoking the contract:
-
-```sh
-curl -X POST \
-    -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","id":"1234","method":"getLatestLedger"}' \
-    https://soroban-testnet.stellar.org/
-```
-
-The output should be something like this:
-
-```sh
-{"jsonrpc":"2.0","id":"1234","result":{"id":"523a4f3552fe9e1a090860495fbf3a0608e3300f9f6e860c800312c1f44da9a3","protocolVersion":21,"sequence":116751}}
-```
-In the upper result, the latest ledger sequence number is `116751`.
 
 Next let's invoke:
 
@@ -63,44 +48,124 @@ stellar contract invoke  \
   -- logging
 ```
 
-Fetch the events:
+You should see an output similar to this:
 
 ```sh
-stellar events --start-ledger <ledger sequence>  \
-    --id <contract id> \
-    --rpc-url https://soroban-testnet.stellar.org \
-    --network-passphrase "Test SDF Network ; September 2015"
-```
-
-You should see the output:
-
-```sh
-Event 0000501471791652864-0000000001 [DIAGNOSTIC]:
-  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
-  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
-  Topics:
-            Symbol(ScSymbol(StringM(log)))
-  Value: String(ScString(StringM(Hello, today is a sunny day!)))
-Event 0000501471791652864-0000000002 [DIAGNOSTIC]:
-  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
-  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
-  Topics:
-            Symbol(ScSymbol(StringM(log)))
-  Value: Vec(Some(ScVec(VecM([String(ScString(StringM(Temperature today:))), I32(30), Symbol(ScSymbol(StringM(celsius)))]))))
-Event 0000501471791652864-0000000003 [DIAGNOSTIC]:
-  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
-  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
-  Topics:
-            Symbol(ScSymbol(StringM(log)))
-  Value: Vec(Some(ScVec(VecM([String(ScString(StringM(Test))), I32(-12)]))))
-Event 0000501471791652864-0000000004 [DIAGNOSTIC]:
-  Ledger:   116758 (closed at 2024-06-18T23:20:40Z)
-  Contract: CD2V4H5TYKE7H3RKTOR2DOPQXIYCX4YA4O4K2IBIYDMUQTDMSFNCW7KR
-  Topics:
-            Symbol(ScSymbol(StringM(fn_return)))
-            Symbol(ScSymbol(StringM(logging)))
-  Value: Void
-Latest Ledger: 116759
+2024-09-09T11:39:13.386010Z  INFO log_event: soroban_cli::log::event: 1: DiagnosticEvent {
+    in_successful_contract_call: true,
+    event: ContractEvent {
+        ext: V0,
+        contract_id: Some(
+            Hash(49f8705f125129c4b2253cc6ae358c210e80aa92beb48caeda077ccdb8882366),
+        ),
+        type_: Diagnostic,
+        body: V0(
+            ContractEventV0 {
+                topics: VecM(
+                    [
+                        Symbol(
+                            ScSymbol(
+                                StringM(log),
+                            ),
+                        ),
+                    ],
+                ),
+                data: String(
+                    ScString(
+                        StringM(Hello, today is a sunny day!),
+                    ),
+                ),
+            },
+        ),
+    },
+}
+2024-09-09T11:39:13.386107Z  INFO log_event: soroban_cli::log::event: 2: DiagnosticEvent {
+    in_successful_contract_call: true,
+    event: ContractEvent {
+        ext: V0,
+        contract_id: Some(
+            Hash(49f8705f125129c4b2253cc6ae358c210e80aa92beb48caeda077ccdb8882366),
+        ),
+        type_: Diagnostic,
+        body: V0(
+            ContractEventV0 {
+                topics: VecM(
+                    [
+                        Symbol(
+                            ScSymbol(
+                                StringM(log),
+                            ),
+                        ),
+                    ],
+                ),
+                data: Vec(
+                    Some(
+                        ScVec(
+                            VecM(
+                                [
+                                    String(
+                                        ScString(
+                                            StringM(Temperature today:),
+                                        ),
+                                    ),
+                                    I32(
+                                        30,
+                                    ),
+                                    Symbol(
+                                        ScSymbol(
+                                            StringM(celsius),
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ),
+                ),
+            },
+        ),
+    },
+}
+2024-09-09T11:39:13.386305Z  INFO log_event: soroban_cli::log::event: 3: DiagnosticEvent {
+    in_successful_contract_call: true,
+    event: ContractEvent {
+        ext: V0,
+        contract_id: Some(
+            Hash(49f8705f125129c4b2253cc6ae358c210e80aa92beb48caeda077ccdb8882366),
+        ),
+        type_: Diagnostic,
+        body: V0(
+            ContractEventV0 {
+                topics: VecM(
+                    [
+                        Symbol(
+                            ScSymbol(
+                                StringM(log),
+                            ),
+                        ),
+                    ],
+                ),
+                data: Vec(
+                    Some(
+                        ScVec(
+                            VecM(
+                                [
+                                    String(
+                                        ScString(
+                                            StringM(Test),
+                                        ),
+                                    ),
+                                    I32(
+                                        -12,
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ),
+                ),
+            },
+        ),
+    },
+}
 ```
 
 ## Code
@@ -135,7 +200,7 @@ Ref: https://github.com/Soneso/as-soroban-examples/tree/main/logging
 
 ## How it works
 
-The `context.logStr` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), logs a string for debugging purposes. Any logs that occur during execution are outputted to stdout in soroban-cli.
+The `context.logStr` method, provided by [as-soroban-sdk](https://github.com/Soneso/as-soroban-sdk), logs a string for debugging purposes. Any logs that occur during execution are outputted when you invoke the function with the stellar-cli.
 
 The `context.log` method lets you log a string and a list of host values. 
 
