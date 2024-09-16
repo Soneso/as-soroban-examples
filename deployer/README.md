@@ -160,7 +160,7 @@ The concrete argument and return types of this example deployer contract are def
         },
         {
             "key" : "version",
-            "value" : "1.0.0"
+            "value" : "1.1.0"
         },
         {
             "key" : "description",

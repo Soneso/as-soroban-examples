@@ -2,7 +2,7 @@ import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as context from "as-soroban-sdk/lib/context";
 import {Map} from "as-soroban-sdk/lib/map";
 import { AddressObject, fromI128Small, fromSmallSymbolStr, fromU32, I128Val, storageTypeTemporary, toU32, U32Val } from "as-soroban-sdk/lib/value";
-import { i128lt, i128sub, i128gt } from "as-soroban-sdk/lib/val128";
+import { i128IsLowerThan, i128Sub, i128IsGreaterThan } from "as-soroban-sdk/lib/arithm128";
 import { ERR_CODE, S_ALLOWANCE } from "./util";
 import { Vec } from "as-soroban-sdk/lib/vec";
 import { extend_contract_data_ttl } from "as-soroban-sdk/lib/env";
@@ -37,7 +37,7 @@ export function read_allowance(from: AddressObject, spender:AddressObject): Vec 
 
 export function write_allowance(from: AddressObject, spender:AddressObject, amount: I128Val, expirationLedger: U32Val): void {
 
-    let amountGtZero = i128gt(amount, fromI128Small(0));
+    let amountGtZero = i128IsGreaterThan(amount, fromI128Small(0));
     let currentLedgerSequence = context.getLedgerSequence();
 
     if (amountGtZero && toU32(expirationLedger) < currentLedgerSequence) {
@@ -87,9 +87,9 @@ export function spend_allowance(from: AddressObject, spender:AddressObject, amou
     let allowance = read_allowance(from, spender);
     let allowanceAmount = allowance.get(0);
 
-    if (i128lt(allowanceAmount, amount)) { 
+    if (i128IsLowerThan(allowanceAmount, amount)) { 
         context.failWithErrorCode(ERR_CODE.INSUFFICIENT_ALLOWANCE);
     }
 
-    write_allowance(from, spender, i128sub(allowanceAmount, amount), allowance.get(1));
+    write_allowance(from, spender, i128Sub(allowanceAmount, amount), allowance.get(1));
 }

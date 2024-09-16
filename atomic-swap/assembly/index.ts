@@ -3,7 +3,7 @@ import * as address from "as-soroban-sdk/lib/address";
 import * as env from "as-soroban-sdk/lib/env";
 import {AddressObject, I128Val, fromVoid, VoidVal, fromSmallSymbolStr} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
-import { i128lt, i128sub } from "as-soroban-sdk/lib/val128";
+import { i128IsLowerThan, i128Sub } from "as-soroban-sdk/lib/arithm128";
 
 enum SWAP_ERR_CODES {
   NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A = 1,
@@ -33,11 +33,11 @@ export function swap(a: AddressObject, b: AddressObject,
   
 
   // Verify preconditions on the minimum price for both parties.
-  if (i128lt(amount_b, min_b_for_a)) { // amount_b < min_b_for_a
+  if (i128IsLowerThan(amount_b, min_b_for_a)) { // amount_b < min_b_for_a
     context.failWithErrorCode(SWAP_ERR_CODES.NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A);
   }
 
-  if (i128lt(amount_a, min_a_for_b)) { // amount_a < min_a_for_b 
+  if (i128IsLowerThan(amount_a, min_a_for_b)) { // amount_a < min_a_for_b 
     context.failWithErrorCode(SWAP_ERR_CODES.NOT_ENOUGH_TOKEN_B_FOR_TOKEN_A);
   }
 
@@ -99,6 +99,6 @@ function move_token(token: AddressObject, from: AddressObject, to:AddressObject,
   let t3Args = new Vec();
   t3Args.pushBack(contract_address);
   t3Args.pushBack(from);
-  t3Args.pushBack(i128sub(max_spend_amount,transfer_amount));
+  t3Args.pushBack(i128Sub(max_spend_amount,transfer_amount));
   env.call(token, func, t3Args.getHostObject());
 }

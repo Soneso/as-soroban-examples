@@ -7,7 +7,7 @@ import * as ledger from "as-soroban-sdk/lib/ledger";
 import * as address from "as-soroban-sdk/lib/address";
 import * as context from "as-soroban-sdk/lib/context";
 import * as env from "as-soroban-sdk/lib/env";
-import {i128gt, i128sub, isNegative} from "as-soroban-sdk/lib/val128";
+import {i128IsGreaterThan, i128Sub, isI128Negative} from "as-soroban-sdk/lib/arithm128";
 
 //! This is a basic multi-sig account contract with a customizable per-token
 //! authorization policy.
@@ -183,14 +183,14 @@ function verify_authorization_policy(context_entry:VecObject, curr_contract_addr
         // here, as it's expected to have the standard interface.
         let args_vec = new Vec(ctxt_args);
         let spent = args_vec.get(2);
-        if(isNegative(spent)) {
+        if(isI128Negative(spent)) {
           context.failWithErrorCode(ERR_CODE.NEGATIVE_AMOUNT);
         }
-        if (!all_signed && (isNegative(spend_left) || i128gt(spent, spend_left))) {
+        if (!all_signed && (isI128Negative(spend_left) || i128IsGreaterThan(spent, spend_left))) {
           context.failWithErrorCode(ERR_CODE.NOT_ENOUGH_SIGNERS);
         }
-        if (!isNegative(spend_left)) {
-          spend_left_per_token.put(curr_contract_addr, i128sub(spend_left, spent));
+        if (!isI128Negative(spend_left)) {
+          spend_left_per_token.put(curr_contract_addr, i128Sub(spend_left, spent));
         }
     }
 }

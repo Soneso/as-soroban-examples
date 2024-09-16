@@ -86,8 +86,8 @@ export function transfer(from: AddressObject, to: AddressObject, amount:I128Val)
   spend_balance(from, amount);
 
   // We calculate some new amounts for payment and royalty
-  let payment = i128div(i128mul(amount, fromI128Small(997)), fromI128Small(1000));
-  let royalty = i128sub(amount, payment);
+  let payment = i128Div(i128Mul(amount, fromI128Small(997)), fromI128Small(1000));
+  let royalty = i128Sub(amount, payment);
   receive_balance(artist, royalty);
   receive_balance(to, payment);
   ev_trans(from, to, amount);

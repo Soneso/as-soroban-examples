@@ -1,6 +1,7 @@
 import { AddressObject, VecObject, VoidVal, fromVoid} from "as-soroban-sdk/lib/value";
 import { Vec } from "as-soroban-sdk/lib/vec";
-import { i128ge, i128le} from "as-soroban-sdk/lib/val128";
+//import { i128ge, i128le} from "as-soroban-sdk/lib/val128";
+import { i128IsEqual, i128IsGreaterThan, i128IsLowerThan} from "as-soroban-sdk/lib/arithm128";
 import * as contract from "as-soroban-sdk/lib/contract";
 import * as address from "as-soroban-sdk/lib/address";
 
@@ -64,7 +65,8 @@ export function multi_swap(swap_contract: AddressObject, token_a: AddressObject,
       let amountB = swapB.get(DATA_INDEX.AMOUNT);
       let minRecvB = swapB.get(DATA_INDEX.MIN_RECV);
       
-      if (i128ge(amountA, minRecvB) && i128le(minRecvA, amountB)) {
+      if ((i128IsGreaterThan(amountA, minRecvB) || i128IsEqual(amountA, minRecvB)) &&
+          (i128IsLowerThan(minRecvA, amountB)   || i128IsEqual(minRecvA, amountB))) {
         // As this is a simple 'batching' contract, there is no need
         // for all possible swaps to be fulfilled, hence we just want 
         // to demonstrate how authorized calls can be batched together.

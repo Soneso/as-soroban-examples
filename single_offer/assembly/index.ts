@@ -19,7 +19,7 @@ import * as contract from "as-soroban-sdk/lib/contract";
 import * as address from "as-soroban-sdk/lib/address";
 import { has_offer, write_offer, load_offer, __sell_price, __buy_price, __buy_token, __sell_token, __seller } from "./offer";
 import { Vec } from "as-soroban-sdk/lib/vec";
-import { i128lt, i128muldiv } from "as-soroban-sdk/lib/val128";
+import { i128IsLowerThan, i128MulDiv } from "as-soroban-sdk/lib/arithm128";
 
 enum ERR_CODE {
   OFFER_ALREADY_EXISTS = 1,
@@ -74,9 +74,9 @@ export function trade(buyer: AddressObject, buy_token_amount: I128Val, min_sell_
   // Compute the amount of token that buyer needs to receive.
   let sell_price = fromI128Small(toU32(__sell_price) as u64);
   let buy_price = fromI128Small(toU32(__buy_price) as u64);
-  let sell_token_amount = i128muldiv(buy_token_amount, sell_price, buy_price);
+  let sell_token_amount = i128MulDiv(buy_token_amount, sell_price, buy_price);
 
-  if (i128lt(sell_token_amount, min_sell_token_amount)) {
+  if (i128IsLowerThan(sell_token_amount, min_sell_token_amount)) {
     context.failWithErrorCode(ERR_CODE.PRICE_IS_TOO_LOW);
   }
 

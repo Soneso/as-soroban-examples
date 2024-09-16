@@ -78,7 +78,7 @@ function move_token(token: AddressObject, from: AddressObject, to:AddressObject,
   let t3Args = new Vec();
   t3Args.pushBack(contract_address);
   t3Args.pushBack(from);
-  t3Args.pushBack(i128sub(max_spend_amount,transfer_amount));
+  t3Args.pushBack(i128Sub(max_spend_amount,transfer_amount));
   env.call(token, func, t3Args.getHostObject());
 }
 ```

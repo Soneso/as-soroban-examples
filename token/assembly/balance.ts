@@ -3,7 +3,7 @@ import * as context from "as-soroban-sdk/lib/context";
 import { AddressObject, fromI128Small, fromSmallSymbolStr, fromU32, I128Val, storageTypePersistent } from "as-soroban-sdk/lib/value";
 import {Map} from "as-soroban-sdk/lib/map";
 import { ERR_CODE, S_BALANCE } from "./util";
-import { i128lt, i128sub, i128add } from "as-soroban-sdk/lib/val128";
+import { i128IsLowerThan, i128Sub, i128Add } from "as-soroban-sdk/lib/arithm128";
 import { extend_contract_data_ttl } from "as-soroban-sdk/lib/env";
 
 const BALANCE_BUMP_AMOUNT = 518400; // 30 days
@@ -39,13 +39,13 @@ export function write_balance(addr: AddressObject, amount: I128Val): void {
 
 export function receive_balance(addr: AddressObject, amount: I128Val): void {
     let balance = read_balance(addr);
-    write_balance(addr, i128add(balance, amount));
+    write_balance(addr, i128Add(balance, amount));
 }
 
 export function spend_balance(addr: AddressObject, amount: I128Val): void {
     let balance = read_balance(addr);
-    if (i128lt(balance, amount)) {
+    if (i128IsLowerThan(balance, amount)) {
         context.failWithErrorCode(ERR_CODE.INSUFFICIENT_BALANCE);
     }
-    write_balance(addr, i128sub(balance, amount));
+    write_balance(addr, i128Sub(balance, amount));
 }

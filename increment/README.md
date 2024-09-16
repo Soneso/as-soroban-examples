@@ -118,7 +118,7 @@ The concrete types must also be defined in the [contract spec](https://github.co
         },
         {
             "key" : "version",
-            "value" : "1.0.0"
+            "value" : "1.1.0"
         },
         {
             "key" : "description",

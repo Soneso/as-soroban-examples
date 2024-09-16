@@ -7,7 +7,8 @@ import { Vec } from "as-soroban-sdk/lib/vec";
 import { Bytes} from "as-soroban-sdk/lib/bytes";
 import { Sym } from "as-soroban-sdk/lib/sym";
 import { __deposit_b, get_deposit_amounts } from "./deposit";
-import { i128add, i128div, i128gt, i128le, i128lt, i128mul, i128muldiv, i128sqrt, i128sub } from "as-soroban-sdk/lib/val128";
+import { i128Add, i128Div, i128IsGreaterThan, i128IsLowerThan, i128IsEqual, i128Mul, i128MulDiv, i128Sub } from "as-soroban-sdk/lib/arithm128";
+import {i128sqrt} from "as-soroban-sdk/lib/val128";
 import { call, create_contract, serialize_to_bytes } from "as-soroban-sdk/lib/env";
 
 
@@ -97,20 +98,20 @@ export function deposit(to: AddressObject, desired_a: I128Val, min_a: I128Val, d
 
   let zero = fromI128Small(0);
   let new_total_shares = zero;
-  if (i128gt(reserve_a, zero) && i128gt(reserve_b, zero)) {
-    let shares_a = i128muldiv(balance_a, total_shares, reserve_a);
-    let shares_b = i128muldiv(balance_b, total_shares, reserve_b);
-    if(i128le(shares_a, shares_b)) {
+  if (i128IsGreaterThan(reserve_a, zero) && i128IsGreaterThan(reserve_b, zero)) {
+    let shares_a = i128MulDiv(balance_a, total_shares, reserve_a);
+    let shares_b = i128MulDiv(balance_b, total_shares, reserve_b);
+    if(i128IsLowerThan(shares_a, shares_b) || i128IsEqual(shares_a, shares_b)) {
       new_total_shares = shares_a;
     } else {
       new_total_shares = shares_b;
     }
   } else {
-    let mul = i128mul(balance_a, balance_b);
+    let mul = i128Mul(balance_a, balance_b);
     new_total_shares = i128sqrt(mul);
   }
   
-  mint_shares(to, i128sub(new_total_shares, total_shares));
+  mint_shares(to, i128Sub(new_total_shares, total_shares));
   put_reserve_a(balance_a);
   put_reserve_b(balance_b);
 
@@ -137,10 +138,10 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
 
   // First calculate how much needs to be sold to buy amount out from the pool
 
-  let n = i128mul(i128mul(reserve_sell, out), fromI128Small(1000));
-  let d = i128mul(i128sub(reserve_buy, out), fromI128Small(997));
-  let sell_amount = i128add(i128div(n,d), fromI128Small(1));
-  if (i128gt(sell_amount, in_max)) {
+  let n = i128Mul(i128Mul(reserve_sell, out), fromI128Small(1000));
+  let d = i128Mul(i128Sub(reserve_buy, out), fromI128Small(997));
+  let sell_amount = i128Add(i128Div(n,d), fromI128Small(1));
+  if (i128IsGreaterThan(sell_amount, in_max)) {
     context.failWithErrorCode(ERR_CODES.IN_AMOUNT_IS_OVER_MAX);
   }
 
@@ -178,10 +179,10 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
 
   let new_inv_a = invariant_factor(balance_a, reserve_a, out_a, residue_numerator, residue_denominator);
   let new_inv_b = invariant_factor(balance_b, reserve_b, out_b, residue_numerator, residue_denominator);
-  let old_inv_a = i128mul(residue_denominator, reserve_a);
-  let old_inv_b = i128mul(residue_denominator, reserve_b);
+  let old_inv_a = i128Mul(residue_denominator, reserve_a);
+  let old_inv_b = i128Mul(residue_denominator, reserve_b);
 
-  if (i128lt(i128mul(new_inv_a, new_inv_b), i128mul(old_inv_a, old_inv_b))) { // new_inv_a * new_inv_b < old_inv_a * old_inv_b
+  if (i128IsLowerThan(i128Mul(new_inv_a, new_inv_b), i128Mul(old_inv_a, old_inv_b))) { // new_inv_a * new_inv_b < old_inv_a * old_inv_b
     context.failWithErrorCode(ERR_CODES.CONST_PROD_INVARIANT_DOESE_NOT_HOLD);
   }
 
@@ -191,8 +192,8 @@ export function swap(to: AddressObject, buy_a: U32Val, out: I128Val, in_max: I12
     transfer_b(to, out_b);
   }
 
-  put_reserve_a(i128sub(balance_a, out_a));
-  put_reserve_b(i128sub(balance_b, out_b));
+  put_reserve_a(i128Sub(balance_a, out_a));
+  put_reserve_b(i128Sub(balance_b, out_b));
 
   return fromVoid();
 }
@@ -218,18 +219,18 @@ export function withdraw(to: AddressObject, share_amount: I128Val, min_a: I128Va
   let total_shares = get_total_shares();
 
   // Now calculate the withdraw amounts
-  let out_a = i128muldiv(balance_a, balance_shares, total_shares);
-  let out_b = i128muldiv(balance_b, balance_shares, total_shares);
+  let out_a = i128MulDiv(balance_a, balance_shares, total_shares);
+  let out_b = i128MulDiv(balance_b, balance_shares, total_shares);
 
-  if (i128lt(out_a, min_a) || i128lt(out_b, min_b)) {
+  if (i128IsLowerThan(out_a, min_a) || i128IsLowerThan(out_b, min_b)) {
     context.failWithErrorCode(ERR_CODES.MIN_NOT_SATISFIED);
   }
 
   burn_shares(balance_shares);
   transfer_a(to, out_a);
   transfer_b(to, out_b);
-  put_reserve_a(i128sub(balance_a, out_a));
-  put_reserve_b(i128sub(balance_b, out_b));
+  put_reserve_a(i128Sub(balance_a, out_a));
+  put_reserve_b(i128Sub(balance_b, out_b));
 
   let result = new Vec();
   result.pushBack(out_a);
@@ -325,7 +326,7 @@ function mint_shares(to: AddressObject, amount: I128Val) : void {
    mintArgs.pushBack(amount);
    call(share_contract, fromSmallSymbolStr("mint"), mintArgs.getHostObject());
 
-   put_total_shares(i128add(total, amount));
+   put_total_shares(i128Add(total, amount));
 
 }
 
@@ -339,24 +340,24 @@ function burn_shares(amount: I128Val) : void {
   burnArgs.pushBack(amount);
   call(share_contract, fromSmallSymbolStr("burn"), burnArgs.getHostObject());
 
-  put_total_shares(i128sub(total, amount));
+  put_total_shares(i128Sub(total, amount));
 
 }
 
 
 function invariant_factor(balance: I128Val, reserve: I128Val, out:I128Val, residue_numerator: I128Val, residue_denominator:I128Val) : I128Val {
     
-  let delta = i128sub(i128sub(balance, reserve), out);
+  let delta = i128Sub(i128Sub(balance, reserve), out);
   let zero = fromI128Small(0);
   
   let adj_delta = zero;
-  if (i128gt(delta,zero)) {
-    adj_delta = i128mul(residue_numerator, delta);
+  if (i128IsGreaterThan(delta,zero)) {
+    adj_delta = i128Mul(residue_numerator, delta);
   } else {
-    adj_delta = i128mul(residue_denominator, delta);
+    adj_delta = i128Mul(residue_denominator, delta);
   }
 
-  return i128add(i128mul(residue_denominator, reserve), adj_delta);
+  return i128Add(i128Mul(residue_denominator, reserve), adj_delta);
 }
 
 function transfer(contract_id: BytesObject, to: AddressObject, amount: I128Val) : void {

@@ -7,7 +7,7 @@ import { read_decimal, read_name, read_symbol, write_metadata } from "./metadata
 import { read_allowance, spend_allowance, write_allowance } from "./allowance";
 import { ev_burn, ev_approve, ev_mint, ev_s_admin, ev_trans } from "./events";
 import { read_balance, receive_balance, spend_balance } from "./balance";
-import { isNegative } from "as-soroban-sdk/lib/val128";
+import { isI128Negative } from "as-soroban-sdk/lib/arithm128";
 import { extend_current_contract_instance_and_code_ttl } from "as-soroban-sdk/lib/env";
 
 const INSTANCE_BUMP_AMOUNT = 120960; // 7 days
@@ -57,7 +57,7 @@ function bumpInstanceAndCode(): void {
 }
 
 function checkNonNegative(amount:I128Val): void {
-  if (isNegative(amount)){
+  if (isI128Negative(amount)){
     context.failWithErrorCode(ERR_CODE.NEG_AMOUNT_NOT_ALLOWED);
   }
 }
