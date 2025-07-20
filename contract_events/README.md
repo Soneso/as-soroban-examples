@@ -73,21 +73,13 @@ stellar events --start-ledger <ledger sequence>  \
 
 You should see the output:
 ```sh
-Event 0000501871223525376-0000000001 [CONTRACT]:
-  Ledger:   116851 (closed at 2024-06-18T23:28:52Z)
-  Contract: CC2ZULT6IXUWB4JP46GZCOZD32MIGKV5KXS5WQZLC2Y2BP3PIVLB7ABM
+Event 0002365783950761984-0000000000 [CONTRACT]:
+  Ledger:   550827 (closed at 2025-07-20T15:23:40Z)
+  Contract: CAEKS43W7SIUFL62UAY3A67JGP4NQJ2FQUZUENUXQGQAVTS43N3YI4N6
   Topics:
             Symbol(ScSymbol(StringM(COUNTER)))
             Symbol(ScSymbol(StringM(increment)))
   Value: U32(1)
-Event 0000501871223525376-0000000002 [DIAGNOSTIC]:
-  Ledger:   116851 (closed at 2024-06-18T23:28:52Z)
-  Contract: CC2ZULT6IXUWB4JP46GZCOZD32MIGKV5KXS5WQZLC2Y2BP3PIVLB7ABM
-  Topics:
-            Symbol(ScSymbol(StringM(fn_return)))
-            Symbol(ScSymbol(StringM(increment)))
-  Value: U32(1)
-Latest Ledger: 116853
 ```
 
 ## Code
