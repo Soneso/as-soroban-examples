@@ -88,7 +88,7 @@ GDFIC2T2RS3ZVR2NYA4HNGVESCGZFLM6ZJXZPF7N5NECR2DAKYYGEMNE
 
 The admin account needs to be funded:
 ```sh
-curl https://friendbot.stellar.org?addr=GDFIC2T2RS3ZVR2NYA4HNGVESCGZFLM6ZJXZPF7N5NECR2DAKYYGEMNE
+stellar keys fund GDFIC2T2RS3ZVR2NYA4HNGVESCGZFLM6ZJXZPF7N5NECR2DAKYYGEMNE
 ```
 
 Now lets deploy the "old" contract first:
@@ -129,10 +129,10 @@ stellar -q contract invoke  \
 The output should be:
 `1`
 
-Next we install the `new` contract:
+Next we upload the `new` contract:
 
 ```sh
-stellar contract install \
+stellar contract upload \
   --wasm new_contract/build/release.wasm \
   --source admin \
   --rpc-url https://soroban-testnet.stellar.org \
