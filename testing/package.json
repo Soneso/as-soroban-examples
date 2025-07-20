@@ -1,6 +1,6 @@
 {
   "name": "testing",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "show how to test a contracts function",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "author": "c.r.",
   "license": "ISC",
   "devDependencies": {
-    "assemblyscript": "^0.27.24"
+    "assemblyscript": "^0.28.3"
   },
   "type": "module",
   "exports": {
@@ -21,6 +21,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^1.1.0"
+    "as-soroban-sdk": "^1.2.0"
   }
 }
