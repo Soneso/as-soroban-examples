@@ -49,10 +49,19 @@ GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
 GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
 ```
 
+Next fund the both accounts on testnet:
+
+```sh
+stellar keys fund GDX2K5D2QFJMW3EGZHQA7CY7OLNGDIXWQ5QL6WDB2T7TKFHAZZUQDZTB
+```
+```sh
+stellar keys fund GALXIPNJMHZU7AZSD7RCC265RGUKMA6QDA2X3JBEXDPOGUJNUFZLBC4F
+```
+
 Now the contract itself can be invoked. Notice the --source has to match --user argument in order to allow soroban tool to automatically sign the necessary payload for the invocation.
 
 ```sh
-stellar -q contract invoke \
+stellar contract invoke \
     --source acc1 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
@@ -65,7 +74,7 @@ stellar -q contract invoke \
 Run a few more increments for both accounts.
 
 ```sh
-stellar -q contract invoke \
+stellar contract invoke \
     --source acc2 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
@@ -76,7 +85,7 @@ stellar -q contract invoke \
 ```
 
 ```sh
-stellar -q contract invoke \
+stellar contract invoke \
     --source acc1 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
@@ -87,7 +96,7 @@ stellar -q contract invoke \
 ```
 
 ```sh
-stellar -q contract invoke \
+stellar contract invoke \
     --source acc2 \
     --id CCAMMD5JFXXLRY7FO776G7K2LSXSBQQEBOKLD4MO6PIIVTIQIRXAWQNQ \
     --rpc-url https://soroban-testnet.stellar.org \
