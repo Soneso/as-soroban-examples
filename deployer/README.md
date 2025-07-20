@@ -32,17 +32,17 @@ cd ..
 cd deployer
 ```
 
-Next install the `add` contract's  WASM code:
+Next upload the `add` contract's  WASM code:
 
 ```sh
-stellar contract install \
+stellar contract upload \
   --wasm ../add/build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015"
 ```
 
-As an output you will get the WASM hash of the installed `add` contract, like this:
+As an output you will get the WASM hash of the uploaded `add` contract, like this:
 ```sh
 1bbc1b84a8f2ac2a012d94265082757c98b9e74528a3f18313994b227c4eb417
 ```
@@ -160,7 +160,7 @@ The concrete argument and return types of this example deployer contract are def
         },
         {
             "key" : "version",
-            "value" : "1.1.0"
+            "value" : "1.2.0"
         },
         {
             "key" : "description",
@@ -247,7 +247,7 @@ export function callContract(contract: AddressObject, func: string, args: Vec): 
 Next, let's run this contract:
 
 ```sh
-stellar contract install \
+stellar contract upload \
   --wasm ../add/build/release.wasm \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
