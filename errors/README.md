@@ -33,7 +33,7 @@ stellar contract deploy \
 This returns the ID of the contract, starting with a C. Next let's invoke:
 
 ```sh
-stellar -q contract invoke  \
+stellar contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
@@ -49,7 +49,7 @@ OK
 Next try with age 12:
 
 ```sh
-stellar -q contract invoke  \
+stellar contract invoke  \
   --source SAIPPNG3AGHSK2CLHIYQMVBPHISOOPT64MMW2PQGER47SDCN6C6XFWQM \
   --rpc-url https://soroban-testnet.stellar.org \
   --network-passphrase "Test SDF Network ; September 2015" \
