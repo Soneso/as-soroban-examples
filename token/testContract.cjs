@@ -360,9 +360,9 @@ async function generateIdentity(name) {
     
     await rmIdentity(name)
 
-    let cmd = 'soroban keys generate' 
+    let cmd = 'stellar keys generate' 
     + network + ' '  + name 
-    + ' && soroban keys address ' + name;
+    + ' && stellar keys address ' + name;
 
     console.log(cmd);
 
@@ -377,7 +377,7 @@ async function generateIdentity(name) {
 
 async function rmIdentity(name) {
     
-    let cmd = 'soroban keys rm ' + name;
+    let cmd = 'stellar keys rm ' + name;
     await exec(cmd)
 }
 

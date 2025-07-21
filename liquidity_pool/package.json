@@ -1,6 +1,6 @@
 {
   "name": "liquidity_pool",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "liquidity pool example",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "author": "C.R.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assemblyscript": "^0.27.24"
+    "assemblyscript": "^0.28.3"
   },
   "type": "module",
   "exports": {
@@ -28,6 +28,6 @@
     }
   },
   "dependencies": {
-    "as-soroban-sdk": "^1.1.0"
+    "as-soroban-sdk": "^1.2.0"
   }
 }
