@@ -163,7 +163,7 @@ async function deployTokenContract() {
         console.log(error);
     }
     if (stderr) {
-        console.log("deployTokenContract - stderr: " + stderr);
+        console.log("deployTokenContract - log: " + stderr);
     }
     return stdout.trim(); // contract address
 }
@@ -189,14 +189,14 @@ async function deployAtomicSwapContract() {
         console.log(error);
     }
     if (stderr) {
-        console.log("deployAtomicSwapContract - stderr: " + stderr);
+        console.log("deployAtomicSwapContract - log: " + stderr);
     }
 
     return stdout.trim(); // contract address
 }
 
 async function createToken(token_contract_id, name , symbol) {
-    let cmd = 'stellar -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + adminId 
     + ' --decimal 8 --name '+ name + ' --symbol ' + symbol;
@@ -206,13 +206,13 @@ async function createToken(token_contract_id, name , symbol) {
         console.log(error);
     }
     if (stderr) {
-        console.log("createToken - stderr: " + stderr);
+        console.log("createToken - log: " + stderr);
     }
     return stdout.trim();
 }
 
 async function mint(to, amount, token_contract_id) {
-    const { error, stdout, stderr } = await exec('stellar -q contract invoke' + 
+    const { error, stdout, stderr } = await exec('stellar contract invoke' + 
     ' --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -220,13 +220,13 @@ async function mint(to, amount, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        console.log("mint - stderr: " + stderr);
+        console.log("mint - log: " + stderr);
     }
     return stdout.trim();
 }
 
 async function getBalance(user, token_contract_id) {
-    let cmd = 'stellar -q contract invoke ' +
+    let cmd = 'stellar contract invoke ' +
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 
@@ -236,7 +236,7 @@ async function getBalance(user, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        console.log("getBalance - stderr: " + stderr);
+        console.log("getBalance - log: " + stderr);
     }
     return stdout.trim(); // balance
 }
