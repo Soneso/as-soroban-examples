@@ -161,7 +161,7 @@ async function deploy_token_contract(name) {
             console.log(error);
         }
         if (stderr) {
-            console.log("deploy_token_contract - stderr: " + stderr);
+            console.log("deploy_token_contract - log: " + stderr);
         }
         console.log(name + " contract address: " + stdout);
         return stdout.trim(); // contract address
@@ -183,7 +183,7 @@ async function build_offer_contract() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log("build_offer_contract - stderr: " + stderr);
+        console.log("build_offer_contract - log: " + stderr);
     }
     console.log(stdout);
 }
@@ -207,7 +207,7 @@ async function deploy_offer_contract() {
 }
 
 async function create_token(token_contract_id, name , symbol) {
-    let cmd = 'stellar -q contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + adminId 
     + ' --decimal 8 --name '+ name + ' --symbol ' + symbol;
@@ -217,7 +217,7 @@ async function create_token(token_contract_id, name , symbol) {
         console.log(error);
     }
     if (stderr) {
-        console.log("create_token - stderr: " + stderr);
+        console.log("create_token - log: " + stderr);
     }
     return stdout.trim();
 }
@@ -237,7 +237,7 @@ async function mint(to, amount, token_contract_id) {
 }
 
 async function getBalance(user, token_contract_id) {
-    let cmd = 'stellar -q contract invoke ' +
+    let cmd = 'stellar contract invoke ' +
     '--source ' + adminSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user;
 
@@ -247,13 +247,13 @@ async function getBalance(user, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        console.log("getBalance - stderr: " + stderr);
+        console.log("getBalance - log: " + stderr);
     }
     return stdout.trim(); // balance
 }
 
 async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_price, buy_price, offer_contract_id) {
-    let cmd = 'stellar -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- create --seller ' + seller_id 
     + ' --sell_token ' + sell_token + ' --buy_token ' + buy_token + ' --sell_price ' + sell_price + ' --buy_price ' + buy_price;
@@ -271,7 +271,7 @@ async function create_offer(seller_seed, seller_id, sell_token, buy_token, sell_
 }
 
 async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contract_id) {
-    let cmd = 'stellar -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
@@ -283,13 +283,13 @@ async function trade(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contra
         console.log(error);
     }
     if (stderr) {
-        console.log("trade - stderr: " + stderr);
+        console.log("trade - log: " + stderr);
     }
     return stdout.trim();
 }
 
 async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_contract_id) {
-    let cmd = 'stellar -q contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + buyer_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- trade --buyer ' + buyer_id 
     + ' --buy_token_amount ' + buy_amount + ' --min_sell_token_amount ' + sell_amount;
@@ -301,14 +301,14 @@ async function trade_err(buyer_seed, buyer_id, buy_amount, sell_amount, offer_co
         return error;
     }
     if (stderr) {
-        console.log("trade_err - stderr: " + stderr);
+        console.log("trade_err - log: " + stderr);
         return stderr;
     }
     return stdout.trim();
 }
 
 async function withdraw(seller_seed, token, amount, offer_contract_id) {
-    let cmd = 'stellar -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- withdraw --token ' + token + ' --amount ' + amount;
 
@@ -319,13 +319,13 @@ async function withdraw(seller_seed, token, amount, offer_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        console.log("withdraw - stderr: " + stderr);
+        console.log("withdraw - log: " + stderr);
     }
     return stdout.trim();
 }
 
 async function updt_price(seller_seed, sell_price, buy_price, offer_contract_id) {
-    let cmd = 'stellar -q contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + seller_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + offer_contract_id 
     + ' -- updt_price --sell_price ' + sell_price + ' --buy_price ' + buy_price;
 
@@ -336,23 +336,22 @@ async function updt_price(seller_seed, sell_price, buy_price, offer_contract_id)
         console.log(error);
     }
     if (stderr) {
-        console.log("updt_price - stderr: " + stderr);
+        console.log("updt_price - log: " + stderr);
     }
     return stdout.trim();
 }
 
 async function transfer(from_seed, from, to, amount, token_contract_id) {
-    let cmd = 'soroban -q contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id '+ token_contract_id + ' -- transfer ' +
     '--from ' + from +' --to ' + to + ' --amount ' + amount;
-    console.log(cmd);
 
     const { error, stdout, stderr } = await exec(cmd);
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log("transfer - stderr: " + stderr);
+        console.log("transfer - log: " + stderr);
     }
 }
 
