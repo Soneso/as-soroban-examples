@@ -151,7 +151,7 @@ async function buildTokenContract() {
         assert.fail(`error: ${error.message}`);
     }
     if (stderr) {
-        console.log("BUILD TOKEN CONTRACT - stderr: " + stderr);
+        console.log("BUILD TOKEN CONTRACT - log: " + stderr);
     }
     console.log(stdout);
 }
@@ -262,7 +262,7 @@ async function testDepositAfterClaimNotPossible(timelock_contract_id, token_cont
 }
 
 async function deposit(from, from_seed, token_contract_id, amount, claimants, lock_kind, timestamp, timelock_contract_id) {
-    let cmd = 'stellar -q contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + from_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + timelock_contract_id + ' --fee 1000000 -- deposit --from ' + from +' --token ' + token_contract_id + ' --amount ' + amount  +
     ' --lock_kind ' + lock_kind + ' --timestamp ' + timestamp +
     ' --claimants \'{ "vec": [';
@@ -283,7 +283,7 @@ async function deposit(from, from_seed, token_contract_id, amount, claimants, lo
         return error;
     }
     if (stderr) {
-        console.log("DEPOSIT - stderr: " + stderr);
+        console.log("DEPOSIT - log: " + stderr);
         return stderr;
     }
     sleep(sleepCmd);
@@ -291,7 +291,7 @@ async function deposit(from, from_seed, token_contract_id, amount, claimants, lo
 }
 
 async function claim(claimant_id, claimant_seed, timelock_contract_id) {
-    let cmd = 'stellar -q contract invoke ' + 
+    let cmd = 'stellar contract invoke ' + 
     '--source ' + claimant_seed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + timelock_contract_id + ' -- claim --claimant ' + claimant_id;
     //console.log(cmd);
@@ -303,7 +303,7 @@ async function claim(claimant_id, claimant_seed, timelock_contract_id) {
 
     }
     if (stderr) {
-        console.log("CLAIM - stderr: " + stderr);
+        console.log("CLAIM - log: " + stderr);
         return stderr;
     }
     sleep(sleepCmd);
@@ -312,7 +312,7 @@ async function claim(claimant_id, claimant_seed, timelock_contract_id) {
 
 async function getBalance(user, token_contract_id) {
     console.log("get balance ...");
-    const { error, stdout, stderr } = await exec('stellar -q contract invoke ' +
+    const { error, stdout, stderr } = await exec('stellar contract invoke ' +
     '--source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase + ' --id ' + token_contract_id + ' -- balance --id ' + user);
 
@@ -332,7 +332,7 @@ async function fundAccount(account_id) {
 
 async function create_token(token_contract_id) {
     console.log("create token ...");
-    let cmd = 'stellar -q contract invoke --source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
+    let cmd = 'stellar contract invoke --source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id 
     + ' -- initialize --admin ' + submitterId 
     + ' --decimal 8 --name "my token" --symbol MTOK';
@@ -342,7 +342,7 @@ async function create_token(token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        console.log("CREATE_TOKEN - stderr: " + stderr);
+        console.log("CREATE_TOKEN - log: " + stderr);
     }
     sleep(sleepCmd);
     return stdout.trim();
@@ -350,7 +350,7 @@ async function create_token(token_contract_id) {
 
 async function mint(to, amount, token_contract_id) {
     console.log("mint ...");
-    const { error, stdout, stderr } = await exec('stellar -q contract invoke' + 
+    const { error, stdout, stderr } = await exec('stellar contract invoke' + 
     ' --source ' + submitterSeed + ' --rpc-url ' + rpcUrl +
     ' --network-passphrase ' + networkPassphrase +' --id ' + token_contract_id + ' -- mint --to ' + to + ' --amount ' + amount);
 
@@ -358,7 +358,7 @@ async function mint(to, amount, token_contract_id) {
         console.log(error);
     }
     if (stderr) {
-        console.log("MINT - stderr: " + stderr);
+        console.log("MINT - log: " + stderr);
     }
     sleep(sleepCmd);
     return stdout.trim();
