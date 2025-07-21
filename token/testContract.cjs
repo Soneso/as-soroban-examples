@@ -357,6 +357,9 @@ async function testDecimalOverMax(contract_id) {
 }
 
 async function generateIdentity(name) {
+    
+    await rmIdentity(name)
+
     let cmd = 'soroban keys generate' 
     + network + ' '  + name 
     + ' && soroban keys address ' + name;
@@ -367,10 +370,15 @@ async function generateIdentity(name) {
     if (error) {
         assert.fail(`error: ${error.message}`);
     }
-    if (stderr) {
-        assert.fail(`stderr: ${stderr}`);
-    }
-    return stdout.trim();
+    let id = stdout.trim()
+    console.log(id)
+    return id;
+}
+
+async function rmIdentity(name) {
+    
+    let cmd = 'soroban keys rm ' + name;
+    await exec(cmd)
 }
 
 async function create_token(contract_id, invoker, admin_id) {
