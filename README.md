@@ -1,6 +1,7 @@
 # [Stellar Soroban Examples for AssemblyScript](https://github.com/Soneso/as-soroban-examples)
 
 ![v1.1.0](https://img.shields.io/badge/v1.1.0-green.svg)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Soneso/as-soroban-examples)
 
 AssemblyScript contract examples for [Soroban](https://soroban.stellar.org).
 
